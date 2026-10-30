@@ -1,0 +1,21 @@
+name: Verify lessons
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run every example and test, regenerate the site
+        run: |
+          python3 src/build.py
+          python3 src/assemble.py
+          python3 src/home.py
+      - name: Fail if the committed pages are out of date
+        run: git diff --exit-code -- index.html workbook/index.html workbook/lessons.js

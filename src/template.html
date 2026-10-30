@@ -1,0 +1,1119 @@
+<title>Python DSA Workbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: a textbook spine on the left (modules and lessons), one reading column, and code cells that work like a lab bench. */
+:root {
+  --paper: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #131b2a;
+  --muted: #586277;
+  --rule: #d9dfe8;
+  --accent: #2148cc;
+  --accent-ink: #ffffff;
+  --accent-soft: #e5ebfb;
+  --code-bg: #eef2f7;
+  --code-ink: #1b2436;
+  --ok: #1b7a4b;
+  --ok-soft: #e2f3ea;
+  --bad: #b2362c;
+  --bad-soft: #fbe9e7;
+  --warn: #8d6100;
+  --warn-soft: #fbf1db;
+  --syn-kw: #8a2ca6;
+  --syn-str: #0b7442;
+  --syn-num: #b04f17;
+  --syn-com: #7a8597;
+  --syn-fn: #2148cc;
+  --shadow: 0 1px 2px rgba(19, 27, 42, .06), 0 4px 14px rgba(19, 27, 42, .05);
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --side-w: 288px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e131b; --surface: #151c27; --ink: #e5eaf2; --muted: #98a3b6; --rule: #273143;
+    --accent: #86a6ff; --accent-ink: #0e131b; --accent-soft: #1b2847; --code-bg: #111823; --code-ink: #dce3ee;
+    --ok: #52c58c; --ok-soft: #13291f; --bad: #f2837a; --bad-soft: #321a19; --warn: #e3b552; --warn-soft: #2e2512;
+    --syn-kw: #d29cf3; --syn-str: #83d6a3; --syn-num: #f2a875; --syn-com: #7d899d; --syn-fn: #86a6ff;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0e131b; --surface: #151c27; --ink: #e5eaf2; --muted: #98a3b6; --rule: #273143;
+  --accent: #86a6ff; --accent-ink: #0e131b; --accent-soft: #1b2847; --code-bg: #111823; --code-ink: #dce3ee;
+  --ok: #52c58c; --ok-soft: #13291f; --bad: #f2837a; --bad-soft: #321a19; --warn: #e3b552; --warn-soft: #2e2512;
+  --syn-kw: #d29cf3; --syn-str: #83d6a3; --syn-num: #f2a875; --syn-com: #7d899d; --syn-fn: #86a6ff;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { background: var(--paper); color: var(--ink); }
+body { font-family: var(--f-body); font-size: 17px; line-height: 1.6; }
+a { color: var(--accent); text-underline-offset: 2px; }
+code { font-family: var(--f-mono); font-size: .86em; background: var(--code-bg); color: var(--code-ink); padding: .08em .35em; border-radius: 4px; }
+button { font: inherit; cursor: pointer; }
+select { font: inherit; font-size: .92rem; padding: 4px 8px; border-radius: 7px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sr { position: absolute; left: -9999px; }
+
+.app { display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr); min-height: 100vh; }
+
+/* ---------- spine ---------- */
+.spine { position: sticky; top: env(safe-area-inset-top, 0px); height: calc(100vh - env(safe-area-inset-top, 0px)); overflow-y: auto; border-right: 1px solid var(--rule); background: var(--surface); padding-block: 22px 32px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: 18px; }
+.brand { font-family: var(--f-display); font-weight: 700; font-size: 1.28rem; line-height: 1.15; letter-spacing: -.01em; margin: 0 0 4px; }
+.brand span { color: var(--accent); }
+.brand-sub { color: var(--muted); font-size: .86rem; margin: 0 0 16px; }
+.meter { display: grid; gap: 6px; margin-bottom: 14px; }
+.meter-row { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meter-bar { height: 6px; background: var(--code-bg); border-radius: 99px; overflow: hidden; }
+.meter-bar i { display: block; height: 100%; width: 0; background: var(--ok); border-radius: 99px; transition: width .3s ease; }
+.engine { display: flex; align-items: center; gap: 8px; font-size: .8rem; color: var(--muted); margin-bottom: 14px; }
+.engine .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); flex: none; }
+.engine[data-state="ready"] .dot { background: var(--ok); }
+.engine[data-state="failed"] .dot { background: var(--bad); }
+.review-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 16px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--rule); text-decoration: none; color: var(--ink); font-weight: 600; font-size: .92rem; }
+.review-link:hover, .review-link[aria-current="page"] { border-color: var(--accent); background: var(--accent-soft); }
+.review-link small { color: var(--muted); font-weight: 400; }
+.home-link { display: block; margin: -8px 0 16px; font-size: .86rem; color: var(--muted); }
+.mod { margin-bottom: 14px; }
+.mod-title { display: flex; gap: 8px; align-items: baseline; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; margin: 0 0 4px; }
+.mod-title b { font-family: var(--f-mono); color: var(--accent); letter-spacing: 0; }
+.mod ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.mod a { display: grid; grid-template-columns: 16px 1fr; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 7px; text-decoration: none; color: var(--ink); font-size: .94rem; line-height: 1.3; position: relative; }
+.mod a:hover { background: var(--code-bg); }
+.mod a[aria-current="page"] { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+.status { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--rule); display: grid; place-items: center; }
+.status.seen { border-color: var(--muted); }
+.status.part { border-color: var(--ok); background: linear-gradient(90deg, var(--ok) 50%, transparent 50%); }
+.status.done { border-color: var(--ok); background: var(--ok); }
+.status.done::after { content: ""; width: 5px; height: 3px; border: solid var(--surface); border-width: 0 0 1.5px 1.5px; transform: rotate(-45deg) translate(0, -1px); }
+
+/* ---------- reading column ---------- */
+.main { min-width: 0; padding-block: 28px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 760px; margin: 0 auto; display: grid; gap: 18px; }
+.topbar { display: none; }
+.eyebrow { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.eyebrow .num { font-family: var(--f-mono); color: var(--accent); letter-spacing: 0; }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2rem, 4.2vw, 2.7rem); line-height: 1.06; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+.lede { font-size: 1.12rem; color: var(--muted); margin: 0; max-width: 64ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: .76rem; font-weight: 700; letter-spacing: .03em; padding: 3px 9px; border-radius: 99px; border: 1px solid var(--rule); color: var(--muted); background: var(--surface); }
+.chip.tag { border-color: transparent; background: var(--accent-soft); color: var(--accent); }
+.mstrip { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.mstrip li { font-size: .8rem; font-weight: 600; padding: 4px 10px 4px 8px; border-radius: 99px; border: 1px solid var(--rule); color: var(--muted); display: inline-flex; align-items: center; gap: 6px; background: var(--surface); }
+.mstrip li::before { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--rule); flex: none; }
+.mstrip li.done { color: var(--ok); border-color: var(--ok); }
+.mstrip li.done::before { background: var(--ok); border-color: var(--ok); }
+.mstrip li.all { background: var(--ok-soft); }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 1.42rem; line-height: 1.2; letter-spacing: -.01em; margin: 18px 0 0; text-wrap: balance; }
+.col > p { margin: 0; max-width: 68ch; }
+.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 8px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
+.steps li::before { content: counter(s); font-family: var(--f-mono); font-size: .8rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 6px; height: 26px; display: grid; place-items: center; margin-top: 1px; }
+.note { border-radius: 10px; padding: 12px 16px; font-size: .98rem; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
+.note b.k { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; padding-top: 3px; }
+.note.tip { background: var(--accent-soft); }
+.note.tip b.k { color: var(--accent); }
+.note.warn { background: var(--warn-soft); }
+.note.warn b.k { color: var(--warn); }
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: var(--code-bg); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; }
+.mistakes { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.mistakes li::marker { color: var(--bad); }
+.related { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .95rem; }
+
+/* ---------- code cells ---------- */
+.cell { border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); overflow: hidden; box-shadow: var(--shadow); }
+.cell-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--rule); background: var(--surface); flex-wrap: wrap; }
+.cell-label { font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+.cell-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.btn { border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 7px; padding: 4px 11px; font-size: .86rem; font-weight: 600; line-height: 1.5; }
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.timer { font-family: var(--f-mono); font-size: .84rem; font-variant-numeric: tabular-nums; color: var(--muted); padding: 0 4px; }
+.timer.over { color: var(--bad); }
+.ed { position: relative; background: var(--code-bg); }
+.ed pre, .ed textarea { margin: 0; border: 0; font-family: var(--f-mono); font-size: 14px; line-height: 1.6; padding: 12px 14px; tab-size: 4; white-space: pre; letter-spacing: 0; font-variant-ligatures: none; }
+.ed pre { position: absolute; inset: 0; overflow: hidden; pointer-events: none; color: var(--code-ink); }
+.ed pre code { background: none; padding: 0; font-size: inherit; color: inherit; display: block; will-change: transform; }
+.ed textarea { position: relative; display: block; width: 100%; min-height: 3.4em; resize: none; overflow-x: auto; overflow-y: hidden; background: transparent; color: transparent; caret-color: var(--ink); outline: none; }
+.ed textarea::selection { background: rgba(120, 140, 220, .35); color: transparent; }
+.ed:focus-within { box-shadow: inset 0 0 0 2px var(--accent); }
+.tk-kw { color: var(--syn-kw); font-weight: 600; }
+.tk-str { color: var(--syn-str); }
+.tk-num { color: var(--syn-num); }
+.tk-com { color: var(--syn-com); font-style: italic; }
+.tk-fn { color: var(--syn-fn); }
+.out { border-top: 1px solid var(--rule); padding: 10px 14px; font-family: var(--f-mono); font-size: 13.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow: auto; }
+.out-label { display: block; font-family: var(--f-body); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; margin-bottom: 4px; }
+.out.err { background: var(--bad-soft); }
+.out.good { background: var(--ok-soft); }
+.out .errtxt { color: var(--bad); }
+.static-code { margin: 0; padding: 12px 14px; font-family: var(--f-mono); font-size: 14px; line-height: 1.6; background: var(--code-bg); color: var(--code-ink); white-space: pre; overflow-x: auto; border-radius: 8px; }
+.predict { border-top: 1px solid var(--rule); padding: 10px 14px; display: grid; gap: 8px; background: var(--warn-soft); }
+.predict label { font-size: .9rem; font-weight: 600; }
+.predict textarea { font-family: var(--f-mono); font-size: 13.5px; line-height: 1.55; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 7px; background: var(--surface); color: var(--ink); min-height: 4.2em; resize: vertical; width: 100%; }
+.predict .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.pcmp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-family: var(--f-mono); font-size: 13px; }
+.pcmp div { background: var(--surface); border: 1px solid var(--rule); border-radius: 7px; padding: 8px 10px; white-space: pre-wrap; min-width: 0; overflow-wrap: anywhere; }
+.pcmp b { display: block; font-family: var(--f-body); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
+
+/* ---------- practice bench ---------- */
+.bench { border: 1.5px solid var(--accent); border-radius: 12px; background: var(--surface); overflow: hidden; margin-top: 10px; }
+.bench.debug { border-color: var(--warn); }
+.bench-head { padding: 16px 18px 6px; display: grid; gap: 6px; }
+.bench-k { font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); font-weight: 700; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.bench.debug .bench-k { color: var(--warn); }
+.bench-title { font-family: var(--f-display); font-weight: 600; font-size: 1.3rem; margin: 0; line-height: 1.2; }
+.bench-prompt { padding: 0 18px 8px; }
+.bench-prompt p { margin: 0 0 10px; max-width: 68ch; }
+.inline-code { margin: 0 0 10px; padding: 10px 12px; font-family: var(--f-mono); font-size: 13.5px; line-height: 1.55; background: var(--code-bg); border-radius: 8px; white-space: pre; overflow-x: auto; }
+.bench .cell { border-radius: 0; border: 0; border-top: 1px solid var(--rule); box-shadow: none; }
+.results { border-top: 1px solid var(--rule); padding: 12px 18px 16px; display: grid; gap: 10px; }
+.summary { display: flex; align-items: center; gap: 10px; font-weight: 700; flex-wrap: wrap; }
+.pill { font-size: .74rem; font-weight: 700; padding: 2px 9px; border-radius: 99px; letter-spacing: .03em; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.dim { background: var(--code-bg); color: var(--muted); }
+.tests { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.tests li { border: 1px solid var(--rule); border-radius: 8px; padding: 8px 12px; display: grid; gap: 4px; font-size: .93rem; }
+.tests li.pass { border-left: 4px solid var(--ok); }
+.tests li.fail { border-left: 4px solid var(--bad); }
+.t-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.t-detail { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); display: grid; gap: 2px; min-width: 0; }
+.t-detail span { overflow-wrap: anywhere; }
+.t-detail b { color: var(--ink); font-weight: 600; }
+.hints { display: grid; gap: 8px; }
+.hint { background: var(--warn-soft); border-radius: 8px; padding: 9px 13px; font-size: .96rem; }
+.hint b { color: var(--warn); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; margin-right: 6px; }
+.explain { background: var(--ok-soft); border-radius: 8px; padding: 10px 14px; font-size: .97rem; }
+.explain b.k { color: var(--ok); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; margin-right: 6px; }
+.confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .94rem; background: var(--code-bg); padding: 8px 12px; border-radius: 8px; }
+.bench-foot { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--rule); align-items: center; }
+.bench-foot .spacer { flex: 1; }
+.small { font-size: .84rem; color: var(--muted); }
+.gate { border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; display: grid; gap: 10px; background: var(--surface); }
+.gate .k { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); font-weight: 700; }
+.gate .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.gate label { font-weight: 600; font-size: .94rem; display: inline-flex; align-items: center; gap: 6px; }
+.gate .msg { font-size: .95rem; }
+.gate.done { border-color: var(--ok); background: var(--ok-soft); }
+.rebuild { border: 1px dashed var(--accent); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; }
+.rebuild .k { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); font-weight: 700; }
+.rebuild p { margin: 0; font-size: .96rem; }
+.rebuild.done { border-style: solid; border-color: var(--ok); background: var(--ok-soft); }
+.rebuild.done .k { color: var(--ok); }
+.notice { background: var(--accent-soft); border-radius: 8px; padding: 9px 13px; font-size: .95rem; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+
+/* ---------- quiz ---------- */
+.quiz { border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.quiz-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 14px 18px; border-bottom: 1px solid var(--rule); }
+.quiz-head h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.2rem; margin: 0; }
+.qq { padding: 14px 18px; border-bottom: 1px solid var(--rule); display: grid; gap: 10px; }
+.qq:last-child { border-bottom: 0; }
+.qq-text { font-weight: 600; display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-items: start; }
+.qq-text .n { font-family: var(--f-mono); font-size: .8rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 6px; height: 26px; display: grid; place-items: center; }
+.qq .static-code { font-size: 13.5px; }
+.opts { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--rule); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: .97rem; }
+.opt:hover { border-color: var(--muted); }
+.opt input { margin-top: 5px; accent-color: var(--accent); flex: none; }
+.opt.correct { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.locked { cursor: default; }
+.qq-foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.why { background: var(--code-bg); border-radius: 8px; padding: 9px 13px; font-size: .95rem; }
+.why b { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; margin-right: 6px; }
+.why.ok b { color: var(--ok); }
+.why.bad b { color: var(--bad); }
+
+/* ---------- big O ladder ---------- */
+.ladder { border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); padding: 16px 18px; display: grid; gap: 14px; }
+.ladder-top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.ladder-top label { font-weight: 600; }
+.ladder-n { font-family: var(--f-mono); font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 10ch; }
+.ladder input[type="range"] { flex: 1 1 220px; accent-color: var(--accent); }
+.rungs { display: grid; gap: 8px; }
+.rung { display: grid; grid-template-columns: 92px minmax(0, 1fr) 124px; gap: 10px; align-items: center; font-variant-numeric: tabular-nums; }
+.rung-name { font-family: var(--f-mono); font-size: .9rem; font-weight: 600; }
+.rung-bar { height: 14px; background: var(--code-bg); border-radius: 4px; overflow: hidden; }
+.rung-bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; transition: width .2s ease; }
+.rung[data-level="slow"] .rung-bar i { background: var(--warn); }
+.rung[data-level="never"] .rung-bar i { background: var(--bad); }
+.rung-val { font-size: .84rem; text-align: right; line-height: 1.25; }
+.rung-val small { display: block; color: var(--muted); }
+.ladder-foot { font-size: .82rem; color: var(--muted); margin: 0; }
+
+.fig { border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); padding: 12px; overflow-x: auto; }
+.fig svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.fig figcaption { font-size: .84rem; color: var(--muted); text-align: center; margin-top: 4px; }
+
+/* ---------- review page ---------- */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.card { border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; background: var(--surface); display: grid; gap: 2px; }
+.card b { font-family: var(--f-display); font-size: 1.5rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.card span { font-size: .82rem; color: var(--muted); }
+.weak { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.weak li { border: 1px solid var(--rule); border-radius: 8px; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; font-size: .95rem; background: var(--surface); }
+.weak li a { font-weight: 600; }
+.weak li .miss { color: var(--muted); font-size: .86rem; }
+
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 26px; }
+.pager a { border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--ink); background: var(--surface); display: grid; gap: 2px; min-width: 0; }
+.pager a:hover { border-color: var(--accent); }
+.pager small { color: var(--muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+.pager .next { text-align: right; grid-column: 2; }
+
+.scrim { display: none; }
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .spine { position: fixed; z-index: 30; inset: 0 auto 0 0; width: min(320px, 88vw); height: 100%; transform: translateX(-105%); transition: transform .22s ease; padding-top: calc(22px + env(safe-area-inset-top, 0px)); box-shadow: var(--shadow); }
+  .app[data-nav="open"] .spine { transform: none; }
+  .app[data-nav="open"] .scrim { display: block; position: fixed; inset: 0; z-index: 25; background: rgba(10, 14, 22, .45); }
+  .topbar { display: flex; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; align-items: center; justify-content: space-between; gap: 10px; background: var(--paper); padding-block: 10px; margin: -28px 0 8px; border-bottom: 1px solid var(--rule); }
+  .topbar .brand { font-size: 1.05rem; margin: 0; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 21; background: var(--paper); }
+  .rung { grid-template-columns: 78px minmax(0, 1fr) 96px; }
+  .pcmp { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+<div class="app" id="app">
+  <aside class="spine" id="spine" aria-label="Course outline">
+    <p class="brand">Python <span>DSA</span> Workbook</p>
+    <p class="brand-sub">Data structures and algorithms for graduate coding assessments</p>
+    <div class="meter" aria-live="polite">
+      <div class="meter-row"><span>Lessons mastered</span><span id="meter-text">0 of 21</span></div>
+      <div class="meter-bar"><i id="meter-fill"></i></div>
+    </div>
+    <div class="engine" id="engine" data-state="loading"><span class="dot"></span><span id="engine-text">Python starts when you first run code</span></div>
+    <a class="review-link" href="#review" id="review-link"><span>Mixed review</span><small id="review-sub">quiz across lessons</small></a>
+    <a class="home-link" href="../" id="home-link" hidden>Course home</a>
+    <nav id="outline"></nav>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <main class="main">
+    <div class="topbar">
+      <button class="btn" id="nav-open" aria-controls="spine" aria-expanded="false">Lessons</button>
+      <p class="brand">Python <span>DSA</span> Workbook</p>
+    </div>
+    <article class="col" id="lesson" aria-live="polite"></article>
+  </main>
+</div>
+
+<script src="lessons.js"></script>
+<script>
+(function () {
+  "use strict";
+  var D = window.DSA;
+  var BRYTHON = "/*BRYTHON_BASE*/";
+  var STORE = "dsa-workbook-v2";
+  var KEYS = ["passed", "seen", "drafts", "solved", "rebuilt", "rebuilding", "complexity", "quiz", "predict", "debug", "times", "review"];
+  var state = load();
+  function load() {
+    var s = {};
+    try { s = JSON.parse(localStorage.getItem(STORE) || "{}") || {}; } catch (e) { s = {}; }
+    try { // carry over progress from the first version of the workbook
+      if (!s.passed) { var old = JSON.parse(localStorage.getItem("dsa-workbook-v1") || "{}") || {}; s.passed = old.passed || {}; s.seen = old.seen || {}; s.drafts = old.drafts || {}; }
+    } catch (e) {}
+    KEYS.forEach(function (k) { if (!s[k] || typeof s[k] !== "object") s[k] = {}; });
+    if (!Array.isArray(s.review.history)) s.review.history = [];
+    return s;
+  }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+
+  var flat = [];
+  D.modules.forEach(function (m, mi) { m.lessons.forEach(function (L) { flat.push({ L: L, m: m, mi: mi }); }); });
+  var byId = {};
+  flat.forEach(function (x) { byId[x.L.id] = x; });
+
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function mmss(secs) { var m = Math.floor(secs / 60), s = secs % 60; return m + ":" + (s < 10 ? "0" : "") + s; }
+
+  // ---------------- mastery model ----------------
+  function quizScore(L) {
+    var a = (state.quiz[L.id] || {}).answers || {};
+    var correct = 0, answered = 0;
+    L.quiz.forEach(function (q, i) { if (a[i] != null) { answered++; if (a[i] === q.answer) correct++; } });
+    return { correct: correct, answered: answered, total: L.quiz.length };
+  }
+  function steps(L) {
+    var out = [];
+    if (L.practice) {
+      out.push({ key: "practice", label: "Practice passes", done: !!state.passed[L.id] });
+      out.push({ key: "complexity", label: "Complexity stated", done: !!state.complexity[L.id] });
+      out.push({ key: "rebuild", label: "Rebuilt from memory", done: !!state.rebuilt[L.id] });
+      out.push({ key: "debug", label: "Bug fixed", done: !!state.debug[L.id] });
+    }
+    if (L.quiz.length) {
+      var qs = quizScore(L);
+      out.push({ key: "quiz", label: "Quiz 80% or more", done: qs.total > 0 && qs.correct / qs.total >= 0.8 });
+    }
+    return out;
+  }
+  function mastered(L) { var s = steps(L); return s.length > 0 && s.every(function (x) { return x.done; }); }
+  function partly(L) { return steps(L).some(function (x) { return x.done; }); }
+
+  // ---------------- Python highlighter ----------------
+  var KW = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
+  var BI = new Set("print len range enumerate zip sorted sum min max abs int str float list dict set tuple bool isinstance map filter reversed any all input open super type round divmod repr ord chr iter next hash".split(" "));
+  var TOKEN = /(#[^\n]*)|((?:[rRbBfFuU]{1,2})?(?:"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?))|(\b\d[\d_]*(?:\.\d+)?(?:[eE][+-]?\d+)?\b)|([A-Za-z_][A-Za-z0-9_]*)|(@[A-Za-z_][\w.]*)/g;
+  function highlight(src) {
+    var out = "", last = 0, m, prevWord = "";
+    TOKEN.lastIndex = 0;
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      var t = m[0];
+      if (m[1]) out += '<span class="tk-com">' + esc(t) + "</span>";
+      else if (m[2]) out += '<span class="tk-str">' + esc(t) + "</span>";
+      else if (m[3]) out += '<span class="tk-num">' + esc(t) + "</span>";
+      else if (m[4]) {
+        if (KW.has(t)) out += '<span class="tk-kw">' + t + "</span>";
+        else if (prevWord === "def" || prevWord === "class" || BI.has(t)) out += '<span class="tk-fn">' + t + "</span>";
+        else out += t;
+        prevWord = t;
+      } else out += '<span class="tk-fn">' + esc(t) + "</span>";
+      if (!m[4]) prevWord = "";
+      last = TOKEN.lastIndex;
+    }
+    return out + esc(src.slice(last));
+  }
+
+  // ---------------- editor ----------------
+  var edCount = 0;
+  function makeEditor(code, label, onRun) {
+    var wrap = el("div", "ed");
+    var pre = el("pre"); pre.setAttribute("aria-hidden", "true");
+    var codeEl = el("code"); pre.appendChild(codeEl);
+    var ta = document.createElement("textarea");
+    ta.id = "ed-" + (++edCount);
+    ta.spellcheck = false;
+    ta.setAttribute("autocapitalize", "off"); ta.setAttribute("autocomplete", "off"); ta.setAttribute("autocorrect", "off");
+    ta.setAttribute("aria-label", label + ". Tab inserts spaces; press Escape, then Tab, to leave the editor. Ctrl or Cmd plus Enter runs.");
+    ta.value = code;
+    wrap.appendChild(pre); wrap.appendChild(ta);
+    var escaped = false;
+    function paint() { codeEl.innerHTML = highlight(ta.value) + "\n"; ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; }
+    ta.addEventListener("input", function () { paint(); if (wrap.onchange) wrap.onchange(ta.value); });
+    ta.addEventListener("scroll", function () { codeEl.style.transform = "translateX(" + (-ta.scrollLeft) + "px)"; });
+    ta.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); if (onRun) onRun(); return; }
+      if (e.key === "Escape") { escaped = true; return; }
+      if (e.key === "Tab" && !escaped) {
+        e.preventDefault();
+        var s = ta.selectionStart, en = ta.selectionEnd, v = ta.value;
+        if (e.shiftKey) {
+          var ls = v.lastIndexOf("\n", s - 1) + 1, n = 0;
+          while (n < 4 && v[ls + n] === " ") n++;
+          if (n) { ta.value = v.slice(0, ls) + v.slice(ls + n); ta.selectionStart = ta.selectionEnd = Math.max(ls, s - n); }
+        } else { ta.value = v.slice(0, s) + "    " + v.slice(en); ta.selectionStart = ta.selectionEnd = s + 4; }
+        paint(); if (wrap.onchange) wrap.onchange(ta.value);
+        return;
+      }
+      escaped = false;
+      if (e.key === "Enter" && !e.shiftKey) {
+        var s2 = ta.selectionStart, v2 = ta.value, lineStart = v2.lastIndexOf("\n", s2 - 1) + 1, line = v2.slice(lineStart, s2);
+        var indent = (line.match(/^ */) || [""])[0];
+        if (/:\s*(#.*)?$/.test(line)) indent += "    ";
+        if (indent) {
+          e.preventDefault();
+          ta.value = v2.slice(0, s2) + "\n" + indent + v2.slice(ta.selectionEnd);
+          ta.selectionStart = ta.selectionEnd = s2 + 1 + indent.length;
+          paint(); if (wrap.onchange) wrap.onchange(ta.value);
+        }
+      }
+    });
+    wrap.getValue = function () { return ta.value; };
+    wrap.setValue = function (v) { ta.value = v; paint(); if (wrap.onchange) wrap.onchange(v); };
+    wrap.focus = function () { ta.focus(); };
+    requestAnimationFrame(paint); paint();
+    return wrap;
+  }
+
+  // ---------------- Python engine (Brython) ----------------
+  var engineEl = document.getElementById("engine"), engineText = document.getElementById("engine-text");
+  var py = { state: "idle" };
+  function setEngine(st, text) { engineEl.dataset.state = st; engineText.textContent = text; }
+  function loadScript(src) {
+    return new Promise(function (res, rej) {
+      var s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = function () { rej(new Error("Could not load " + src)); };
+      document.head.appendChild(s);
+    });
+  }
+  function startPython() {
+    if (py.state !== "idle") return py.promise;
+    py.state = "loading";
+    setEngine("loading", "Starting Python (about 5 MB, first time only)");
+    py.promise = (window.brython ? Promise.resolve() : loadScript(BRYTHON + "brython.min.js").then(function () { return loadScript(BRYTHON + "brython_stdlib.js"); }))
+      .then(function () {
+        return new Promise(function (res, rej) {
+          var src = document.getElementById("runner-src").textContent;
+          try {
+            if (!window.pyReady) {
+              try { window.brython({ debug: 0 }); } catch (e) { /* already initialised */ }
+              window.__BRYTHON__.runPythonSource(src, "dsa_runner");
+            }
+          } catch (e) { rej(e); return; }
+          var t0 = Date.now();
+          (function wait() {
+            if (window.pyReady && window.pyRun) return res();
+            if (Date.now() - t0 > 20000) return rej(new Error("Python did not start in time"));
+            setTimeout(wait, 50);
+          })();
+        });
+      })
+      .then(function () { py.state = "ready"; setEngine("ready", "Python ready (runs in your browser)"); },
+        function (err) { py.state = "idle"; setEngine("failed", "Python could not load. Outputs shown are precomputed; press Run to retry."); throw err; });
+    return py.promise;
+  }
+  function cleanTrace(text) {
+    if (text.indexOf("Traceback (most recent call last)") === -1) return text;
+    var lines = text.split("\n"), out = [], skip = false;
+    for (var i = 0; i < lines.length; i++) {
+      var ln = lines[i], fm = ln.match(/^\s*File "(.*?)", line (\d+)(.*)$/);
+      if (fm) {
+        if (fm[1] === "<string>") { skip = false; out.push("  Your code, line " + fm[2] + fm[3].replace(", in <module>", "")); }
+        else skip = true;
+        continue;
+      }
+      if (skip && /^\s{4,}/.test(ln)) continue;
+      skip = false;
+      out.push(ln);
+    }
+    return out.join("\n");
+  }
+  function runPython(src) {
+    return startPython().then(function () {
+      return new Promise(function (res) {
+        setTimeout(function () {
+          var raw;
+          try { raw = window.pyRun(src); } catch (e) { raw = "Traceback (most recent call last)\n" + (e && e.message ? e.message : String(e)); }
+          res(String(raw));
+        }, 30);
+      });
+    });
+  }
+
+  // ---------------- outline ----------------
+  var outline = document.getElementById("outline");
+  function renderOutline(current) {
+    var html = "";
+    D.modules.forEach(function (m, mi) {
+      html += '<div class="mod"><p class="mod-title"><b>' + (mi + 1) + "</b>" + esc(m.title) + "</p><ol>";
+      m.lessons.forEach(function (L) {
+        var st = mastered(L) ? "done" : (partly(L) ? "part" : (state.seen[L.id] ? "seen" : ""));
+        var label = { done: " (mastered)", part: " (in progress)", seen: " (seen)" }[st] || "";
+        html += '<li><a href="#' + L.id + '"' + (L.id === current ? ' aria-current="page"' : "") + '><span class="status ' + st + '" aria-hidden="true"></span><span>' + esc(L.title) + '<span class="sr">' + label + "</span></span></a></li>";
+      });
+      html += "</ol></div>";
+    });
+    outline.innerHTML = html;
+    var done = flat.filter(function (x) { return mastered(x.L); }).length;
+    document.getElementById("meter-text").textContent = done + " of " + flat.length;
+    document.getElementById("meter-fill").style.width = (100 * done / flat.length) + "%";
+    var rl = document.getElementById("review-link");
+    if (current === "review") rl.setAttribute("aria-current", "page"); else rl.removeAttribute("aria-current");
+    var h = state.review.history;
+    document.getElementById("review-sub").textContent = h.length ? "last: " + h[h.length - 1].score + " of " + h[h.length - 1].total : "quiz across lessons";
+  }
+
+  // ---------------- example cells with predict-first ----------------
+  function normOut(s) {
+    return String(s).split("\n").map(function (l) { return l.replace(/\s+/g, " ").trim(); }).filter(function (l, i, a) { return !(l === "" && i >= a.length - 1); }).join("\n").replace(/\n+$/, "");
+  }
+  function codeCell(code, out, label, lessonId) {
+    var cell = el("div", "cell");
+    var head = el("div", "cell-head", '<span class="cell-label">' + esc(label || "Example") + '</span><span class="cell-actions"><button class="btn" data-act="predict" type="button" title="Write down what it prints before you run it">Predict</button><button class="btn" data-act="reset" type="button">Reset</button><button class="btn primary" data-act="run" type="button">Run</button></span>');
+    var outEl = el("div", "out");
+    var predictEl = el("div", "predict"); predictEl.hidden = true;
+    function showStatic() { outEl.hidden = false; outEl.className = "out"; outEl.innerHTML = '<span class="out-label">Output</span>' + (out ? esc(out.replace(/\n$/, "")) : '<span class="small">(prints nothing)</span>'); }
+    var ed = makeEditor(code, label || "Example code", run);
+    var edited = false;
+    ed.onchange = function () { edited = true; };
+    function run() {
+      var btn = head.querySelector('[data-act="run"]');
+      btn.disabled = true; btn.textContent = "Running";
+      predictEl.hidden = true;
+      outEl.hidden = false; outEl.className = "out"; outEl.innerHTML = '<span class="out-label">Output</span><span class="small">Running...</span>';
+      runPython(ed.getValue()).then(function (raw) {
+        var text = cleanTrace(raw), isErr = raw.indexOf("Traceback (most recent call last)") !== -1;
+        outEl.className = "out" + (isErr ? " err" : "");
+        var body = esc(text.replace(/\n$/, ""));
+        if (isErr) { var idx = text.indexOf("Traceback"); body = esc(text.slice(0, idx)) + '<span class="errtxt">' + esc(text.slice(idx).replace(/\n$/, "")) + "</span>"; }
+        outEl.innerHTML = '<span class="out-label">Your output</span>' + (text.trim() ? body : '<span class="small">(prints nothing)</span>');
+      }, function () {
+        outEl.className = "out err";
+        outEl.innerHTML = '<span class="out-label">Python unavailable</span>Python could not load, so the precomputed output will show again in a moment. Check your connection and press Run to retry.';
+        setTimeout(showStatic, 4000);
+      }).then(function () { btn.disabled = false; btn.textContent = "Run"; });
+    }
+    function predict() {
+      if (edited) { predictEl.hidden = false; predictEl.innerHTML = '<span class="small">Prediction works on the original example. Press Reset first.</span>'; return; }
+      outEl.hidden = true;
+      predictEl.hidden = false;
+      predictEl.innerHTML = '<label for="pr-' + edCount + '">What will this print? One line per print.</label><textarea id="pr-' + edCount + '" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea><div class="row"><button class="btn primary" type="button" data-act="check">Check prediction</button><button class="btn" type="button" data-act="cancel">Cancel</button><span class="small">Predicting before running is the fastest way to find gaps in how you read code.</span></div>';
+      predictEl.querySelector("textarea").focus();
+    }
+    predictEl.addEventListener("click", function (e) {
+      var act = e.target.getAttribute("data-act");
+      if (act === "cancel") { predictEl.hidden = true; showStatic(); }
+      if (act === "check") {
+        var mine = predictEl.querySelector("textarea").value;
+        var ok = normOut(mine) === normOut(out);
+        var p = state.predict[lessonId] || { tried: 0, right: 0 };
+        p.tried++; if (ok) p.right++;
+        state.predict[lessonId] = p; save();
+        predictEl.innerHTML = (ok ? '<div><span class="pill ok">Correct</span> <span class="small">That is exactly what it prints.</span></div>' : '<div><span class="pill bad">Not quite</span> <span class="small">Trace it line by line, then press Run to see it happen.</span></div><div class="pcmp"><div><b>Real output</b>' + esc(out.replace(/\n$/, "") || "(prints nothing)") + "</div><div><b>Your prediction</b>" + esc(mine.trim() || "(blank)") + "</div></div>") + '<div class="row"><button class="btn" type="button" data-act="cancel">Close</button></div>';
+        if (ok) showStatic();
+      }
+    });
+    head.addEventListener("click", function (e) {
+      var act = e.target.getAttribute("data-act");
+      if (act === "run") run();
+      if (act === "predict") predict();
+      if (act === "reset") { ed.setValue(code); edited = false; predictEl.hidden = true; showStatic(); }
+    });
+    showStatic();
+    cell.appendChild(head); cell.appendChild(ed); cell.appendChild(predictEl); cell.appendChild(outEl);
+    return cell;
+  }
+
+  function ladder() {
+    var box = el("div", "ladder", '<div class="ladder-top"><label for="ladder-range">Input size n</label><input type="range" id="ladder-range" min="0" max="21" step="1" value="12"><span class="ladder-n" id="ladder-n"></span></div><div class="rungs" id="rungs"></div><p class="ladder-foot">Bars use a logarithmic scale: each tick of length is ten times more steps. Times assume about 10 million simple Python steps per second.</p>');
+    var rows = [
+      { name: "O(1)", f: function () { return 0; } },
+      { name: "O(log n)", f: function (n) { return Math.log10(Math.max(1, Math.log2(n))); } },
+      { name: "O(n)", f: function (n) { return Math.log10(n); } },
+      { name: "O(n log n)", f: function (n) { return Math.log10(n * Math.max(1, Math.log2(n))); } },
+      { name: "O(n²)", f: function (n) { return 2 * Math.log10(n); } },
+      { name: "O(2ⁿ)", f: function (n) { return n * Math.log10(2); } },
+    ];
+    var rungs = box.querySelector("#rungs");
+    rows.forEach(function (r) {
+      var d = el("div", "rung", '<span class="rung-name">' + r.name + '</span><span class="rung-bar"><i></i></span><span class="rung-val"></span>');
+      rungs.appendChild(d); r.el = d;
+    });
+    var SIZES = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5, 5e5, 1e6, 2e6, 5e6, 1e7];
+    function fmtCount(lg) {
+      if (lg < 6) return Math.round(Math.pow(10, lg)).toLocaleString("en-GB");
+      if (lg < 12) return (Math.pow(10, lg) / 1e6).toLocaleString("en-GB", { maximumFractionDigits: 1 }) + " million";
+      if (lg < 15) return (Math.pow(10, lg) / 1e12).toLocaleString("en-GB", { maximumFractionDigits: 1 }) + " trillion";
+      return "10^" + Math.floor(lg);
+    }
+    function fmtTime(lg) {
+      var secs = Math.pow(10, lg - 7);
+      if (lg - 7 > 30) return { t: "longer than the universe has existed", lvl: "never" };
+      if (secs < 0.1) return { t: "instant", lvl: "ok" };
+      if (secs < 60) return { t: secs.toFixed(secs < 10 ? 1 : 0) + " s", lvl: secs < 2 ? "ok" : "slow" };
+      if (secs < 3600) return { t: Math.round(secs / 60) + " min", lvl: "slow" };
+      if (secs < 86400 * 2) return { t: Math.round(secs / 3600) + " hours", lvl: "never" };
+      if (secs < 3.15e7 * 2) return { t: Math.round(secs / 86400) + " days", lvl: "never" };
+      return { t: Math.round(secs / 3.15e7).toLocaleString("en-GB") + " years", lvl: "never" };
+    }
+    var range = box.querySelector("#ladder-range"), nEl = box.querySelector("#ladder-n");
+    function update() {
+      var n = SIZES[+range.value];
+      nEl.textContent = n.toLocaleString("en-GB");
+      rows.forEach(function (r) {
+        var lg = r.f(n), w = Math.max(1.5, Math.min(100, 100 * lg / 15)), tm = fmtTime(lg), cnt = fmtCount(lg);
+        r.el.dataset.level = tm.lvl;
+        r.el.querySelector("i").style.width = w + "%";
+        r.el.querySelector(".rung-val").innerHTML = esc(cnt) + (cnt === "1" ? " step" : " steps") + "<small>" + esc(tm.t) + "</small>";
+      });
+    }
+    range.addEventListener("input", update);
+    update();
+    return box;
+  }
+
+  function diagram(kind) {
+    var fig = el("figure", "fig");
+    var line = 'stroke="var(--muted)" stroke-width="1.5"';
+    var node = function (x, y, label, accent) {
+      return '<circle cx="' + x + '" cy="' + y + '" r="19" fill="' + (accent ? "var(--accent-soft)" : "var(--surface)") + '" stroke="' + (accent ? "var(--accent)" : "var(--muted)") + '" stroke-width="1.5"/><text x="' + x + '" y="' + (y + 5) + '" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600" fill="var(--ink)">' + label + "</text>";
+    };
+    if (kind === "tree") {
+      var P = { r: [200, 34], a: [120, 104], b: [280, 104], c: [76, 174], d: [164, 174], e: [324, 174] };
+      fig.innerHTML = '<svg viewBox="0 0 400 210" width="400" role="img" aria-label="Binary tree with root 8, children 3 and 10, and leaves 1, 6 and 14">' +
+        ["a", "b"].map(function (k) { return '<line x1="' + P.r[0] + '" y1="' + P.r[1] + '" x2="' + P[k][0] + '" y2="' + P[k][1] + '" ' + line + "/>"; }).join("") +
+        ["c", "d"].map(function (k) { return '<line x1="' + P.a[0] + '" y1="' + P.a[1] + '" x2="' + P[k][0] + '" y2="' + P[k][1] + '" ' + line + "/>"; }).join("") +
+        '<line x1="' + P.b[0] + '" y1="' + P.b[1] + '" x2="' + P.e[0] + '" y2="' + P.e[1] + '" ' + line + "/>" +
+        node(P.r[0], P.r[1], "8", true) + node(P.a[0], P.a[1], "3") + node(P.b[0], P.b[1], "10") + node(P.c[0], P.c[1], "1") + node(P.d[0], P.d[1], "6") + node(P.e[0], P.e[1], "14") +
+        '<text x="236" y="38" font-size="12" fill="var(--muted)" font-family="Source Sans 3, sans-serif">root</text><text x="352" y="178" font-size="12" fill="var(--muted)" font-family="Source Sans 3, sans-serif">leaf</text></svg><figcaption>Root 8; leaves 1, 6 and 14; height 3</figcaption>';
+    } else {
+      var G = { A: [60, 90], B: [170, 36], C: [170, 144], D: [280, 90], E: [380, 90] };
+      var edges = [["A", "B"], ["A", "C"], ["B", "D"], ["C", "D"], ["D", "E"]];
+      fig.innerHTML = '<svg viewBox="0 0 440 180" width="440" role="img" aria-label="Undirected graph: A connects to B and C, B and C connect to D, D connects to E">' +
+        edges.map(function (e) { return '<line x1="' + G[e[0]][0] + '" y1="' + G[e[0]][1] + '" x2="' + G[e[1]][0] + '" y2="' + G[e[1]][1] + '" ' + line + "/>"; }).join("") +
+        Object.keys(G).map(function (k) { return node(G[k][0], G[k][1], k, k === "A"); }).join("") + "</svg><figcaption>The graph built above. BFS from A reaches B and C in 1 hop, D in 2, E in 3.</figcaption>";
+    }
+    return fig;
+  }
+
+  // ---------------- bench (practice and debug) ----------------
+  function shortVal(v) {
+    var s;
+    if (v && typeof v === "object" && !Array.isArray(v) && v.__py__) s = "generated: " + v.__py__;
+    else s = JSON.stringify(v, null, 0).replace(/,(?=[\[\]"\d{-]|null|true|false)/g, ", ");
+    return s.length > 140 ? s.slice(0, 137) + "..." : s;
+  }
+  function fmtGot(g) {
+    if (g == null) return "";
+    try { return shortVal(JSON.parse(g)); } catch (e) { return g.length > 140 ? g.slice(0, 137) + "..." : g; }
+  }
+  function bench(cfg) {
+    var P = cfg, L = cfg.lesson, key = cfg.key, isDebug = cfg.kind === "debug";
+    var box = el("section", "bench" + (isDebug ? " debug" : ""));
+    box.setAttribute("aria-label", isDebug ? "Debugging exercise" : "Practice problem");
+    var hintsShown = 0, solutionShown = false, loadedSolution = false, timer = null, timerStart = 0;
+    box.innerHTML = '<div class="bench-head"><span class="bench-k"><span>' + (isDebug ? "Fix the bug" : "Practice") + "</span>" + (cfg.limit ? '<span class="pill dim">aim: under ' + cfg.limit + " min</span>" : "") + '</span><h3 class="bench-title">' + esc(P.title) + '</h3></div><div class="bench-prompt">' + P.prompt + "</div>";
+    var cell = el("div", "cell");
+    var head = el("div", "cell-head", '<span class="cell-label">' + (isDebug ? "Buggy code: fix it" : "Your solution") + '</span><span class="cell-actions"><span class="timer" data-role="timer" hidden></span><button class="btn" type="button" data-act="timer">Start timer</button><button class="btn" type="button" data-act="reset">Reset</button><button class="btn" type="button" data-act="run">Run</button><button class="btn primary" type="button" data-act="test">Run tests</button></span>');
+    var initial = state.drafts[key] != null ? state.drafts[key] : P.starter;
+    var ed = makeEditor(initial, isDebug ? "Buggy code to fix" : "Your solution", function () { test(); });
+    ed.onchange = function (v) { state.drafts[key] = v; save(); };
+    var outEl = el("div", "out"); outEl.hidden = true;
+    cell.appendChild(head); cell.appendChild(ed); cell.appendChild(outEl);
+    box.appendChild(cell);
+    var rebuildNotice = el("div", "notice"); rebuildNotice.hidden = true;
+    box.appendChild(rebuildNotice);
+    var results = el("div", "results"); results.hidden = true;
+    box.appendChild(results);
+    var extras = el("div", "results"); extras.hidden = true;
+    var gateEl = el("div", "gate"); gateEl.hidden = true;
+    var rebuildEl = el("div", "rebuild"); rebuildEl.hidden = true;
+    var hintsEl = el("div", "hints");
+    var confirmEl = el("div"); confirmEl.hidden = true;
+    var solEl = el("div"); solEl.hidden = true;
+    var explainEl = el("div", "explain", '<b class="k">Complexity</b>' + P.explain); explainEl.hidden = true;
+    extras.appendChild(gateEl); extras.appendChild(rebuildEl); extras.appendChild(hintsEl); extras.appendChild(confirmEl); extras.appendChild(solEl); extras.appendChild(explainEl);
+    box.appendChild(extras);
+    var foot = el("div", "bench-foot", '<button class="btn" type="button" data-act="hint">Show a hint (' + P.hints.length + ")</button>" +
+      '<button class="btn" type="button" data-act="solution" disabled>Show solution</button><span class="small" data-role="lock">Unlocks after your first test run</span><span class="spacer"></span><span data-role="status"></span>');
+    box.appendChild(foot);
+
+    function status() {
+      var s = foot.querySelector('[data-role="status"]'), parts = [];
+      if (state.passed[key]) parts.push('<span class="pill ok">Passed</span>');
+      if (!isDebug && state.rebuilt[key]) parts.push('<span class="pill ok">Rebuilt from memory</span>');
+      if (state.times[key]) parts.push('<span class="pill dim">best ' + mmss(state.times[key]) + "</span>");
+      s.innerHTML = parts.join(" ");
+    }
+    function harness() {
+      var call = P.wrapper || "__call = globals().get(" + JSON.stringify(P.func) + ")";
+      var tests = P.tests.map(function (t) { return { args: t.args, expected: t.expected }; });
+      return D.harness.replace("__CALL_LINE__", call).split("__FUNC__").join(P.func).replace("__TESTS__", JSON.stringify(JSON.stringify(tests)));
+    }
+    function unlockSolution() { foot.querySelector('[data-act="solution"]').disabled = solutionShown; var lock = foot.querySelector('[data-role="lock"]'); if (lock) lock.remove(); }
+    function showPrints(text, label) {
+      if (!text.trim()) { outEl.hidden = true; return; }
+      outEl.hidden = false;
+      var isErr = text.indexOf("Traceback") !== -1;
+      outEl.className = "out" + (isErr ? " err" : "");
+      outEl.innerHTML = '<span class="out-label">' + esc(label) + "</span>" + (isErr ? '<span class="errtxt">' + esc(cleanTrace(text).replace(/\n$/, "")) + "</span>" : esc(text.replace(/\n$/, "")));
+    }
+    function runOnly() {
+      var b = head.querySelector('[data-act="run"]'); b.disabled = true;
+      runPython(ed.getValue()).then(function (raw) {
+        showPrints(raw || "", "Your output");
+        if (!raw.trim()) { outEl.hidden = false; outEl.className = "out"; outEl.innerHTML = '<span class="out-label">Your output</span><span class="small">(prints nothing. Use Run tests to check your function.)</span>'; }
+      }, function () { outEl.hidden = false; outEl.className = "out err"; outEl.textContent = "Python could not load. Check your connection and try again."; })
+        .then(function () { b.disabled = false; });
+    }
+    function tickTimer() {
+      var t = head.querySelector('[data-role="timer"]'), secs = Math.floor((Date.now() - timerStart) / 1000);
+      t.textContent = mmss(secs);
+      t.className = "timer" + (cfg.limit && secs > cfg.limit * 60 ? " over" : "");
+    }
+    function startTimer() {
+      if (timer) { clearInterval(timer); timer = null; head.querySelector('[data-act="timer"]').textContent = "Start timer"; return; }
+      timerStart = Date.now();
+      head.querySelector('[data-role="timer"]').hidden = false;
+      head.querySelector('[data-act="timer"]').textContent = "Stop timer";
+      tickTimer();
+      timer = setInterval(tickTimer, 1000);
+    }
+    function stopTimer() {
+      if (!timer) return null;
+      clearInterval(timer); timer = null;
+      head.querySelector('[data-act="timer"]').textContent = "Start timer";
+      return Math.floor((Date.now() - timerStart) / 1000);
+    }
+    function renderGate() {
+      var C = L.complexity;
+      if (!C || isDebug) return;
+      gateEl.hidden = false;
+      if (state.complexity[L.id]) {
+        gateEl.className = "gate done";
+        gateEl.innerHTML = '<span class="k">Complexity stated</span><div class="msg"><b>' + esc(C.time[0]) + " time, " + esc(C.space[0]) + " space.</b> " + C.why + "</div>";
+        return;
+      }
+      gateEl.className = "gate";
+      var opt = function (list) { return list.map(function (o) { return '<option value="' + esc(o) + '">' + esc(o) + "</option>"; }).join(""); };
+      gateEl.innerHTML = '<span class="k">State the complexity to earn the tick</span><div class="row"><label>Time <select data-role="time"><option value="">choose</option>' + opt(C.time_options) + '</select></label><label>Space <select data-role="space"><option value="">choose</option>' + opt(C.space_options) + '</select></label><button class="btn primary" type="button" data-act="gate-check">Check</button></div><div class="msg small">Say it the way you would in an interview: the growth, and the reason.</div>';
+    }
+    var gateWrong = 0;
+    gateEl.addEventListener("click", function (e) {
+      if (e.target.getAttribute("data-act") !== "gate-check") return;
+      var C = L.complexity, t = gateEl.querySelector('[data-role="time"]').value, s = gateEl.querySelector('[data-role="space"]').value;
+      var notation = function (v) { return v.replace(/\)\s.*$/, ")"); };
+      if (!t || !s) { gateEl.querySelector(".msg").innerHTML = "Choose both time and space."; return; }
+      var ok = C.time.indexOf(notation(t)) !== -1 && C.space.indexOf(notation(s)) !== -1;
+      if (ok) { state.complexity[L.id] = true; save(); renderGate(); renderOutline(L.id); renderStrip(); return; }
+      gateWrong++;
+      var tOk = C.time.indexOf(notation(t)) !== -1, sOk = C.space.indexOf(notation(s)) !== -1;
+      gateEl.querySelector(".msg").innerHTML = '<span class="pill bad">Not quite</span> ' + (tOk ? "Time is right. " : "Time: count how many times the most repeated step runs, and what each step costs. ") + (sOk ? "Space is right." : "Space: what new structures does the code create, and how big can they get?") + (gateWrong >= 2 ? "<br><b>The answer:</b> " + esc(C.time[0]) + " time, " + esc(C.space[0]) + " space. " + C.why + " Select them to record it." : "");
+    });
+    function renderRebuild() {
+      if (isDebug) return;
+      rebuildEl.hidden = false;
+      if (state.rebuilt[L.id]) {
+        rebuildEl.className = "rebuild done";
+        rebuildEl.innerHTML = '<span class="k">Rebuilt from memory</span><p>You wrote this one again without looking. That is the skill the assessment measures.</p>';
+        return;
+      }
+      rebuildEl.className = "rebuild";
+      rebuildEl.innerHTML = '<span class="k">Make it stick</span><p>Reading a solution feels like understanding. Rewriting it from a blank editor is the proof. Your passing code is saved; the editor is cleared; the tests decide.</p><div class="row"><button class="btn primary" type="button" data-act="rebuild">Rebuild from memory</button></div>';
+    }
+    rebuildEl.addEventListener("click", function (e) {
+      if (e.target.getAttribute("data-act") !== "rebuild") return;
+      state.solved[key] = ed.getValue();
+      state.rebuilding[key] = true; save();
+      loadedSolution = false;
+      ed.setValue(P.starter);
+      results.hidden = true; outEl.hidden = true; solEl.hidden = true;
+      showRebuildNotice();
+      ed.focus();
+    });
+    function showRebuildNotice() {
+      rebuildNotice.hidden = !state.rebuilding[key];
+      rebuildNotice.innerHTML = '<span><b>Rebuilding from memory.</b> Write it again without looking, then run the tests.</span><button class="btn" type="button" data-act="restore">Give up and restore my solution</button>';
+    }
+    rebuildNotice.addEventListener("click", function (e) {
+      if (e.target.getAttribute("data-act") !== "restore") return;
+      state.rebuilding[key] = false; save();
+      if (state.solved[key]) ed.setValue(state.solved[key]);
+      rebuildNotice.hidden = true;
+    });
+    function test() {
+      var b = head.querySelector('[data-act="test"]');
+      b.disabled = true; b.textContent = "Testing";
+      results.hidden = false;
+      results.innerHTML = '<div class="small">Running ' + P.tests.length + " tests...</div>";
+      runPython(ed.getValue() + "\n\n" + harness()).then(function (raw) {
+        unlockSolution();
+        var cut = raw.lastIndexOf("@@RESULTS@@");
+        if (cut === -1) {
+          showPrints(raw, "Your code stopped with an error");
+          results.innerHTML = '<div class="summary"><span class="pill bad">Error</span>Your code raised an error before the tests could run. Read the message above, fix it, and try again.</div>';
+          return;
+        }
+        showPrints(raw.slice(0, cut), "Your print output");
+        var res = JSON.parse(raw.slice(cut + 11));
+        var passed = res.filter(function (r) { return r.ok; }).length, all = passed === res.length;
+        var html = '<div class="summary"><span class="pill ' + (all ? "ok" : "bad") + '">' + passed + " / " + res.length + " passed</span>" +
+          (all ? "All tests pass." : "Some tests fail. Hidden tests show only their name, as in a real assessment.") + '</div><ul class="tests">';
+        P.tests.forEach(function (t, i) {
+          var r = res[i] || { ok: false, error: "no result" };
+          html += '<li class="' + (r.ok ? "pass" : "fail") + '"><div class="t-row"><span>' + esc(t.label) + "</span><span>" + (t.hidden ? '<span class="pill dim">hidden</span> ' : "") + '<span class="pill ' + (r.ok ? "ok" : "bad") + '">' + (r.ok ? "pass" : "fail") + "</span></span></div>";
+          if (!t.hidden) html += '<div class="t-detail"><span><b>input</b> ' + esc(t.args.map(shortVal).join(", ")) + "</span><span><b>expected</b> " + esc(shortVal(t.expected)) + "</span>" + (r.error ? "<span><b>error</b> " + esc(r.error) + "</span>" : "<span><b>got</b> " + esc(fmtGot(r.got)) + "</span>") + "</div>";
+          else if (r.error && !r.ok) html += '<div class="t-detail"><span><b>error</b> ' + esc(r.error) + "</span></div>";
+          html += "</li>";
+        });
+        html += "</ul>";
+        if (all) {
+          var secs = stopTimer();
+          if (loadedSolution) {
+            html = '<div class="summary"><span class="pill warn">Passed with the model solution</span>That does not count. Press Reset, then write it yourself; or use Rebuild from memory.</div>' + html.replace(/^<div class="summary">.*?<\/div>/, "");
+          } else {
+            if (secs != null) { state.times[key] = state.times[key] ? Math.min(state.times[key], secs) : secs; html = html.replace("All tests pass.", "All tests pass in " + mmss(secs) + (cfg.limit ? (secs <= cfg.limit * 60 ? ", inside the " + cfg.limit + " minute aim." : ", over the " + cfg.limit + " minute aim. Speed comes with the rebuild.") : ".")); }
+            var first = !state.passed[key];
+            state.passed[key] = true;
+            if (isDebug) state.debug[L.id] = true;
+            if (state.rebuilding[key]) { state.rebuilding[key] = false; state.rebuilt[key] = true; rebuildNotice.hidden = true; html = html.replace("All tests pass", "Rebuilt from memory. All tests pass"); }
+            save();
+            extras.hidden = false; explainEl.hidden = false;
+            renderGate(); renderRebuild();
+            renderOutline(L.id); renderStrip(); status();
+            if (first && cfg.onFirstPass) cfg.onFirstPass();
+          }
+        }
+        results.innerHTML = html;
+      }, function () {
+        results.innerHTML = '<div class="summary"><span class="pill bad">Unavailable</span>Python could not load, so the tests cannot run. Check your connection and try again.</div>';
+      }).then(function () { b.disabled = false; b.textContent = "Run tests"; });
+    }
+    head.addEventListener("click", function (e) {
+      var act = e.target.getAttribute("data-act");
+      if (act === "test") test();
+      if (act === "run") runOnly();
+      if (act === "timer") startTimer();
+      if (act === "reset") { ed.setValue(P.starter); outEl.hidden = true; loadedSolution = false; }
+    });
+    foot.addEventListener("click", function (e) {
+      var act = e.target.getAttribute("data-act");
+      if (act === "hint" && hintsShown < P.hints.length) {
+        hintsEl.appendChild(el("div", "hint", "<b>Hint " + (hintsShown + 1) + "</b>" + P.hints[hintsShown]));
+        hintsShown++; extras.hidden = false;
+        e.target.textContent = hintsShown < P.hints.length ? "Next hint (" + (P.hints.length - hintsShown) + " left)" : "No more hints";
+        if (hintsShown >= P.hints.length) e.target.disabled = true;
+      }
+      if (act === "solution" && !solutionShown) {
+        extras.hidden = false; confirmEl.hidden = false; confirmEl.className = "confirm";
+        confirmEl.innerHTML = "<span>" + (hintsShown < P.hints.length ? "You have hints left. Reading a solution teaches less than one more attempt." : "Ready to compare with a model answer?") + '</span><button class="btn" type="button" data-act="sol-yes">Show it</button><button class="btn" type="button" data-act="sol-no">Keep trying</button>';
+      }
+    });
+    confirmEl.addEventListener("click", function (e) {
+      var act = e.target.getAttribute("data-act");
+      if (act === "sol-no") confirmEl.hidden = true;
+      if (act === "sol-yes") {
+        solutionShown = true; confirmEl.hidden = true; solEl.hidden = false;
+        solEl.innerHTML = '<div class="out-label">Model solution</div><pre class="static-code">' + highlight(P.solution.replace(/\n$/, "")) + '</pre><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">' + (state.rebuilding[key] ? '<span class="small">You are rebuilding from memory, so loading it is off. Read it, close it, then type it.</span>' : '<button class="btn" type="button" data-act="sol-load">Load into editor</button><span class="small">A loaded solution passing tests does not earn the tick. Rebuild it from memory afterwards.</span>') + "</div>";
+        explainEl.hidden = false;
+        foot.querySelector('[data-act="solution"]').disabled = true;
+      }
+    });
+    solEl.addEventListener("click", function (e) { if (e.target.getAttribute("data-act") === "sol-load") { ed.setValue(P.solution); loadedSolution = true; } });
+    if (state.passed[key]) { extras.hidden = false; renderGate(); renderRebuild(); }
+    showRebuildNotice();
+    status();
+    return box;
+  }
+
+  // ---------------- quiz ----------------
+  function quizBlock(L, questions, opts) {
+    opts = opts || {};
+    var box = el("section", "quiz");
+    box.setAttribute("aria-label", opts.title || "Check your understanding");
+    var headEl = el("div", "quiz-head", "<h3>" + esc(opts.title || "Check your understanding") + '</h3><span><span class="pill dim" data-role="score"></span> <button class="btn" type="button" data-act="reset">Reset</button></span>');
+    box.appendChild(headEl);
+    var saved = opts.answers || {};
+    var answers = {};
+    Object.keys(saved).forEach(function (k) { answers[k] = saved[k]; });
+    function score() {
+      var c = 0, a = 0;
+      questions.forEach(function (q, i) { if (answers[i] != null) { a++; if (answers[i] === q.answer) c++; } });
+      return { c: c, a: a };
+    }
+    function paintScore() {
+      var s = score();
+      headEl.querySelector('[data-role="score"]').textContent = s.a ? s.c + " of " + questions.length + " correct" : questions.length + " questions";
+      if (s.a === questions.length && opts.onComplete) opts.onComplete(s.c, questions.length);
+    }
+    questions.forEach(function (q, i) {
+      var qq = el("div", "qq");
+      var name = "q-" + (opts.key || L.id) + "-" + i + "-" + (++edCount);
+      qq.innerHTML = '<div class="qq-text"><span class="n">' + (i + 1) + "</span><span>" + q.q + (q.source ? ' <span class="small">(' + esc(q.source) + ")</span>" : "") + "</span></div>" + (q.code ? '<pre class="static-code">' + highlight(q.code) + "</pre>" : "") +
+        '<ul class="opts">' + q.options.map(function (o, oi) { return '<li><label class="opt"><input type="radio" name="' + name + '" value="' + oi + '"><span>' + o + "</span></label></li>"; }).join("") + '</ul><div class="qq-foot"><button class="btn primary" type="button" data-act="check">Check</button></div>';
+      var why = el("div", "why"); why.hidden = true; qq.appendChild(why);
+      function lock(choice) {
+        qq.querySelectorAll(".opt").forEach(function (o, oi) {
+          var inp = o.querySelector("input"); inp.disabled = true; o.classList.add("locked");
+          if (oi === q.answer) o.classList.add("correct");
+          else if (oi === choice) o.classList.add("wrong");
+          if (oi === choice) inp.checked = true;
+        });
+        qq.querySelector('[data-act="check"]').disabled = true;
+        var ok = choice === q.answer;
+        why.hidden = false; why.className = "why " + (ok ? "ok" : "bad");
+        why.innerHTML = "<b>" + (ok ? "Correct" : "Not quite") + "</b>" + q.why;
+      }
+      qq.addEventListener("click", function (e) {
+        if (e.target.getAttribute("data-act") !== "check") return;
+        var sel = qq.querySelector("input:checked");
+        if (!sel) { why.hidden = false; why.className = "why"; why.innerHTML = "Pick an answer first."; return; }
+        var choice = +sel.value;
+        answers[i] = choice;
+        if (opts.onAnswer) opts.onAnswer(i, choice, choice === q.answer);
+        lock(choice); paintScore();
+      });
+      if (answers[i] != null) lock(answers[i]);
+      box.appendChild(qq);
+    });
+    headEl.addEventListener("click", function (e) {
+      if (e.target.getAttribute("data-act") !== "reset") return;
+      answers = {};
+      if (opts.onReset) opts.onReset();
+      var fresh = quizBlock(L, questions, Object.assign({}, opts, { answers: {} }));
+      box.replaceWith(fresh);
+    });
+    paintScore();
+    return box;
+  }
+
+  // ---------------- lesson view ----------------
+  var article = document.getElementById("lesson");
+  var currentL = null;
+  function renderStrip() {
+    var strip = article.querySelector(".mstrip");
+    if (!strip || !currentL) return;
+    var s = steps(currentL), all = s.every(function (x) { return x.done; });
+    strip.innerHTML = s.map(function (x) { return '<li class="' + (x.done ? "done" : "") + (all ? " all" : "") + '">' + esc(x.label) + "</li>"; }).join("");
+    strip.setAttribute("aria-label", "Mastery: " + s.filter(function (x) { return x.done; }).length + " of " + s.length + " steps done");
+  }
+  function render(id) {
+    if (id === "review") return renderReview();
+    var x = byId[id] || flat[0], L = x.L, idx = flat.indexOf(x);
+    currentL = L;
+    state.seen[L.id] = true; save();
+    document.title = L.title + " | Python DSA Workbook";
+    article.innerHTML = "";
+    var head = el("header"); head.style.display = "grid"; head.style.gap = "12px";
+    head.innerHTML = '<div class="eyebrow"><span><span class="num">' + (x.mi + 1) + "</span> " + esc(x.m.title) + '</span><span>Lesson <span class="num">' + (idx + 1) + "</span> of " + flat.length + "</span><span>About " + L.minutes + " min</span></div><h1>" + esc(L.title) + '</h1><p class="lede">' + esc(L.summary) + "</p>" +
+      (L.tags.length ? '<div class="chips">' + L.tags.map(function (t) { return '<span class="chip tag">' + esc(t) + " priority</span>"; }).join("") + "</div>" : "") + '<ol class="mstrip"></ol>';
+    article.appendChild(head);
+    renderStrip();
+    L.blocks.forEach(function (b) {
+      var e;
+      if (b.t === "p") e = el("p", null, b.html);
+      else if (b.t === "h") { e = el("h2"); e.textContent = b.html; }
+      else if (b.t === "steps") e = el("ol", "steps", b.items.map(function (s) { return "<li><span>" + s + "</span></li>"; }).join(""));
+      else if (b.t === "tip" || b.t === "warn") e = el("div", "note " + b.t, '<b class="k">' + (b.t === "tip" ? "Tip" : "Watch out") + "</b><div>" + b.html + "</div>");
+      else if (b.t === "table") e = el("div", "tbl", "<table><thead><tr>" + b.head.map(function (h) { return "<th>" + h + "</th>"; }).join("") + "</tr></thead><tbody>" + b.rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>");
+      else if (b.t === "code") e = codeCell(b.code, b.out, "Example", L.id);
+      else if (b.t === "widget") e = ladder();
+      else if (b.t === "diagram") e = diagram(b.html);
+      if (e) article.appendChild(e);
+    });
+    if (L.mistakes.length) {
+      article.appendChild(el("h2", null, "Common mistakes"));
+      article.appendChild(el("ul", "mistakes", L.mistakes.map(function (m) { return "<li>" + m + "</li>"; }).join("")));
+    }
+    if (L.quiz.length) {
+      article.appendChild(el("h2", null, "Check your understanding"));
+      var qs = state.quiz[L.id] || { answers: {} };
+      article.appendChild(quizBlock(L, L.quiz, {
+        answers: qs.answers,
+        onAnswer: function (i, choice) { state.quiz[L.id] = state.quiz[L.id] || { answers: {} }; state.quiz[L.id].answers[i] = choice; save(); renderOutline(L.id); renderStrip(); },
+        onReset: function () { state.quiz[L.id] = { answers: {} }; save(); renderOutline(L.id); renderStrip(); },
+      }));
+    }
+    if (L.practice) {
+      var P = L.practice;
+      article.appendChild(el("h2", null, "Practice"));
+      article.appendChild(bench({ kind: "practice", key: L.id, lesson: L, title: P.title, prompt: P.prompt, starter: P.starter, func: P.func, wrapper: P.wrapper, tests: P.tests, hints: P.hints, solution: P.solution, explain: P.explain, limit: L.limit }));
+      if (L.debug) {
+        var DB = L.debug;
+        article.appendChild(el("h2", null, "Fix the bug"));
+        article.appendChild(bench({ kind: "debug", key: L.id + ":debug", lesson: L, title: P.title + ", broken", prompt: "<p>" + DB.intro + " Same task, same tests. Debugging under time pressure is a skill in its own right: read the failing case, form one hypothesis, change one thing, re-run.</p>", starter: DB.starter, func: P.func, wrapper: P.wrapper, tests: DB.tests, hints: [DB.hint], solution: P.solution, explain: P.explain, limit: Math.max(5, Math.round((L.limit || 10) / 2)) }));
+      }
+    }
+    if (L.related.length) {
+      article.appendChild(el("h2", null, "More practice"));
+      article.appendChild(el("div", "related", L.related.map(function (r) { return '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.title) + "</a>"; }).join("")));
+    }
+    var pager = el("nav", "pager"); pager.setAttribute("aria-label", "Lesson navigation");
+    var prev = flat[idx - 1], next = flat[idx + 1];
+    pager.innerHTML = (prev ? '<a href="#' + prev.L.id + '"><small>Previous</small>' + esc(prev.L.title) + "</a>" : "<span></span>") + (next ? '<a class="next" href="#' + next.L.id + '"><small>Next</small>' + esc(next.L.title) + "</a>" : '<a class="next" href="#review"><small>Next</small>Mixed review</a>');
+    article.appendChild(pager);
+    renderOutline(L.id);
+    closeNav();
+  }
+
+  // ---------------- review page ----------------
+  function renderReview() {
+    currentL = null;
+    document.title = "Mixed review | Python DSA Workbook";
+    article.innerHTML = "";
+    var seenLessons = flat.filter(function (x) { return state.seen[x.L.id]; });
+    var pool = (seenLessons.length >= 3 ? seenLessons : flat);
+    var head = el("header"); head.style.display = "grid"; head.style.gap = "12px";
+    head.innerHTML = '<div class="eyebrow"><span>Retrieval practice</span></div><h1>Mixed review</h1><p class="lede">Ten questions drawn across lessons, in a random order, with the ones you got wrong before coming back first. Interleaving topics is what makes recall stick, and it is what an assessment does to you.</p>';
+    article.appendChild(head);
+    // stats
+    var masteredN = flat.filter(function (x) { return mastered(x.L); }).length;
+    var passedN = flat.filter(function (x) { return state.passed[x.L.id]; }).length;
+    var pr = { tried: 0, right: 0 };
+    Object.keys(state.predict).forEach(function (k) { pr.tried += state.predict[k].tried; pr.right += state.predict[k].right; });
+    var qTot = { c: 0, t: 0 };
+    flat.forEach(function (x) { var s = quizScore(x.L); qTot.c += s.correct; qTot.t += s.answered; });
+    article.appendChild(el("div", "cards", '<div class="card"><b>' + masteredN + " / " + flat.length + '</b><span>lessons mastered</span></div><div class="card"><b>' + passedN + " / " + flat.filter(function (x) { return x.L.practice; }).length + '</b><span>practice problems passed</span></div><div class="card"><b>' + (qTot.t ? Math.round(100 * qTot.c / qTot.t) + "%" : "–") + '</b><span>quiz accuracy (' + qTot.t + " answered)</span></div><div class=\"card\"><b>" + (pr.tried ? pr.right + " / " + pr.tried : "–") + '</b><span>predictions correct</span></div>'));
+    // weak spots
+    var weak = seenLessons.filter(function (x) { return !mastered(x.L); }).map(function (x) {
+      var miss = steps(x.L).filter(function (s) { return !s.done; }).map(function (s) { return s.label.toLowerCase(); });
+      return '<li><a href="#' + x.L.id + '">' + esc(x.L.title) + '</a><span class="miss">to do: ' + esc(miss.join(", ")) + "</span></li>";
+    });
+    article.appendChild(el("h2", null, "Weak spots"));
+    article.appendChild(weak.length ? el("ul", "weak", weak.join("")) : el("p", null, seenLessons.length ? "Every lesson you have opened is mastered. Open the next one." : "Open a few lessons first; this list shows what each one still needs."));
+    // quiz
+    article.appendChild(el("h2", null, "Ten-question review"));
+    var holder = el("div");
+    article.appendChild(holder);
+    function build() {
+      var items = [];
+      pool.forEach(function (x) {
+        var a = (state.quiz[x.L.id] || {}).answers || {};
+        x.L.quiz.forEach(function (q, i) { items.push({ q: Object.assign({}, q, { source: x.L.title }), wrong: a[i] != null && a[i] !== q.answer, lid: x.L.id, qi: i }); });
+      });
+      function shuffle(arr) { for (var i = arr.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = arr[i]; arr[i] = arr[j]; arr[j] = t; } return arr; }
+      var wrongs = shuffle(items.filter(function (it) { return it.wrong; })), rest = shuffle(items.filter(function (it) { return !it.wrong; }));
+      var picked = wrongs.slice(0, 5).concat(rest).slice(0, 10);
+      if (picked.length < 10) picked = picked.concat(wrongs.slice(5)).slice(0, 10);
+      shuffle(picked);
+      holder.innerHTML = "";
+      holder.appendChild(quizBlock(null, picked.map(function (p) { return p.q; }), {
+        key: "review", title: "Review set",
+        onAnswer: function (i, choice, ok) { var p = picked[i]; state.quiz[p.lid] = state.quiz[p.lid] || { answers: {} }; state.quiz[p.lid].answers[p.qi] = choice; save(); },
+        onComplete: function (c, t) {
+          var h = state.review.history, last = h[h.length - 1];
+          if (!last || last.stamp !== stamp) { h.push({ date: new Date().toISOString().slice(0, 10), score: c, total: t, stamp: stamp }); if (h.length > 20) h.shift(); save(); }
+          renderOutline("review"); paintHistory();
+        },
+        onReset: function () { stamp = Date.now(); },
+      }));
+    }
+    var stamp = Date.now();
+    var again = el("div", "row"); again.style.display = "flex"; again.style.gap = "8px"; again.style.flexWrap = "wrap";
+    again.innerHTML = '<button class="btn primary" type="button" data-act="new">New random set</button><span class="small">Answers also update each lesson’s quiz score.</span>';
+    again.addEventListener("click", function (e) { if (e.target.getAttribute("data-act") === "new") { stamp = Date.now(); build(); window.scrollTo({ top: holder.offsetTop - 20 }); } });
+    article.appendChild(again);
+    article.appendChild(el("h2", null, "Review history"));
+    var hist = el("div", "tbl");
+    article.appendChild(hist);
+    function paintHistory() {
+      var h = state.review.history.slice().reverse().slice(0, 8);
+      hist.innerHTML = h.length ? "<table><thead><tr><th>Date</th><th>Score</th></tr></thead><tbody>" + h.map(function (r) { return "<tr><td>" + esc(r.date) + "</td><td>" + r.score + " of " + r.total + "</td></tr>"; }).join("") + "</tbody></table>" : '<p style="margin:0;padding:10px 12px" class="small">No completed review sets yet.</p>';
+    }
+    paintHistory();
+    build();
+    renderOutline("review");
+    closeNav();
+  }
+
+  // ---------------- nav + routing ----------------
+  var app = document.getElementById("app"), navBtn = document.getElementById("nav-open");
+  function closeNav() { app.dataset.nav = ""; navBtn.setAttribute("aria-expanded", "false"); }
+  navBtn.addEventListener("click", function () { var open = app.dataset.nav !== "open"; app.dataset.nav = open ? "open" : ""; navBtn.setAttribute("aria-expanded", String(open)); });
+  document.getElementById("scrim").addEventListener("click", closeNav);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && app.dataset.nav === "open") closeNav(); });
+  function route() {
+    var id = (location.hash || "").replace(/^#/, "");
+    render(id || flat[0].L.id);
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", route);
+  route();
+  setTimeout(function () { startPython().catch(function () {}); }, 2500);
+})();
+</script>
+<script type="text/plain" id="runner-src">
+/*RUNNER*/
+</script>
