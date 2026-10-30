@@ -5,8 +5,7 @@ assessments. Twenty-one lessons, each with runnable examples, a quiz, an auto-te
 problem, a planted bug to fix, a complexity gate and a rebuild-from-memory step. Python runs in
 the browser; there is no server and no account.
 
-**Live site:** enable GitHub Pages on this repository (see below) and the course is served at
-`https://<your-username>.github.io/<repository-name>/`.
+**Live site:** https://holysaiyan.github.io/python-dsa-workbook/
 
 ## What is in a lesson
 
