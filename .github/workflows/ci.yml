@@ -1,21 +1,60 @@
-name: Verify lessons
+name: Verify and deploy
 
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  build:
+  verify:
+    name: Verify every example, test and quiz answer
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run every example and test, regenerate the site
+      - name: Rebuild the lesson data and pages
         run: |
           python3 src/build.py
           python3 src/assemble.py
           python3 src/home.py
       - name: Fail if the committed pages are out of date
         run: git diff --exit-code -- index.html workbook/index.html workbook/lessons.js
+      - name: Collect the site
+        run: |
+          mkdir _site
+          cp index.html .nojekyll _site/
+          cp -r workbook _site/
+      - name: Enable GitHub Pages on first run
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload the site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: verify
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

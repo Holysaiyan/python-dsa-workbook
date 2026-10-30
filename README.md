@@ -34,7 +34,7 @@ src/template.html       the app's HTML, CSS and JavaScript
 src/runner.py           the in-browser Python runner (captures output, matches CPython's JSON errors)
 src/assemble.py         combines template + runner into workbook/index.html
 src/home.py             writes index.html from the lesson data
-.github/workflows/      CI: rebuilds and fails if the generated files are out of date
+.github/workflows/      CI: rebuilds, fails if the generated files are out of date, deploys to Pages
 ```
 
 ## Build locally
@@ -59,13 +59,16 @@ steps, tips), `mistakes`, and a `practice` problem with `func`, `starter`, `test
 hidden), `hints`, `solution` and `explain`. Its quiz, bug-fix variant and complexity gate live in
 `src/extras.py` under the same lesson id. Run the three build steps and open the page.
 
-## Publish on GitHub Pages
+## Deployment
 
-1. Create a new public repository on GitHub and upload these files (or push with git).
-2. In the repository, open **Settings**, then **Pages**.
-3. Under **Build and deployment**, set **Source** to **Deploy from a branch**, choose the `main`
-   branch and the `/ (root)` folder, and save.
-4. After a minute or two the site is live at `https://<your-username>.github.io/<repository-name>/`.
+Every push to `main` runs `.github/workflows/ci.yml`. It rebuilds the lesson data in CPython, fails
+if any example, test or quiz answer disagrees with the committed files, and then deploys the site
+to GitHub Pages. The first run enables Pages on the repository automatically. The site is served
+at `https://<your-username>.github.io/<repository-name>/`.
+
+If Actions are disabled for your account, the manual route also works: in the repository open
+**Settings**, then **Pages**, set **Source** to **Deploy from a branch**, and choose `main` and
+`/ (root)`.
 
 ## Licence
 
