@@ -63,12 +63,9 @@ hidden), `hints`, `solution` and `explain`. Its quiz, bug-fix variant and comple
 
 Every push to `main` runs `.github/workflows/ci.yml`. It rebuilds the lesson data in CPython, fails
 if any example, test or quiz answer disagrees with the committed files, and then deploys the site
-to GitHub Pages. The first run enables Pages on the repository automatically. The site is served
-at `https://<your-username>.github.io/<repository-name>/`.
-
-If Actions are disabled for your account, the manual route also works: in the repository open
-**Settings**, then **Pages**, set **Source** to **Deploy from a branch**, and choose `main` and
-`/ (root)`.
+to GitHub Pages. Before the first deployment, open the repository's **Settings**, then **Pages**,
+and set **Source** to **GitHub Actions** (a one-time step that only the repository owner can do).
+The site is then served at `https://<your-username>.github.io/<repository-name>/`.
 
 ## Licence
 

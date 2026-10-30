@@ -36,11 +36,9 @@ jobs:
           mkdir _site
           cp index.html .nojekyll _site/
           cp -r workbook _site/
-      - name: Enable GitHub Pages on first run
+      - name: Configure GitHub Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload the site
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
