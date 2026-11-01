@@ -109,6 +109,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 .opt.missed { border-color: var(--ok); border-style: dashed; }
 .opts.six { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; max-width: 480px; margin: 0 auto; }
+#nu-modes { margin-top: 8px; }
 .lvnote { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .odd-grid { display: grid; gap: 8px; justify-content: center; }
 .odd-grid button { border: 2px solid transparent; background: var(--tile); border-radius: 10px; padding: 6px; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
@@ -143,6 +144,14 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <button class="mode" id="m-train" aria-pressed="true" type="button">Training</button>
     <button class="mode" id="m-test" aria-pressed="false" type="button">Test run</button>
   </div>
+  <div class="modes" role="group" aria-label="Level" id="nu-modes">
+    <button class="mode" data-m="adaptive" aria-pressed="true" type="button">Adaptive</button>
+    <button class="mode" data-m="easy" aria-pressed="false" type="button">Easy</button>
+    <button class="mode" data-m="medium" aria-pressed="false" type="button">Medium</button>
+    <button class="mode" data-m="hard" aria-pressed="false" type="button">Hard</button>
+    <button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button>
+  </div>
+  <p class="lvnote" id="nu-note">Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.</p>
 
   <section class="board" aria-label="Game board">
     <div class="top"><span class="lvl" id="lvl">Level 1</span><span class="lvl" id="clock">0:20</span></div>
@@ -246,6 +255,14 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   </div>
 
   <div class="game" id="g-odd" hidden>
+  <div class="modes" role="group" aria-label="Level" id="od-modes">
+    <button class="mode" data-m="adaptive" aria-pressed="true" type="button">Adaptive</button>
+    <button class="mode" data-m="easy" aria-pressed="false" type="button">Easy</button>
+    <button class="mode" data-m="medium" aria-pressed="false" type="button">Medium</button>
+    <button class="mode" data-m="hard" aria-pressed="false" type="button">Hard</button>
+    <button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button>
+  </div>
+  <p class="lvnote" id="od-note">Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.</p>
     <section class="board" aria-label="Odd one out board">
       <div class="top"><span class="lvl" id="od-lvl">Level 1</span><span class="lvl" id="od-clock">0:10</span></div>
       <div class="timebar" id="od-bar"><i id="od-fill"></i></div>
@@ -268,6 +285,14 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   </div>
 
   <div class="game" id="g-memory" hidden>
+  <div class="modes" role="group" aria-label="Level" id="me-modes">
+    <button class="mode" data-m="adaptive" aria-pressed="true" type="button">Adaptive</button>
+    <button class="mode" data-m="easy" aria-pressed="false" type="button">Easy</button>
+    <button class="mode" data-m="medium" aria-pressed="false" type="button">Medium</button>
+    <button class="mode" data-m="hard" aria-pressed="false" type="button">Hard</button>
+    <button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button>
+  </div>
+  <p class="lvnote" id="me-note">Adaptive: starts at 4 digits; 2 right in a row adds a digit and speeds up the flashes, a miss takes one away.</p>
     <section class="board" aria-label="Memory board">
       <div class="top"><span class="lvl" id="me-lvl">Length 4</span><span class="lvl" id="me-state">Ready</span></div>
       <div class="task"><span class="op" id="me-op">Watch the digits, then type them in order</span><span class="target" id="me-show">&nbsp;</span></div>
@@ -319,7 +344,13 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   var $ = function (id) { return document.getElementById(id); };
   var mode = "train", level = 0, streak = 0, puzzle = null, picked = [], timer = null, tLeft = 0, tMax = 0, tStart = 0, locked = true;
   var stats = { right: 0, wrong: 0, out: 0, times: [] };
-  var TEST_LEVELS = 15;
+  var TEST_LEVELS = 15, tier = "adaptive";
+  var NU_TIERS = { easy: [0, 2], medium: [3, 5], hard: [6, 9], ultimate: [12, 14] };
+  var NU_NOTES = { adaptive: "Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.",
+    easy: "Easy: add and subtract, 5 tiles, numbers up to about 30, 20 to 22 s. No extra training time.",
+    medium: "Medium: add, subtract and multiply, 6 tiles, numbers up to about 50, 17 to 19 s.",
+    hard: "Hard: all four operations, some 3-number targets, 7 to 8 tiles, numbers up to about 75, 13 to 16 s.",
+    ultimate: "Ultimate: all four operations, about half are 3-number targets, 9 tiles, numbers up to 99, 10 s." };
 
   function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
@@ -347,7 +378,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   function make(lv) {
     for (var tries = 0; tries < 400; tries++) {
       var s = spec(lv), sol, target;
-      if (s.op === "+") { sol = []; for (var i = 0; i < s.k; i++) sol.push(rnd(2, Math.floor(s.max / s.k) + 6)); target = apply("+", sol); }
+      if (s.op === "+") { sol = []; for (var i = 0; i < s.k; i++) sol.push(rnd(lv >= 10 ? 9 : 2, Math.floor(s.max / s.k) + 6)); target = apply("+", sol); }
       else if (s.op === "-") { var b = rnd(2, s.max - 6), a = b + rnd(3, Math.min(40, s.max)); sol = [a, b]; target = a - b; }
       else if (s.op === "x") { sol = [rnd(2, 12), rnd(2, 12)]; target = sol[0] * sol[1]; }
       else { var d = rnd(2, 9), q = rnd(2, 12); sol = [d * q, d]; target = q; }
@@ -374,7 +405,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 
   var OPWORD = { "+": "add to", "-": "have a difference of", x: "multiply to", "/": "divide to give" };
   function render() {
-    $("lvl").textContent = mode === "test" ? "Level " + (level + 1) + " of " + TEST_LEVELS : "Level " + (level + 1);
+    $("lvl").textContent = mode === "test" ? "Level " + (level + 1) + " of " + TEST_LEVELS : tier !== "adaptive" ? tier.charAt(0).toUpperCase() + tier.slice(1) : "Level " + (level + 1);
     $("op").textContent = "Pick " + puzzle.k + " numbers that " + OPWORD[puzzle.op];
     $("target").textContent = puzzle.target;
     var html = "";
@@ -390,9 +421,10 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     if (tLeft <= 0) finish(false, true);
   }
   function startLevel() {
-    puzzle = make(level);
+    var fixed = mode === "train" && tier !== "adaptive";
+    puzzle = make(fixed ? rnd(NU_TIERS[tier][0], NU_TIERS[tier][1]) : level);
     picked = []; locked = false;
-    tMax = mode === "test" ? puzzle.time : puzzle.time + 8;
+    tMax = mode === "test" || fixed ? puzzle.time : puzzle.time + 8;
     render();
     $("next").hidden = true; $("start").hidden = true;
     $("coach").className = "coach tip";
@@ -432,7 +464,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       c.innerHTML = '<b class="k">' + (timedOut ? "Out of time" : near ? "Close but wrong" : "Wrong pick") + "</b><span>" + (wrongPick ? "You picked <code>" + mine.join(puzzle.op === "+" ? " + " : " " + ({ "-": "-", x: "×", "/": "÷" })[puzzle.op] + " ") + "</code>" + (isNaN(got) ? ", which does not divide exactly" : " = " + got) + ". " + (near ? "That is the near-miss habit: check the last digit before the second click. " : "") : "") + explain() + "</span>";
     }
     // adaptive like the real thing: two right in a row moves you up, a miss moves you down
-    if (mode === "train") { if (ok && streak >= 2) { level++; streak = 0; } else if (!ok) level = Math.max(0, level - 1); }
+    if (mode === "train") { if (tier !== "adaptive") {} else if (ok && streak >= 2) { level++; streak = 0; } else if (!ok) level = Math.max(0, level - 1); }
     else level++;
     paintStats();
     if (mode === "test" && level >= TEST_LEVELS) { endTest(); return; }
@@ -470,6 +502,8 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     mode = m; level = 0; streak = 0; stats = { right: 0, wrong: 0, out: 0, times: [] }; paintStats(); locked = true; clearInterval(timer);
     $("m-train").setAttribute("aria-pressed", String(m === "train")); $("m-test").setAttribute("aria-pressed", String(m === "test"));
     $("show-live").disabled = m === "test";
+    document.querySelectorAll("#nu-modes .mode").forEach(function (x) { x.disabled = m === "test"; });
+    $("nu-note").textContent = m === "test" ? "Test run always climbs from level 1, like the real thing. Levels apply in Training." : NU_NOTES[tier];
     $("start").textContent = m === "test" ? "Start test run (" + TEST_LEVELS + " levels)" : "Start"; $("start").hidden = false; $("next").hidden = true;
     var c = $("coach"); c.className = "coach tip";
     c.innerHTML = m === "test" ? '<b class="k">Test run</b><span>' + TEST_LEVELS + " levels, real time limits, no training wheels, difficulty rises every level like the assessment.</span>" : '<b class="k">How to play</b><span>Start with one number and ask what it <b>needs</b>: target minus that number. Is the partner on the board? For three numbers, take the biggest first, then find a pair for what is left. Keys 1 to 9 pick tiles.</span>';
@@ -484,6 +518,11 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   });
   $("start").addEventListener("click", function () { if (mode === "test" && level >= TEST_LEVELS) reset("test"); startLevel(); });
   $("next").addEventListener("click", startLevel);
+  $("nu-modes").addEventListener("click", function (e) {
+    var b = e.target.closest(".mode"); if (!b || b.disabled) return;
+    document.querySelectorAll("#nu-modes .mode").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    tier = b.dataset.m; reset("train"); startLevel();
+  });
   $("m-train").addEventListener("click", function () { reset("train"); });
   $("m-test").addEventListener("click", function () { reset("test"); });
   reset("train"); paintHist();
@@ -501,6 +540,13 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     $(prefix + "-clock").textContent = "0:" + String(Math.ceil(secs)).padStart(2, "0");
     $(prefix + "-fill").style.width = (100 * secs / max) + "%";
     $(prefix + "-bar").className = "timebar" + (secs < 4 ? " low" : "");
+  }
+  function tierBar(pfx, notes, onPick) {
+    $(pfx + "-modes").addEventListener("click", function (e) {
+      var b = e.target.closest(".mode"); if (!b) return;
+      document.querySelectorAll("#" + pfx + "-modes .mode").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      $(pfx + "-note").textContent = notes[b.dataset.m]; onPick(b.dataset.m);
+    });
   }
   function coach(id, kind, title, html) { var c = $(id); c.className = "coach " + kind; c.innerHTML = '<b class="k">' + title + "</b><span>" + html + "</span>"; }
 
@@ -629,19 +675,36 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     flag: function (s) { return '<path d="M' + (50 - 26 * s) + " " + (50 + 34 * s) + "v" + (-68 * s) + "h" + 52 * s + "l" + (-14 * s) + " " + 16 * s + "l" + 14 * s + " " + 16 * s + "h" + (-38 * s) + "v" + 36 * s + 'z"/>'; },
   };
   function svg(shape, angle, scale) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor" transform="rotate(' + angle + ' 50 50)">' + SHAPES[shape](scale) + "</g></svg>"; }
+  od.mode = "adaptive";
+  var OD_LV = {
+    easy:     { cols: 3, kinds: ["turn", "shape"], turns: [90], size: 0.78, time: 12 },
+    medium:   { cols: 4, kinds: ["turn", "turn", "size", "shape"], turns: [90, 180], size: 0.8, time: 8 },
+    hard:     { cols: 5, kinds: ["turn", "turn", "size", "size"], turns: [45, 90, 180], size: 0.86, time: 6 },
+    ultimate: { cols: 6, kinds: ["turn", "size", "size"], turns: [45, 180], size: 0.9, time: 5 }
+  };
+  var OD_NOTES = { adaptive: "Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.",
+    easy: "Easy: 3 by 3, the odd one is turned a quarter or a different shape, 12 s.",
+    medium: "Medium: 4 by 4, turned, a different shape or smaller, 8 s.",
+    hard: "Hard: 5 by 5, turned by as little as 45 degrees or only slightly smaller, 6 s.",
+    ultimate: "Ultimate: 6 by 6, tiny size differences and 45 or 180 degree turns, 5 s." };
+  function odCfg() {
+    if (od.mode !== "adaptive") return OD_LV[od.mode];
+    var t = ["easy", "medium", "hard", "ultimate"][Math.min(3, Math.floor(od.lv / 3))], c = Object.assign({}, OD_LV[t]);
+    c.time = Math.max(4, c.time - (od.lv % 3)); return c;
+  }
   function odStart() {
-    var cols = od.lv < 3 ? 3 : od.lv < 7 ? 4 : 5, n = cols * cols;
+    var cfg = odCfg(), cols = cfg.cols, n = cols * cols;
     var names = Object.keys(SHAPES), shape = names[rnd(0, names.length - 1)], angle = [0, 90, 180, 270][rnd(0, 3)];
-    var diff = od.lv < 4 ? "turn" : ["turn", "turn", "size", "shape"][rnd(0, 3)];
+    var diff = cfg.kinds[rnd(0, cfg.kinds.length - 1)];
     var ans = rnd(0, n - 1), oddA = angle, oddS = 1, oddShape = shape;
-    if (diff === "turn") oddA = angle + (od.lv < 6 ? 90 : [45, 90, 180][rnd(0, 2)]) * (rnd(0, 1) ? 1 : -1);
-    if (diff === "size") oddS = od.lv < 8 ? 0.78 : 0.86;
+    if (diff === "turn") oddA = angle + cfg.turns[rnd(0, cfg.turns.length - 1)] * (rnd(0, 1) ? 1 : -1);
+    if (diff === "size") oddS = cfg.size;
     if (diff === "shape") oddShape = names.filter(function (x) { return x !== shape; })[rnd(0, 2)];
     var html = "";
     for (var i = 0; i < n; i++) html += '<button type="button" data-i="' + i + '" style="color:var(--ink)">' + (i === ans ? svg(oddShape, oddA, oddS) : svg(shape, angle, 1)) + "</button>";
     var g = $("od-grid"); g.style.gridTemplateColumns = "repeat(" + cols + ", minmax(0, 72px))"; g.innerHTML = html;
-    od.ans = ans; od.diff = diff; od.locked = false; od.max = Math.max(5, 11 - Math.floor(od.lv / 2));
-    $("od-lvl").textContent = "Level " + (od.lv + 1); $("od-start").hidden = true; $("od-next").hidden = true;
+    od.ans = ans; od.diff = diff; od.locked = false; od.max = cfg.time;
+    $("od-lvl").textContent = od.mode === "adaptive" ? "Level " + (od.lv + 1) : od.mode.charAt(0).toUpperCase() + od.mode.slice(1); $("od-start").hidden = true; $("od-next").hidden = true;
     coach("od-coach", "tip", "Tip", "Scan row by row, left to right. Look at one feature at a time: the point of the shape, then its size.");
     od.t0 = Date.now(); clearInterval(od.timer);
     od.timer = setInterval(function () { var left = Math.max(0, od.max - (Date.now() - od.t0) / 1000); clock("od", left, od.max); if (left <= 0) odEnd(-1); }, 100);
@@ -651,40 +714,52 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     var ok = i === od.ans, secs = ((Date.now() - od.t0) / 1000).toFixed(1);
     document.querySelectorAll("#od-grid button").forEach(function (b, k) { b.disabled = true; if (k === od.ans) b.classList.add("right"); else if (k === i) b.classList.add("wrong"); });
     var what = { turn: "it was turned", size: "it was slightly smaller", shape: "it was a different shape" }[od.diff];
-    if (ok) { od.r++; od.streak++; if (od.streak >= 2) { od.lv++; od.streak = 0; } coach("od-coach", "ok", "Correct, " + secs + " s", "Found it: " + what + "."); }
-    else { od.w++; od.streak = 0; od.lv = Math.max(0, od.lv - 1); coach("od-coach", "bad", i < 0 ? "Out of time" : "Not that one", "The odd one is outlined in green: " + what + "."); }
-    $("od-r").textContent = od.r; $("od-w").textContent = od.w; $("od-best").textContent = best("tt-od", od.lv + 1);
+    var ad = od.mode === "adaptive";
+    if (ok) { od.r++; od.streak++; if (ad && od.streak >= 2) { od.lv++; od.streak = 0; } coach("od-coach", "ok", "Correct, " + secs + " s", "Found it: " + what + "."); }
+    else { od.w++; od.streak = 0; if (ad) od.lv = Math.max(0, od.lv - 1); coach("od-coach", "bad", i < 0 ? "Out of time" : "Not that one", "The odd one is outlined in green: " + what + "."); }
+    $("od-r").textContent = od.r; $("od-w").textContent = od.w; if (ad) $("od-best").textContent = best("tt-od", od.lv + 1);
     $("od-next").hidden = false; $("od-next").focus();
   }
-  $("od-start").addEventListener("click", odStart); $("od-next").addEventListener("click", odStart);
+  $("od-start").addEventListener("click", odStart);
+  tierBar("od", OD_NOTES, function (t) { od.mode = t; od.lv = 0; od.streak = 0; odStart(); }); $("od-next").addEventListener("click", odStart);
   $("od-grid").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) odEnd(+b.dataset.i); });
 
   // ---------------- Memory: digit span ----------------
-  var me = { len: 4, streak: 0, r: 0, w: 0, seq: "", typed: "", phase: "idle", timers: [] };
+  var me = { len: 4, streak: 0, r: 0, w: 0, seq: "", typed: "", phase: "idle", timers: [], mode: "adaptive" };
+  var ME_LV = { easy: { len: [4, 5], step: 900 }, medium: { len: [6, 7], step: 800 }, hard: { len: [8, 9], step: 700 }, ultimate: { len: [10, 11], step: 600 } };
+  var ME_NOTES = { adaptive: "Adaptive: starts at 4 digits; 2 right in a row adds a digit and speeds up the flashes, a miss takes one away.",
+    easy: "Easy: 4 to 5 digits, about one a second.", medium: "Medium: 6 to 7 digits, a bit quicker.",
+    hard: "Hard: 8 to 9 digits, quicker again. Grouping in threes is essential here.", ultimate: "Ultimate: 10 to 11 digits, fast flashes. Group in threes and say them silently." };
   $("me-pad").innerHTML = "1234567890".split("").map(function (d) { return '<button type="button" data-d="' + d + '">' + d + "</button>"; }).join("");
   function meShow() {
     me.timers.forEach(clearTimeout); me.timers = [];
+    var step = 900;
+    if (me.mode !== "adaptive") { var c = ME_LV[me.mode]; me.len = rnd(c.len[0], c.len[1]); step = c.step; }
+    else step = Math.max(600, 900 - Math.max(0, me.len - 5) * 50);
+    var on = Math.round(step * 0.72);
     me.seq = ""; for (var i = 0; i < me.len; i++) { var d; do { d = String(rnd(0, 9)); } while (me.seq.slice(-1) === d); me.seq += d; }
     me.typed = ""; me.phase = "show";
-    $("me-entry").textContent = ""; $("me-lvl").textContent = "Length " + me.len; $("me-state").textContent = "Watch";
+    $("me-entry").textContent = ""; $("me-lvl").textContent = (me.mode === "adaptive" ? "" : me.mode.charAt(0).toUpperCase() + me.mode.slice(1) + ", length ") + (me.mode === "adaptive" ? "Length " : "") + me.len; $("me-state").textContent = "Watch";
     $("me-start").hidden = true; $("me-ok").hidden = true; $("me-del").hidden = true;
     coach("me-coach", "tip", "Watch", "Group them in threes as they appear.");
     me.seq.split("").forEach(function (d, i) {
-      me.timers.push(setTimeout(function () { $("me-show").textContent = d; }, 400 + i * 900));
-      me.timers.push(setTimeout(function () { $("me-show").innerHTML = "&nbsp;"; }, 400 + i * 900 + 650));
+      me.timers.push(setTimeout(function () { $("me-show").textContent = d; }, 400 + i * step));
+      me.timers.push(setTimeout(function () { $("me-show").innerHTML = "&nbsp;"; }, 400 + i * step + on));
     });
-    me.timers.push(setTimeout(function () { me.phase = "type"; $("me-state").textContent = "Your turn"; $("me-ok").hidden = false; $("me-del").hidden = false; coach("me-coach", "tip", "Your turn", "Type the " + me.len + " digits in order, then press Check (or Enter)."); }, 400 + me.len * 900));
+    me.timers.push(setTimeout(function () { me.phase = "type"; $("me-state").textContent = "Your turn"; $("me-ok").hidden = false; $("me-del").hidden = false; coach("me-coach", "tip", "Your turn", "Type the " + me.len + " digits in order, then press Check (or Enter)."); }, 400 + me.len * step));
   }
   function meType(d) { if (me.phase !== "type" || me.typed.length >= me.len) return; me.typed += d; $("me-entry").textContent = me.typed; }
   function meCheck() {
     if (me.phase !== "type") return; me.phase = "done";
     var ok = me.typed === me.seq;
-    if (ok) { me.r++; me.streak++; coach("me-coach", "ok", "Correct", "You recalled " + me.len + " digits." + (me.streak >= 2 ? " Adding a digit." : "")); if (me.streak >= 2) { me.len++; me.streak = 0; } }
-    else { me.w++; me.streak = 0; coach("me-coach", "bad", "Not quite", "It was <code>" + me.seq.replace(/(\d{3})(?=\d)/g, "$1 ") + "</code>. You typed <code>" + (me.typed || "nothing") + "</code>." + (me.len > 3 ? " Dropping a digit." : "")); if (me.len > 3) me.len--; }
+    var ad = me.mode === "adaptive";
+    if (ok) { me.r++; me.streak++; coach("me-coach", "ok", "Correct", "You recalled " + me.len + " digits." + (ad && me.streak >= 2 ? " Adding a digit." : "")); if (ad && me.streak >= 2) { me.len++; me.streak = 0; } }
+    else { me.w++; me.streak = 0; coach("me-coach", "bad", "Not quite", "It was <code>" + me.seq.replace(/(\d{3})(?=\d)/g, "$1 ") + "</code>. You typed <code>" + (me.typed || "nothing") + "</code>." + (ad && me.len > 3 ? " Dropping a digit." : "")); if (ad && me.len > 3) me.len--; }
     $("me-r").textContent = me.r; $("me-w").textContent = me.w; $("me-best").textContent = best("tt-me", ok ? me.seq.length : 0) || 4;
     $("me-ok").hidden = true; $("me-del").hidden = true; $("me-start").textContent = "Next"; $("me-start").hidden = false; $("me-start").focus();
   }
   $("me-start").addEventListener("click", meShow);
+  tierBar("me", ME_NOTES, function (t) { me.mode = t; me.len = 4; me.streak = 0; meShow(); });
   $("me-ok").addEventListener("click", meCheck);
   $("me-del").addEventListener("click", function () { if (me.phase === "type") { me.typed = me.typed.slice(0, -1); $("me-entry").textContent = me.typed; } });
   $("me-pad").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) meType(b.dataset.d); });
@@ -712,7 +787,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   }
   window.addEventListener("hashchange", route); route();
   $("sh-best").textContent = best("tt-sh", 1); $("od-best").textContent = best("tt-od", 1); $("me-best").textContent = best("tt-me", 4);
-  window.__gym = { SH_LV: SH_LV, shMake: shMake, sh: sh, allRots: allRots, key: key, mirror: mirror };
+  window.__gym = { OD_LV: OD_LV, ME_LV: ME_LV, od: od, me: me, SH_LV: SH_LV, shMake: shMake, sh: sh, allRots: allRots, key: key, mirror: mirror };
 })();
 </script>
 
