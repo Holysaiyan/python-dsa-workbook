@@ -110,6 +110,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .opt.missed { border-color: var(--ok); border-style: dashed; }
 .opts.six { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; max-width: 480px; margin: 0 auto; }
 #nu-modes { margin-top: 8px; }
+.vidbox video { width: 100%; border-radius: 10px; background: #000; display: block; margin-top: 8px; }
 .lvnote { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .odd-grid { display: grid; gap: 8px; justify-content: center; }
 .odd-grid button { border: 2px solid transparent; background: var(--tile); border-radius: 10px; padding: 6px; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
@@ -171,6 +172,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <div class="card"><b id="s-avg">-</b><span>average time</span></div>
   </section>
 
+  <details class="vidbox"><summary>Watch: Numbers explainer, 2 min</summary><video controls preload="none" playsinline src="videos/numbers.mp4"></video></details>
   <details open>
     <summary>Number tips: every operation</summary>
     <div class="tipbody">
@@ -236,6 +238,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <div class="coach tip" id="sh-coach"><b class="k">How to play</b><span>The right option is the target turned round (90, 180 or 270 degrees, any direction). The others are a <b>mirror image</b> or have <b>one square moved</b>. On Ultimate, <b>more than one</b> option can be right: tick every match, then Submit. Keys 1 to 6 pick, Enter submits.</span></div>
       <div class="row"><button class="btn primary" id="sh-start" type="button">Start</button><button class="btn primary" id="sh-submit" type="button" hidden>Submit</button><button class="btn" id="sh-next" type="button" hidden>Next</button></div>
     </section>
+    <details class="vidbox"><summary>Watch: Shapes explainer, 2 min</summary><video controls preload="none" playsinline src="videos/shapes.mp4"></video></details>
     <details>
       <summary>Shape tips</summary>
       <div class="tipbody"><ol>
@@ -271,6 +274,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <div class="coach tip" id="od-coach"><b class="k">How to play</b><span>All shapes match except one: it is turned, a different shape, or a slightly different size. Scan row by row instead of jumping around. Speed counts, but a wrong tap costs more than a slow one.</span></div>
       <div class="row"><button class="btn primary" id="od-start" type="button">Start</button><button class="btn" id="od-next" type="button" hidden>Next</button></div>
     </section>
+    <details class="vidbox"><summary>Watch: Odd one out explainer, 1 min</summary><video controls preload="none" playsinline src="videos/odd.mp4"></video></details>
     <details>
       <summary>Odd one out tips</summary>
       <div class="tipbody"><ol>
@@ -301,6 +305,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <div class="coach tip" id="me-coach"><b class="k">How to play</b><span>Digits appear one at a time. Group them in your head in threes, like a phone number: 4 7 2, 9 1 5. Say them silently as they appear. Type with the keypad or your keyboard. Two right in a row adds a digit; a miss takes one away.</span></div>
       <div class="row"><button class="btn primary" id="me-start" type="button">Start</button><button class="btn" id="me-del" type="button" hidden>Delete</button><button class="btn" id="me-ok" type="button" hidden>Check</button></div>
     </section>
+    <details class="vidbox"><summary>Watch: Memory explainer, 1 min</summary><video controls preload="none" playsinline src="videos/memory.mp4"></video></details>
     <details>
       <summary>Memory tips</summary>
       <div class="tipbody"><ol>

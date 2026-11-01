@@ -11,6 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from extras import EXTRAS
 from extras_more import EXTRAS_MORE
+from videos import VIDEOS
 EXTRAS.update(EXTRAS_MORE)
 OUT = os.path.join(HERE, "..", "workbook", "lessons.js")
 
@@ -98,6 +99,8 @@ def main():
             else:
                 lesson["n"] = str(1 + sum(len(x["lessons"]) for x in modules if not x["n"].isalpha()) + len(mod["lessons"]))
             lesson["blocks"] = blocks
+            if L["id"] in VIDEOS:
+                lesson["video"] = {"src": "videos/" + VIDEOS[L["id"]][0], "title": VIDEOS[L["id"]][1]}
             lesson["related"] = [{"title": t, "url": u} for t, u in L.get("related", [])]
             X = EXTRAS.get(L["id"], {})
             # quiz: run any code question, fill "@run", check distractors differ

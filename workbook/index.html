@@ -201,6 +201,9 @@ td:first-child { font-weight: 600; }
 .t-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
 .t-detail { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); display: grid; gap: 2px; min-width: 0; }
 .t-detail span { overflow-wrap: anywhere; white-space: pre-wrap; }
+.vid { margin: 4px 0 8px; }
+.vid video { width: 100%; max-height: 70vh; border-radius: 12px; background: #000; display: block; }
+.vid p { margin: 6px 0 0; }
 .t-detail b { color: var(--ink); font-weight: 600; }
 .hints { display: grid; gap: 8px; }
 .hint { background: var(--warn-soft); border-radius: 8px; padding: 9px 13px; font-size: .96rem; }
@@ -997,6 +1000,7 @@ td:first-child { font-weight: 600; }
     head.innerHTML = '<div class="eyebrow"><span><span class="num">' + x.m.n + "</span> " + esc(x.m.title) + '</span><span>Lesson <span class="num">' + L.n + "</span> of " + flat.length + "</span><span>About " + L.minutes + " min</span></div><h1>" + esc(L.title) + '</h1><p class="lede">' + esc(L.summary) + "</p>" +
       (L.tags.length ? '<div class="chips">' + L.tags.map(function (t) { return '<span class="chip tag">' + esc(t) + " priority</span>"; }).join("") + "</div>" : "") + '<ol class="mstrip"></ol>';
     article.appendChild(head);
+    if (L.video) article.appendChild(el("div", "vid", '<video controls preload="metadata" playsinline src="' + esc(L.video.src) + '"></video><p class="small">' + esc(L.video.title) + " (covers this whole section)</p>"));
     renderStrip();
     L.blocks.forEach(function (b) {
       var e;
