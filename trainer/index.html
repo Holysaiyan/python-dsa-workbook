@@ -111,6 +111,16 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .opts.six { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; max-width: 480px; margin: 0 auto; }
 #nu-modes { margin-top: 8px; }
 .vidbox video { width: 100%; border-radius: 10px; background: #000; display: block; margin-top: 8px; }
+.vals { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.val { border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; background: var(--surface); }
+.val b { font-family: var(--f-display); font-size: 1.1rem; color: var(--accent); }
+.val ul { margin: 6px 0; padding-left: 18px; }
+.val p { margin: 0; font-size: .92rem; color: var(--muted); }
+.vq-item { border-top: 1px solid var(--rule); padding: 8px 0; }
+.vq-item p { margin: 0 0 6px; }
+.vq-item .row { display: flex; gap: 6px; flex-wrap: wrap; }
+.vq-item button[data-ok="1"] { background: var(--ok-soft); border-color: var(--ok); }
+.vq-item button[data-ok="0"] { background: var(--bad-soft); border-color: var(--bad); }
 .lvnote { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .odd-grid { display: grid; gap: 8px; justify-content: center; }
 .odd-grid button { border: 2px solid transparent; background: var(--tile); border-radius: 10px; padding: 6px; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
@@ -321,14 +331,24 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   </div>
 
   <details>
-    <summary>About the personality game</summary>
-    <div class="tipbody"><ol>
-      <li><b>What it is.</b> Candidates report an image-choice game: "which of these two is more like you?". It measures work style, not ability.</li>
-      <li><b>There is no right profile.</b> Trying to guess what BAE wants produces answers that contradict each other, and consistency is what these games check.</li>
-      <li><b>Go with your first honest reaction.</b> Do not deliberate. A few seconds per choice is normal.</li>
-      <li><b>Think of yourself at work,</b> not at home or with friends, when a choice depends on the setting.</li>
-    </ol></div>
-  </details>
+    <summary>The personality game and BAE's values</summary>
+    <div class="tipbody">
+      <p style="margin:0 0 8px"><b>What it is.</b> Candidates report an image-choice game: "which of these is more like you?". It measures work style, not ability, and it checks that your answers are consistent.</p>
+      <p style="margin:0 0 10px"><b>BAE Systems' values</b> (from BAE's own careers site). BAE says these are what it looks for, so know them, but answer as you really are at work:</p>
+      <div class="vals">
+        <div class="val"><b>Trusted</b><ul><li>Being committed: giving our best every day</li><li>Doing what we say we will</li><li>Doing the right thing</li></ul><p><i>Your evidence:</i> compliance work in a regulated sector, where accuracy, procedure and owning your mistakes matter.</p></div>
+        <div class="val"><b>Innovative</b><ul><li>Being curious: seeking new ways to make things better</li><li>Learning constantly, from successes and failures</li><li>Turning ideas into actions</li></ul><p><i>Your evidence:</i> moving from compliance into software, and finding a new route for your meal planner project (Story 1).</p></div>
+        <div class="val"><b>Bold</b><ul><li>Being courageous: speaking up, stepping forward</li><li>Seizing opportunities</li><li>Realising big ambitions</li></ul><p><i>Your evidence:</i> raising your situation with your supervisor in third year and agreeing a new plan, instead of quietly struggling on.</p></div>
+      </div>
+      <ol>
+        <li><b>Use the values as a lens, not a script.</b> When two images both feel true, pick the one closest to how you behave on a good day at work: owning things, staying curious, speaking up.</li>
+        <li><b>Do not try to game it.</b> Guessing a "perfect" profile makes answers contradict each other, and consistency is what these games check.</li>
+        <li><b>First honest reaction, a few seconds each.</b> Think of yourself at work, not with friends.</li>
+        <li><b>Reuse them in your video answers.</b> Name the value your story shows in your last sentence: "That is what doing the right thing means to me."</li>
+      </ol>
+      <p style="margin:12px 0 6px"><b>Quick check: which value does each behaviour show?</b> <span class="small">(practice items I wrote, not BAE's)</span></p>
+      <div id="vq"></div>
+    </div>
   <details>
     <summary>On the day: all games</summary>
     <div class="tipbody"><ol>
@@ -768,6 +788,29 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   $("me-ok").addEventListener("click", meCheck);
   $("me-del").addEventListener("click", function () { if (me.phase === "type") { me.typed = me.typed.slice(0, -1); $("me-entry").textContent = me.typed; } });
   $("me-pad").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) meType(b.dataset.d); });
+
+  // ---------------- values quick check ----------------
+  var VQ = [
+    ["You notice a figure in a report is wrong after it has been sent. You flag it to your manager straight away.", "Trusted", "Doing the right thing, even when keeping quiet would be easier."],
+    ["You promised a teammate a review by Friday, so you finish it on Thursday evening.", "Trusted", "Doing what you say you will."],
+    ["A test keeps failing in a way nobody understands, so you dig into why instead of just re-running it.", "Innovative", "Curiosity: finding out how to make things better."],
+    ["After a project goes badly, you write down what you would do differently and change your approach.", "Innovative", "Learning constantly, from failures as well as successes."],
+    ["In a meeting, you say you think the plan has a risk that no one has mentioned.", "Bold", "Courage: speaking up."],
+    ["A new team needs someone to learn a tool nobody knows yet, and you volunteer.", "Bold", "Seizing an opportunity and stepping forward."]
+  ];
+  (function () {
+    var box = $("vq"); if (!box) return;
+    box.innerHTML = VQ.map(function (q, i) {
+      return '<div class="vq-item" data-i="' + i + '"><p>' + (i + 1) + ". " + q[0] + '</p><div class="row">' + ["Trusted", "Innovative", "Bold"].map(function (v) { return '<button class="mode" type="button" data-v="' + v + '">' + v + "</button>"; }).join("") + '</div><p class="small" hidden></p></div>';
+    }).join("");
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      var item = b.closest(".vq-item"), q = VQ[+item.dataset.i], ok = b.dataset.v === q[1];
+      item.querySelectorAll("button").forEach(function (x) { x.removeAttribute("data-ok"); });
+      b.setAttribute("data-ok", ok ? "1" : "0");
+      var p = item.querySelector("p.small"); p.hidden = false; p.textContent = (ok ? "Yes: " : "Closest fit is " + q[1] + ": ") + q[2].charAt(0).toLowerCase() + q[2].slice(1);
+    });
+  })();
 
   // ---------------- keyboard + tabs ----------------
   document.addEventListener("keydown", function (e) {
