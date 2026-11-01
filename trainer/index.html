@@ -106,6 +106,10 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .opt kbd { font-family: var(--f-body); font-size: .72rem; color: var(--muted); font-weight: 600; }
 .opt.right { border-color: var(--ok); background: var(--ok-soft); }
 .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.opt.missed { border-color: var(--ok); border-style: dashed; }
+.opts.six { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; max-width: 480px; margin: 0 auto; }
+.lvnote { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .odd-grid { display: grid; gap: 8px; justify-content: center; }
 .odd-grid button { border: 2px solid transparent; background: var(--tile); border-radius: 10px; padding: 6px; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
 .odd-grid button.right { border-color: var(--ok); background: var(--ok-soft); }
@@ -117,9 +121,9 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 @media (max-width: 480px) { .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
-
 </head>
 <body>
+
 <div class="wrap">
   <header>
     <div>
@@ -206,14 +210,22 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   </div>
 
   <div class="game" id="g-shapes" hidden>
+  <div class="modes" role="group" aria-label="Shapes level" id="sh-modes">
+    <button class="mode" data-m="adaptive" aria-pressed="true" type="button">Adaptive</button>
+    <button class="mode" data-m="easy" aria-pressed="false" type="button">Easy</button>
+    <button class="mode" data-m="medium" aria-pressed="false" type="button">Medium</button>
+    <button class="mode" data-m="hard" aria-pressed="false" type="button">Hard</button>
+    <button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button>
+  </div>
+  <p class="lvnote" id="sh-note">Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.</p>
     <section class="board" aria-label="Shapes board">
       <div class="top"><span class="lvl" id="sh-lvl">Level 1</span><span class="lvl" id="sh-clock">0:15</span></div>
       <div class="timebar" id="sh-bar"><i id="sh-fill"></i></div>
       <div class="task"><span class="op" id="sh-op">Which option is the same shape, turned?</span></div>
       <div class="shape-target" id="sh-target"></div>
       <div class="opts" id="sh-opts"></div>
-      <div class="coach tip" id="sh-coach"><b class="k">How to play</b><span>One option is the target turned round (90, 180 or 270 degrees). The others are a <b>mirror image</b> or have <b>one square moved</b>. Pick a corner square in the target, find where it lands when turned, then check one more square. Keys 1 to 4 pick.</span></div>
-      <div class="row"><button class="btn primary" id="sh-start" type="button">Start</button><button class="btn" id="sh-next" type="button" hidden>Next</button></div>
+      <div class="coach tip" id="sh-coach"><b class="k">How to play</b><span>The right option is the target turned round (90, 180 or 270 degrees, any direction). The others are a <b>mirror image</b> or have <b>one square moved</b>. On Ultimate, <b>more than one</b> option can be right: tick every match, then Submit. Keys 1 to 6 pick, Enter submits.</span></div>
+      <div class="row"><button class="btn primary" id="sh-start" type="button">Start</button><button class="btn primary" id="sh-submit" type="button" hidden>Submit</button><button class="btn" id="sh-next" type="button" hidden>Next</button></div>
     </section>
     <details>
       <summary>Shape tips</summary>
@@ -224,6 +236,10 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
         <li><b>Count first.</b> Every correct option has the same number of filled squares as the target. A "one square moved" option has the right count but the wrong layout, so count, then check the layout.</li>
         <li><b>Rule out, then choose.</b> If one option is obviously the same shape flipped, cross it out mentally and compare the rest.</li>
         <li><b>Do not over-check.</b> Once two landmarks match, pick. Time is part of the score.</li>
+        <li><b>Any direction.</b> The answer can be turned clockwise, anticlockwise or upside down. Do not guess the direction: find where your landmark corner went, and that tells you the turn. Corners only ever go to corners.</li>
+        <li><b>Big grids: pick the loneliest square.</b> On 5 by 5 grids, choose a square with the fewest neighbours, or the end of the longest line. It is easier to spot after a turn than a square in a clump.</li>
+        <li><b>Moved square tricks.</b> On harder levels a square is moved by only one step. If two landmarks match but something feels off, check the square furthest from your landmark.</li>
+        <li><b>More than one right answer.</b> Some versions ask you to pick every match. Check each option on its own merits; do not stop at the first match, and do not assume there must be two.</li>
       </ol></div>
     </details>
     <section class="score"><div class="card"><b id="sh-r">0</b><span>correct</span></div><div class="card"><b id="sh-w">0</b><span>wrong</span></div><div class="card"><b id="sh-best">1</b><span>best level</span></div></section>
@@ -294,8 +310,8 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     </ol>
     <p style="margin:8px 0 0">These tips cover the games candidates describe for BAE Systems and the common HireVue types. The real games are not published, so expect some surprises; the practice round is there for exactly that.</p></div>
   </details>
-  <p class="hist"><a href="../">Back to the Python DSA Workbook</a></p>
 </div>
+  <p class="hist"><a href="../">Back to the Python DSA Workbook</a></p>
 
 <script>
 (function () {
@@ -500,58 +516,109 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) h += "<i" + (on[r * 10 + c] ? ' class="on"' : "") + "></i>";
     return h + "</div>";
   }
-  function shMake() {
-    var n = sh.lv < 3 ? 3 : sh.lv < 7 ? 4 : 5, cnt = Math.min(n * n - 2, 3 + Math.floor(sh.lv / 2));
-    for (var t = 0; t < 500; t++) {
-      var all = []; for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) all.push([r, c]);
-      var cells = shuffle(all).slice(0, cnt);
-      var rots = allRots(cells, n), mir = mirror(cells, n);
-      if (allRots(mir, n).some(function (k) { return rots.indexOf(k) !== -1; })) continue; // symmetric shapes are ambiguous
+  var SH_LV = {
+    easy:     { n: 3, cnt: [4, 4],  opts: 4, right: [1, 1], mirrors: 1, near: false, time: 20, label: "Easy: 3 by 3 grid, 4 squares, 4 options, one answer, 20 s." },
+    medium:   { n: 4, cnt: [5, 6],  opts: 4, right: [1, 1], mirrors: 1, near: false, time: 15, label: "Medium: 4 by 4 grid, 5 to 6 squares, 4 options, one answer, 15 s." },
+    hard:     { n: 4, cnt: [7, 8],  opts: 6, right: [1, 1], mirrors: 2, near: true,  time: 12, label: "Hard: 4 by 4 grid, 7 to 8 squares, 6 options, two mirror traps, squares moved by one step, 12 s." },
+    ultimate: { n: 5, cnt: [9, 11], opts: 6, right: [1, 3], mirrors: 2, near: true,  time: 18, label: "Ultimate: 5 by 5 grid, 9 to 11 squares, 6 options, 1 to 3 right answers (tick them all), 18 s." }
+  };
+  var SH_ORDER = ["easy", "medium", "hard", "ultimate"];
+  sh.mode = "adaptive";
+  function shCfg() {
+    if (sh.mode !== "adaptive") return SH_LV[sh.mode];
+    var tier = SH_ORDER[Math.min(3, Math.floor(sh.lv / 3))], c = Object.assign({}, SH_LV[tier]);
+    c.time = Math.max(c.time - 2 * (sh.lv % 3), 8); return c;
+  }
+  function shMake(cfg) {
+    cfg = cfg || shCfg();
+    var n = cfg.n;
+    var all = []; for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) all.push([r, c]);
+    function has(cs, a) { return cs.some(function (b) { return b[0] === a[0] && b[1] === a[1]; }); }
+    for (var t = 0; t < 2000; t++) {
+      var cells = shuffle(all.slice()).slice(0, rnd(cfg.cnt[0], cfg.cnt[1]));
+      var rots = allRots(cells, n), mir = mirror(cells, n), mrots = allRots(mir, n);
+      if (mrots.some(function (k) { return rots.indexOf(k) !== -1; })) continue; // mirror-symmetric shapes are ambiguous
       if (new Set(rots).size < 4) continue;
-      var turns = rnd(1, 3), correct = cells; for (var i = 0; i < turns; i++) correct = rot(correct, n);
-      var opts = [{ cells: correct, kind: "right" }];
-      var m = mir; for (var j = 0, mt = rnd(0, 3); j < mt; j++) m = rot(m, n);
-      opts.push({ cells: m, kind: "mirror" });
+      var opts = [], seen = {};
+      function add(cs, kind) { var k = key(cs); if (seen[k]) return false; seen[k] = 1; opts.push({ cells: cs, kind: kind }); return true; }
+      var nRight = rnd(cfg.right[0], cfg.right[1]), turnsList = shuffle([1, 2, 3]);
+      for (var i = 0; i < nRight; i++) { var cr = cells; for (var j = 0; j < turnsList[i]; j++) cr = rot(cr, n); add(cr, "right"); }
+      var mt = shuffle([0, 1, 2, 3]);
+      for (var i2 = 0; i2 < cfg.mirrors && opts.length < cfg.opts; i2++) { var m = mir; for (var j2 = 0; j2 < mt[i2]; j2++) m = rot(m, n); add(m, "mirror"); }
       var tries = 0;
-      while (opts.length < 4 && tries++ < 60) {
-        var base = rnd(0, 1) ? correct : m, moved = base.map(function (c) { return c.slice(); });
-        var free = all.filter(function (a) { return !moved.some(function (b) { return b[0] === a[0] && b[1] === a[1]; }); });
-        moved[rnd(0, moved.length - 1)] = free[rnd(0, free.length - 1)];
-        var k = key(moved);
-        if (rots.indexOf(k) !== -1 || allRots(moved, n).some(function (x) { return rots.indexOf(x) !== -1; })) continue;
-        if (opts.some(function (o) { return key(o.cells) === k; })) continue;
-        opts.push({ cells: moved, kind: "moved" });
+      while (opts.length < cfg.opts && tries++ < 200) {
+        var base = opts[rnd(0, opts.length - 1)].cells, moved = base.map(function (c) { return c.slice(); });
+        var idx = rnd(0, moved.length - 1), from = moved[idx], cand;
+        if (cfg.near) cand = [[from[0] + 1, from[1]], [from[0] - 1, from[1]], [from[0], from[1] + 1], [from[0], from[1] - 1]].filter(function (a) { return a[0] >= 0 && a[1] >= 0 && a[0] < n && a[1] < n && !has(moved, a); });
+        else cand = all.filter(function (a) { return !has(moved, a); });
+        if (!cand.length) continue;
+        moved[idx] = cand[rnd(0, cand.length - 1)];
+        var ks = allRots(moved, n);
+        if (ks.some(function (x) { return rots.indexOf(x) !== -1 || mrots.indexOf(x) !== -1; })) continue; // must not be a turn or a mirror
+        add(moved, "moved");
       }
-      if (opts.length < 4) continue;
+      if (opts.length < cfg.opts) continue;
       shuffle(opts);
-      return { n: n, cells: cells, opts: opts, ans: opts.findIndex(function (o) { return o.kind === "right"; }) };
+      var ans = []; opts.forEach(function (o, k) { if (o.kind === "right") ans.push(k); });
+      return { n: n, cells: cells, opts: opts, ans: ans, multi: cfg.right[1] > 1, time: cfg.time };
     }
   }
   function shStart() {
-    var p = shMake(); sh.p = p; sh.locked = false; sh.max = Math.max(8, 16 - sh.lv);
-    $("sh-lvl").textContent = "Level " + (sh.lv + 1);
+    var cfg = shCfg(), p = shMake(cfg); sh.p = p; sh.locked = false; sh.max = p.time; sh.pick = {};
+    $("sh-lvl").textContent = sh.mode === "adaptive" ? "Level " + (sh.lv + 1) + " (" + SH_ORDER[Math.min(3, Math.floor(sh.lv / 3))] + ")" : sh.mode.charAt(0).toUpperCase() + sh.mode.slice(1);
+    $("sh-op").textContent = p.multi ? "Tick every option that is the same shape, turned" : "Which option is the same shape, turned?";
     $("sh-target").innerHTML = miniHTML(p.cells, p.n);
-    $("sh-opts").innerHTML = p.opts.map(function (o, i) { return '<button class="opt" type="button" data-i="' + i + '"><kbd>' + (i + 1) + "</kbd>" + miniHTML(o.cells, p.n) + "</button>"; }).join("");
-    $("sh-start").hidden = true; $("sh-next").hidden = true;
-    coach("sh-coach", "tip", "Tip", "Pick one corner square of the target and follow it round as the shape turns. A mirror image looks right at a glance: check a second square.");
+    $("sh-opts").className = "opts" + (p.opts.length > 4 ? " six" : "");
+    $("sh-opts").innerHTML = p.opts.map(function (o, i) { return '<button class="opt" type="button" data-i="' + i + '"' + (p.multi ? ' aria-pressed="false"' : "") + "><kbd>" + (i + 1) + "</kbd>" + miniHTML(o.cells, p.n) + "</button>"; }).join("");
+    $("sh-start").hidden = true; $("sh-next").hidden = true; $("sh-submit").hidden = !p.multi;
+    coach("sh-coach", "tip", "Tip", p.multi ? "One, two or three options can be right. Check each option against your landmark and a second square; tick every match, then Submit." : "Find where your landmark corner went: that tells you the turn, in any direction. Then check a second square before you pick.");
     sh.t0 = Date.now(); clearInterval(sh.timer);
-    sh.timer = setInterval(function () { var left = Math.max(0, sh.max - (Date.now() - sh.t0) / 1000); clock("sh", left, sh.max); if (left <= 0) shEnd(-1); }, 100);
+    sh.timer = setInterval(function () { var left = Math.max(0, sh.max - (Date.now() - sh.t0) / 1000); clock("sh", left, sh.max); if (left <= 0) shEnd(true); }, 100);
   }
-  function shEnd(i) {
+  function shToggle(i) {
+    if (sh.locked || !sh.p.multi) return;
+    sh.pick[i] = !sh.pick[i];
+    var b = document.querySelector('#sh-opts .opt[data-i="' + i + '"]'); if (b) b.setAttribute("aria-pressed", String(!!sh.pick[i]));
+  }
+  function shEnd(timeout, single) {
     if (sh.locked) return; sh.locked = true; clearInterval(sh.timer);
-    var p = sh.p, ok = i === p.ans, secs = ((Date.now() - sh.t0) / 1000).toFixed(1);
-    document.querySelectorAll("#sh-opts .opt").forEach(function (b, k) { b.disabled = true; if (k === p.ans) b.classList.add("right"); else if (k === i) b.classList.add("wrong"); });
-    if (ok) { sh.r++; sh.streak++; if (sh.streak >= 2) { sh.lv++; sh.streak = 0; } coach("sh-coach", "ok", "Correct, " + secs + " s", "Option " + (p.ans + 1) + " is the target turned round."); }
+    var p = sh.p, secs = ((Date.now() - sh.t0) / 1000).toFixed(1);
+    var picked = single !== undefined ? [single] : Object.keys(sh.pick).filter(function (k) { return sh.pick[k]; }).map(Number);
+    if (timeout && !p.multi) picked = [];
+    var wrongPicks = picked.filter(function (k) { return p.ans.indexOf(k) === -1; });
+    var missed = p.ans.filter(function (k) { return picked.indexOf(k) === -1; });
+    var ok = !timeout && wrongPicks.length === 0 && missed.length === 0;
+    document.querySelectorAll("#sh-opts .opt").forEach(function (b, k) {
+      b.disabled = true; b.removeAttribute("aria-pressed");
+      if (p.ans.indexOf(k) !== -1) b.classList.add(picked.indexOf(k) !== -1 || !p.multi ? "right" : "missed");
+      if (wrongPicks.indexOf(k) !== -1) b.classList.add("wrong");
+    });
+    var ansTxt = p.ans.map(function (k) { return k + 1; }).join(" and ");
+    if (ok) { sh.r++; sh.streak++; if (sh.mode === "adaptive" && sh.streak >= 2) { sh.lv = Math.min(sh.lv + 1, 14); sh.streak = 0; } coach("sh-coach", "ok", "Correct, " + secs + " s", (p.ans.length > 1 ? "Options " : "Option ") + ansTxt + (p.ans.length > 1 ? " are" : " is") + " the target turned round."); }
     else {
-      sh.w++; sh.streak = 0; sh.lv = Math.max(0, sh.lv - 1);
-      var why = i < 0 ? "Out of time." : p.opts[i].kind === "mirror" ? "That one is a <b>mirror image</b>: flipped, not turned. You can never turn a shape into its mirror." : "That one has <b>one square moved</b>.";
-      coach("sh-coach", "bad", i < 0 ? "Out of time" : "Not that one", why + " The answer was option " + (p.ans + 1) + ".");
+      sh.w++; sh.streak = 0; if (sh.mode === "adaptive") sh.lv = Math.max(0, sh.lv - 1);
+      var why = [];
+      if (timeout) why.push("Out of time.");
+      var kinds = wrongPicks.map(function (k) { return p.opts[k].kind; });
+      if (kinds.indexOf("mirror") !== -1) why.push("You picked a <b>mirror image</b>: flipped, not turned. No turn ever makes a mirror.");
+      if (kinds.indexOf("moved") !== -1) why.push("You picked one with <b>one square moved</b>: check the square furthest from your landmark.");
+      if (missed.length && !timeout && p.multi) why.push("You missed " + missed.length + " right option" + (missed.length > 1 ? "s" : "") + " (dashed green). Check every option, not just the first match.");
+      coach("sh-coach", "bad", timeout ? "Out of time" : "Not quite", why.join(" ") + " Right: option" + (p.ans.length > 1 ? "s " : " ") + ansTxt + ".");
     }
-    $("sh-r").textContent = sh.r; $("sh-w").textContent = sh.w; $("sh-best").textContent = best("tt-sh", sh.lv + 1);
-    $("sh-next").hidden = false; $("sh-next").focus();
+    $("sh-r").textContent = sh.r; $("sh-w").textContent = sh.w;
+    var tierN = sh.mode === "adaptive" ? sh.lv + 1 : 0; if (tierN) $("sh-best").textContent = best("tt-sh", tierN);
+    $("sh-submit").hidden = true; $("sh-next").hidden = false; $("sh-next").focus();
   }
-  $("sh-start").addEventListener("click", shStart); $("sh-next").addEventListener("click", shStart);
-  $("sh-opts").addEventListener("click", function (e) { var b = e.target.closest(".opt"); if (b) shEnd(+b.dataset.i); });
+  function shSubmit() { if (!sh.locked) shEnd(false); }
+  $("sh-start").addEventListener("click", shStart); $("sh-next").addEventListener("click", shStart); $("sh-submit").addEventListener("click", shSubmit);
+  $("sh-opts").addEventListener("click", function (e) { var b = e.target.closest(".opt"); if (!b || sh.locked) return; if (sh.p.multi) shToggle(+b.dataset.i); else shEnd(false, +b.dataset.i); });
+  $("sh-modes").addEventListener("click", function (e) {
+    var b = e.target.closest(".mode"); if (!b) return;
+    sh.mode = b.dataset.m; sh.lv = 0; sh.streak = 0; clearInterval(sh.timer); sh.locked = true;
+    document.querySelectorAll("#sh-modes .mode").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    $("sh-note").textContent = sh.mode === "adaptive" ? "Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate." : SH_LV[sh.mode].label;
+    shStart();
+  });
 
   // ---------------- Odd one out ----------------
   var od = { lv: 0, streak: 0, r: 0, w: 0, timer: null, t0: 0, max: 10, locked: true };
@@ -624,8 +691,9 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 
   // ---------------- keyboard + tabs ----------------
   document.addEventListener("keydown", function (e) {
-    if (!$("g-shapes").hidden && /^[1-4]$/.test(e.key) && !sh.locked) shEnd(+e.key - 1);
-    if (!$("g-shapes").hidden && e.key === "Enter" && !$("sh-next").hidden) { e.preventDefault(); shStart(); }
+    if (!$("g-shapes").hidden && /^[1-6]$/.test(e.key) && !sh.locked && sh.p && +e.key <= sh.p.opts.length) { if (sh.p.multi) shToggle(+e.key - 1); else shEnd(false, +e.key - 1); }
+    if (!$("g-shapes").hidden && e.key === "Enter" && !sh.locked && sh.p && sh.p.multi) { e.preventDefault(); shSubmit(); }
+    else if (!$("g-shapes").hidden && e.key === "Enter" && !$("sh-next").hidden) { e.preventDefault(); shStart(); }
     if (!$("g-odd").hidden && e.key === "Enter" && !$("od-next").hidden) { e.preventDefault(); odStart(); }
     if (!$("g-memory").hidden) {
       if (/^[0-9]$/.test(e.key)) meType(e.key);
@@ -644,7 +712,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   }
   window.addEventListener("hashchange", route); route();
   $("sh-best").textContent = best("tt-sh", 1); $("od-best").textContent = best("tt-od", 1); $("me-best").textContent = best("tt-me", 4);
-  window.__gym = { shMake: shMake, sh: sh, allRots: allRots, key: key, mirror: mirror };
+  window.__gym = { SH_LV: SH_LV, shMake: shMake, sh: sh, allRots: allRots, key: key, mirror: mirror };
 })();
 </script>
 
