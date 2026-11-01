@@ -84,6 +84,11 @@ summary { font-weight: 700; cursor: pointer; }
 details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .hist { font-size: .9rem; color: var(--muted); margin: 0; }
 .toggle { display: flex; align-items: center; gap: 8px; justify-content: center; font-size: .9rem; color: var(--muted); }
+.tipbody { display: grid; gap: 8px; margin-top: 8px; }
+.tipbody h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; margin: 6px 0 0; }
+.tipbody ol { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 6px; margin-top: 6px; }
+.facts span { white-space: nowrap; font-family: var(--f-mono); font-size: .9rem; background: var(--tile); border-radius: 6px; padding: 4px 8px; font-variant-numeric: tabular-nums; }
 .tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--rule); }
 .tabs a { padding: 8px 14px; text-decoration: none; color: var(--muted); font-weight: 700; border-bottom: 3px solid transparent; margin-bottom: -1px; }
 .tabs a[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
@@ -153,13 +158,49 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <div class="card"><b id="s-avg">-</b><span>average time</span></div>
   </section>
 
-  <details>
-    <summary>Three tricks that fix close-but-wrong answers</summary>
-    <ol>
-      <li><b>Work from the target.</b> Add to 31 with 17, 13, 19, 12: 17 needs 14 (not there), 19 needs 12 (there). Answer 19 + 12.</li>
-      <li><b>Check the last digit.</b> For 31 the last digits must make something ending in 1: 9 + 2, 7 + 4, 3 + 8. 17 + 13 ends in 0, so it cannot be right.</li>
-      <li><b>Three numbers become two.</b> Take the biggest, subtract it from the target, find a pair for the rest. No pair? Put it back and try the next biggest.</li>
-    </ol>
+  <details open>
+    <summary>Number tips: every operation</summary>
+    <div class="tipbody">
+      <h3>Before every level</h3>
+      <ol>
+        <li><b>Read the operation first.</b> Add, difference, multiply and divide each need a different method below. Picking with the wrong operation in mind is the easiest point to lose.</li>
+        <li><b>Check one number at a time.</b> Never try pairs at random. Take one number, work out the partner it needs, and look for that partner.</li>
+        <li><b>Check before the last click.</b> Say the sum or product in your head. Half a second here saves a wrong pick, which costs more than a slow one.</li>
+      </ol>
+      <h3>Add to</h3>
+      <ol>
+        <li><b>Target minus one number.</b> Add to 31 with 17, 13, 19, 12: 17 needs 14 (not there); 19 needs 12 (there). Answer 19 + 12.</li>
+        <li><b>Last digit check.</b> For 31 the last digits must make a number ending in 1: 9 + 2, 7 + 4, 3 + 8, 6 + 5, 0 + 1. 17 + 13 ends in 0, so it is wrong before you add the tens.</li>
+        <li><b>Odd or even.</b> An odd target needs one odd and one even number. An even target needs two odds or two evens.</li>
+        <li><b>Three numbers become two.</b> Take the biggest, subtract it from the target, then find a pair for what is left. No pair? Put it back and start with the next biggest.</li>
+      </ol>
+      <h3>Have a difference of (subtract)</h3>
+      <ol>
+        <li><b>Add the target to each small number.</b> Difference 17 with 45, 28, 32, 16, 19: 16 + 17 = 33 (no), 19 + 17 = 36 (no), 28 + 17 = 45 (yes). Answer 45 and 28.</li>
+        <li><b>Start with the smallest numbers.</b> The smaller number of the pair is always the starting point, so work up from the bottom.</li>
+        <li><b>The top number is always bigger than the target.</b> With a difference of 30, nothing of 30 or under can be the top of the pair; those numbers can only be the bottom.</li>
+        <li><b>Last digit check.</b> 45 and 28: going from 8 up to 15 is 7, matching the 7 in 17.</li>
+        <li><b>Odd or even.</b> An odd difference needs one odd and one even number. An even difference needs two odds or two evens.</li>
+      </ol>
+      <h3>Multiply to</h3>
+      <ol>
+        <li><b>Think in factor pairs of the target.</b> For 72 ask "what times what?": 8 &times; 9, 6 &times; 12. Then look for both numbers. Do not multiply pairs from the board one by one.</li>
+        <li><b>Odd target:</b> both numbers are odd, so every even number is out.</li>
+        <li><b>Even target:</b> at least one number is even.</li>
+        <li><b>Ends in 0 or 5:</b> one number is 5, 10 or another multiple of 5.</li>
+        <li><b>Size check.</b> Two numbers under 10 cannot make more than 81. If the target is bigger, one number is 10 or more.</li>
+        <li><b>Learn the slippery facts.</b> These are the ones most often confused:
+          <div class="facts"><span>6 &times; 7 = 42</span><span>6 &times; 8 = 48</span><span>6 &times; 9 = 54</span><span>7 &times; 7 = 49</span><span>7 &times; 8 = 56</span><span>7 &times; 9 = 63</span><span>8 &times; 8 = 64</span><span>8 &times; 9 = 72</span><span>9 &times; 9 = 81</span><span>11 &times; 12 = 132</span><span>12 &times; 6 = 72</span><span>12 &times; 7 = 84</span><span>12 &times; 8 = 96</span><span>12 &times; 9 = 108</span><span>12 &times; 12 = 144</span></div>
+        </li>
+      </ol>
+      <h3>Divide to give</h3>
+      <ol>
+        <li><b>Turn it into multiplying.</b> Small number &times; target = big number. Divide to give 7 with 56, 9, 8, 30, 4: 4 &times; 7 = 28 (no), 8 &times; 7 = 56 (yes). Answer 56 &divide; 8.</li>
+        <li><b>Go through the small numbers.</b> Multiply each by the target and look for the result on the board.</li>
+        <li><b>Odd big number:</b> it cannot be divided exactly by an even number, so pair it only with odd numbers.</li>
+        <li><b>Divisibility shortcuts.</b> Divisible by 3 or 9: the digits add up to a multiple of 3 or 9 (54: 5 + 4 = 9). By 5: ends in 0 or 5. By 4: the last two digits divide by 4 (56: yes). By 6: even and divisible by 3.</li>
+      </ol>
+    </div>
   </details>
   <p class="hist" id="hist"></p>
   </div>
@@ -174,6 +215,17 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <div class="coach tip" id="sh-coach"><b class="k">How to play</b><span>One option is the target turned round (90, 180 or 270 degrees). The others are a <b>mirror image</b> or have <b>one square moved</b>. Pick a corner square in the target, find where it lands when turned, then check one more square. Keys 1 to 4 pick.</span></div>
       <div class="row"><button class="btn primary" id="sh-start" type="button">Start</button><button class="btn" id="sh-next" type="button" hidden>Next</button></div>
     </section>
+    <details>
+      <summary>Shape tips</summary>
+      <div class="tipbody"><ol>
+        <li><b>Turned, never flipped.</b> A shape can be turned to any of four positions, but no amount of turning makes its mirror image. A mirror option is always wrong, and it is the trap most people fall into because it looks right at a glance.</li>
+        <li><b>Follow one landmark.</b> Pick a distinctive square in the target, such as a corner or the end of a line. Turned a quarter clockwise, the top row becomes the right-hand column, the right-hand column becomes the bottom row, and so on round.</li>
+        <li><b>Check a second square.</b> One square in the right place proves nothing: mirror images share many squares. Confirm a second landmark before you pick.</li>
+        <li><b>Count first.</b> Every correct option has the same number of filled squares as the target. A "one square moved" option has the right count but the wrong layout, so count, then check the layout.</li>
+        <li><b>Rule out, then choose.</b> If one option is obviously the same shape flipped, cross it out mentally and compare the rest.</li>
+        <li><b>Do not over-check.</b> Once two landmarks match, pick. Time is part of the score.</li>
+      </ol></div>
+    </details>
     <section class="score"><div class="card"><b id="sh-r">0</b><span>correct</span></div><div class="card"><b id="sh-w">0</b><span>wrong</span></div><div class="card"><b id="sh-best">1</b><span>best level</span></div></section>
   </div>
 
@@ -186,6 +238,16 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <div class="coach tip" id="od-coach"><b class="k">How to play</b><span>All shapes match except one: it is turned, a different shape, or a slightly different size. Scan row by row instead of jumping around. Speed counts, but a wrong tap costs more than a slow one.</span></div>
       <div class="row"><button class="btn primary" id="od-start" type="button">Start</button><button class="btn" id="od-next" type="button" hidden>Next</button></div>
     </section>
+    <details>
+      <summary>Odd one out tips</summary>
+      <div class="tipbody"><ol>
+        <li><b>Scan in a fixed order.</b> Row by row, left to right, like reading. Jumping around makes you look at the same shapes twice.</li>
+        <li><b>Use your side vision.</b> On small grids, look at the centre of the grid and let the odd shape pop out. Only scan row by row if nothing stands out in a second.</li>
+        <li><b>Check one feature at a time.</b> First the direction a point or arrow faces, then the size, then the outline. The difference is always one of these.</li>
+        <li><b>Size differences are small.</b> On harder levels the odd one may be only slightly smaller. Compare it with its neighbours, not with a shape across the grid.</li>
+        <li><b>Accuracy beats speed.</b> A wrong tap usually costs more than an extra second.</li>
+      </ol></div>
+    </details>
     <section class="score"><div class="card"><b id="od-r">0</b><span>correct</span></div><div class="card"><b id="od-w">0</b><span>wrong</span></div><div class="card"><b id="od-best">1</b><span>best level</span></div></section>
   </div>
 
@@ -198,12 +260,39 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <div class="coach tip" id="me-coach"><b class="k">How to play</b><span>Digits appear one at a time. Group them in your head in threes, like a phone number: 4 7 2, 9 1 5. Say them silently as they appear. Type with the keypad or your keyboard. Two right in a row adds a digit; a miss takes one away.</span></div>
       <div class="row"><button class="btn primary" id="me-start" type="button">Start</button><button class="btn" id="me-del" type="button" hidden>Delete</button><button class="btn" id="me-ok" type="button" hidden>Check</button></div>
     </section>
+    <details>
+      <summary>Memory tips</summary>
+      <div class="tipbody"><ol>
+        <li><b>Chunk in threes.</b> 4 7 2 9 1 5 is six things to hold; 472, 915 is two. It is how phone numbers are remembered.</li>
+        <li><b>Say them silently.</b> Repeat the chunk in your head as each digit appears. Hearing it uses a different memory from seeing it, and both together hold more.</li>
+        <li><b>Spot patterns.</b> Runs (3 4 5), repeats (7 7) and familiar numbers (a year, a door number) are free memory.</li>
+        <li><b>Do not look away.</b> Keep your eyes on where the digits appear until the last one has gone.</li>
+        <li><b>Type straight away.</b> Recall fades in seconds. Type the first chunk the moment your turn starts.</li>
+        <li><b>Letters too.</b> Some memory games mix letters and digits. Chunk them the same way and say them as a sound: K 4 P is "kay-four-pee".</li>
+      </ol></div>
+    </details>
     <section class="score"><div class="card"><b id="me-r">0</b><span>correct</span></div><div class="card"><b id="me-w">0</b><span>wrong</span></div><div class="card"><b id="me-best">4</b><span>longest recalled</span></div></section>
   </div>
 
   <details>
     <summary>About the personality game</summary>
-    <p style="margin:8px 0 0">Candidates also report an image-choice game: "which of these two is more like you?". There is no right profile and nothing to train. Answer quickly with your first honest reaction; overthinking gives inconsistent answers, and consistency is what it measures.</p>
+    <div class="tipbody"><ol>
+      <li><b>What it is.</b> Candidates report an image-choice game: "which of these two is more like you?". It measures work style, not ability.</li>
+      <li><b>There is no right profile.</b> Trying to guess what BAE wants produces answers that contradict each other, and consistency is what these games check.</li>
+      <li><b>Go with your first honest reaction.</b> Do not deliberate. A few seconds per choice is normal.</li>
+      <li><b>Think of yourself at work,</b> not at home or with friends, when a choice depends on the setting.</li>
+    </ol></div>
+  </details>
+  <details>
+    <summary>On the day: all games</summary>
+    <div class="tipbody"><ol>
+      <li><b>Use every practice round.</b> Each real game gives you a practice round first. Use it to learn the controls and the rule, not to rush.</li>
+      <li><b>The games get harder when you do well.</b> Feeling stretched means you are doing well, not badly. Do not let one hard level shake you.</li>
+      <li><b>One wrong answer is one point.</b> Move on straight away; dwelling on it costs the next level too.</li>
+      <li><b>Use a mouse or trackpad you are used to,</b> on a laptop or desktop rather than a phone, in a quiet room, with notifications off.</li>
+      <li><b>Water and a short break</b> between the video questions and the games.</li>
+    </ol>
+    <p style="margin:8px 0 0">These tips cover the games candidates describe for BAE Systems and the common HireVue types. The real games are not published, so expect some surprises; the practice round is there for exactly that.</p></div>
   </details>
   <p class="hist"><a href="../">Back to the Python DSA Workbook</a></p>
 </div>
