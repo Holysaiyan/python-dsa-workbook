@@ -200,7 +200,7 @@ td:first-child { font-weight: 600; }
 .tests li.fail { border-left: 4px solid var(--bad); }
 .t-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
 .t-detail { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); display: grid; gap: 2px; min-width: 0; }
-.t-detail span { overflow-wrap: anywhere; }
+.t-detail span { overflow-wrap: anywhere; white-space: pre-wrap; }
 .t-detail b { color: var(--ink); font-weight: 600; }
 .hints { display: grid; gap: 8px; }
 .hint { background: var(--warn-soft); border-radius: 8px; padding: 9px 13px; font-size: .96rem; }
@@ -525,7 +525,7 @@ td:first-child { font-weight: 600; }
   function renderOutline(current) {
     var html = "";
     D.modules.forEach(function (m, mi) {
-      html += '<div class="mod"><p class="mod-title"><b>' + (mi + 1) + "</b>" + esc(m.title) + "</p><ol>";
+      html += '<div class="mod"><p class="mod-title"><b>' + m.n + "</b>" + esc(m.title) + "</p><ol>";
       m.lessons.forEach(function (L) {
         var st = mastered(L) ? "done" : (partly(L) ? "part" : (state.seen[L.id] ? "seen" : ""));
         var label = { done: " (mastered)", part: " (in progress)", seen: " (seen)" }[st] || "";
@@ -680,7 +680,16 @@ td:first-child { font-weight: 600; }
   function shortVal(v) {
     var s;
     if (v && typeof v === "object" && !Array.isArray(v) && v.__py__) s = "generated: " + v.__py__;
-    else s = JSON.stringify(v, null, 0).replace(/,(?=[\[\]"\d{-]|null|true|false)/g, ", ");
+    else {
+      // add a space after commas and colons that separate items, never inside strings
+      var raw = JSON.stringify(v, null, 0), inStr = false, esc2 = false; s = "";
+      for (var ci = 0; ci < raw.length; ci++) {
+        var ch = raw[ci]; s += ch;
+        if (inStr) { if (esc2) esc2 = false; else if (ch === "\\") esc2 = true; else if (ch === '"') inStr = false; }
+        else if (ch === '"') inStr = true;
+        else if (ch === "," || ch === ":") s += " ";
+      }
+    }
     return s.length > 140 ? s.slice(0, 137) + "..." : s;
   }
   function fmtGot(g) {
@@ -985,7 +994,7 @@ td:first-child { font-weight: 600; }
     document.title = L.title + " | Python DSA Workbook";
     article.innerHTML = "";
     var head = el("header"); head.style.display = "grid"; head.style.gap = "12px";
-    head.innerHTML = '<div class="eyebrow"><span><span class="num">' + (x.mi + 1) + "</span> " + esc(x.m.title) + '</span><span>Lesson <span class="num">' + (idx + 1) + "</span> of " + flat.length + "</span><span>About " + L.minutes + " min</span></div><h1>" + esc(L.title) + '</h1><p class="lede">' + esc(L.summary) + "</p>" +
+    head.innerHTML = '<div class="eyebrow"><span><span class="num">' + x.m.n + "</span> " + esc(x.m.title) + '</span><span>Lesson <span class="num">' + L.n + "</span> of " + flat.length + "</span><span>About " + L.minutes + " min</span></div><h1>" + esc(L.title) + '</h1><p class="lede">' + esc(L.summary) + "</p>" +
       (L.tags.length ? '<div class="chips">' + L.tags.map(function (t) { return '<span class="chip tag">' + esc(t) + " priority</span>"; }).join("") + "</div>" : "") + '<ol class="mstrip"></ol>';
     article.appendChild(head);
     renderStrip();

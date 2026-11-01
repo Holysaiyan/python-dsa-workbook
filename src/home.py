@@ -20,7 +20,7 @@ for mi, m in enumerate(modules):
     rows = ""
     for L in m["lessons"]:
         rows += f'<li><a href="workbook/#{e(L["id"])}"><span class="ls-title">{e(L["title"])}</span><span class="ls-meta">{L["minutes"]} min</span></a></li>'
-    syllabus += f'<section class="module"><div class="module-head"><span class="module-n">{mi + 1}</span><h3>{e(m["title"])}</h3></div><ol class="lesson-list">{rows}</ol></section>'
+    syllabus += f'<section class="module"><div class="module-head"><span class="module-n">{e(m["n"])}</span><h3>{e(m["title"])}</h3></div><ol class="lesson-list">{rows}</ol></section>'
 
 page = f"""<!doctype html>
 <html lang="en-GB">
@@ -189,7 +189,7 @@ footer p {{ margin: 0; }}
 
   <section class="section" id="syllabus">
     <h2>Syllabus</h2>
-    <p class="intro">Six modules, from how to start a problem to dynamic programming. Each lesson is about 15 to 35 minutes of reading and coding, plus the practice.</p>
+    <p class="intro">Python basics for anyone new or rusty, six DSA modules from how to start a problem to dynamic programming, and a final project you can talk about in interviews. Each lesson is about 15 to 35 minutes of reading and coding, plus the practice.</p>
     <div class="modules">{syllabus}</div>
   </section>
 
@@ -204,8 +204,8 @@ footer p {{ margin: 0; }}
   </section>
 
   <div class="cta-band">
-    <p><b>Start with lesson 1</b>It teaches the six-step routine that every other lesson builds on, and takes about 15 minutes.</p>
-    <a class="btn primary" href="workbook/#how-to-solve">Open the workbook</a>
+    <p><b>New or rusty at Python? Start with P1.</b>The Python basics module gets you from variables to classes. Already comfortable? Jump to lesson 1, the six-step routine every DSA lesson builds on.</p>
+    <a class="btn primary" href="workbook/#py-values">Start Python basics</a> <a class="btn" href="workbook/#how-to-solve">Go to lesson 1</a>
   </div>
 
   <footer>

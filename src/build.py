@@ -10,6 +10,8 @@ import json, os, subprocess, sys, tempfile, importlib
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from extras import EXTRAS
+from extras_more import EXTRAS_MORE
+EXTRAS.update(EXTRAS_MORE)
 OUT = os.path.join(HERE, "..", "workbook", "lessons.js")
 
 HARNESS = r'''
@@ -72,9 +74,9 @@ def run(code, timeout=30):
 def main():
     modules = []
     problems = []
-    for name in ["m1", "m2", "m3", "m4", "m5", "m6"]:
+    for name in ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7"]:
         m = importlib.import_module(name)
-        mod = {"id": m.MODULE["id"], "title": m.MODULE["title"], "lessons": []}
+        mod = {"id": m.MODULE["id"], "title": m.MODULE["title"], "lessons": [], "n": m.MODULE.get("n") or str(len([x for x in modules if not x["n"].isalpha()]) + 1)}
         for L in m.LESSONS:
             blocks = []
             for b in L["blocks"]:
@@ -91,6 +93,10 @@ def main():
                 else:
                     blocks.append({"t": kind, "html": b[1]})
             lesson = {k: L[k] for k in ("id", "title", "minutes", "tags", "summary", "mistakes")}
+            if mod["n"].isalpha():
+                lesson["n"] = mod["n"] + str(len(mod["lessons"]) + 1)
+            else:
+                lesson["n"] = str(1 + sum(len(x["lessons"]) for x in modules if not x["n"].isalpha()) + len(mod["lessons"]))
             lesson["blocks"] = blocks
             lesson["related"] = [{"title": t, "url": u} for t, u in L.get("related", [])]
             X = EXTRAS.get(L["id"], {})
