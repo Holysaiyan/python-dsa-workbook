@@ -35,7 +35,7 @@ jobs:
         run: |
           mkdir _site
           cp index.html .nojekyll _site/
-          cp -r workbook _site/
+          cp -r workbook trainer _site/
       - name: Configure GitHub Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5

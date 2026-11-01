@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Practise the number-target round of game-based assessments, with coaching on near-miss answers.">
+<style>:root{color-scheme:light}body{margin:0}[hidden]{display:none!important}</style>
+<title>Target Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=JetBrains+Mono:wght@500;700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: one focused board (target, tiles, timer) above a coaching strip and a session scorecard. */
+:root {
+  --paper: #f4f6f9; --surface: #ffffff; --ink: #131b2a; --muted: #586277; --rule: #d9dfe8;
+  --accent: #2148cc; --accent-ink: #ffffff; --accent-soft: #e5ebfb;
+  --ok: #1b7a4b; --ok-soft: #e2f3ea; --bad: #b2362c; --bad-soft: #fbe9e7; --warn: #8d6100; --warn-soft: #fbf1db;
+  --tile: #eef2f7;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e131b; --surface: #151c27; --ink: #e5eaf2; --muted: #98a3b6; --rule: #273143;
+    --accent: #86a6ff; --accent-ink: #0e131b; --accent-soft: #1b2847;
+    --ok: #52c58c; --ok-soft: #13291f; --bad: #f2837a; --bad-soft: #321a19; --warn: #e3b552; --warn-soft: #2e2512;
+    --tile: #1b2433; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0e131b; --surface: #151c27; --ink: #e5eaf2; --muted: #98a3b6; --rule: #273143;
+  --accent: #86a6ff; --accent-ink: #0e131b; --accent-soft: #1b2847;
+  --ok: #52c58c; --ok-soft: #13291f; --bad: #f2837a; --bad-soft: #321a19; --warn: #e3b552; --warn-soft: #2e2512;
+  --tile: #1b2433; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--paper); color: var(--ink); }
+body { font-family: var(--f-body); font-size: 17px; line-height: 1.5; }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 22px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: 1.7rem; letter-spacing: -.02em; margin: 0; }
+h1 span { color: var(--accent); }
+.sub { margin: 0; color: var(--muted); font-size: .95rem; }
+.modes { display: flex; gap: 6px; flex-wrap: wrap; }
+.mode { border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 99px; padding: 5px 13px; font-size: .9rem; font-weight: 600; }
+.mode[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.board { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 18px; display: grid; gap: 16px; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.lvl { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+.timebar { height: 6px; background: var(--tile); border-radius: 99px; overflow: hidden; }
+.timebar i { display: block; height: 100%; width: 100%; background: var(--accent); border-radius: 99px; }
+.timebar.low i { background: var(--bad); }
+.task { text-align: center; display: grid; gap: 4px; }
+.task .op { font-size: 1rem; color: var(--muted); font-weight: 600; }
+.task .target { font-family: var(--f-mono); font-weight: 700; font-size: clamp(2.6rem, 9vw, 3.6rem); line-height: 1; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap: 10px; }
+.tile { aspect-ratio: 1.25; max-width: 100%; border: 2px solid transparent; background: var(--tile); color: var(--ink); border-radius: 12px; font-family: var(--f-mono); font-weight: 700; font-size: 1.6rem; display: grid; place-items: center; position: relative; }
+.tile:hover:not(:disabled) { border-color: var(--rule); }
+.tile[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.tile.right { background: var(--ok-soft); border-color: var(--ok); }
+.tile.wrong { background: var(--bad-soft); border-color: var(--bad); }
+.tile kbd { position: absolute; top: 4px; left: 7px; font-family: var(--f-body); font-size: .68rem; color: var(--muted); font-weight: 600; }
+.live { text-align: center; font-family: var(--f-mono); font-size: .95rem; color: var(--muted); min-height: 1.5em; }
+.coach { border-radius: 12px; padding: 12px 16px; font-size: .98rem; display: grid; gap: 4px; }
+.coach b.k { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+.coach.ok { background: var(--ok-soft); } .coach.ok b.k { color: var(--ok); }
+.coach.bad { background: var(--bad-soft); } .coach.bad b.k { color: var(--bad); }
+.coach.tip { background: var(--accent-soft); } .coach.tip b.k { color: var(--accent); }
+.coach code { font-family: var(--f-mono); font-size: .92em; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: center; }
+.btn { border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 9px; padding: 8px 16px; font-weight: 700; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.score { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; }
+.card b { display: block; font-family: var(--f-display); font-size: 1.5rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.card span { font-size: .8rem; color: var(--muted); }
+details { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 14px; }
+summary { font-weight: 700; cursor: pointer; }
+details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.hist { font-size: .9rem; color: var(--muted); margin: 0; }
+.toggle { display: flex; align-items: center; gap: 8px; justify-content: center; font-size: .9rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Target <span>Trainer</span></h1>
+      <p class="sub">Pick the numbers that make the target. Accuracy first, then speed.</p>
+    </div>
+    <div class="modes" role="group" aria-label="Mode">
+      <button class="mode" id="m-train" aria-pressed="true" type="button">Training</button>
+      <button class="mode" id="m-test" aria-pressed="false" type="button">Test run</button>
+    </div>
+  </header>
+
+  <section class="board" aria-label="Game board">
+    <div class="top"><span class="lvl" id="lvl">Level 1</span><span class="lvl" id="clock">0:20</span></div>
+    <div class="timebar" id="timebar"><i id="timefill"></i></div>
+    <div class="task" aria-live="polite"><span class="op" id="op">Pick 2 numbers that add to</span><span class="target" id="target">31</span></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="live" id="live" aria-live="polite"></div>
+    <div class="toggle"><input type="checkbox" id="show-live"><label for="show-live">Show my running total (training wheels)</label></div>
+    <div class="coach tip" id="coach"><b class="k">How to play</b><span>Start with one number and ask what it <b>needs</b>: target minus that number. Is the partner on the board? For three numbers, take the biggest first, then find a pair for what is left. Keys 1 to 9 pick tiles.</span></div>
+    <div class="row"><button class="btn primary" id="start" type="button">Start</button><button class="btn" id="next" type="button" hidden>Next level</button></div>
+  </section>
+
+  <section class="score" aria-label="This session">
+    <div class="card"><b id="s-right">0</b><span>correct</span></div>
+    <div class="card"><b id="s-wrong">0</b><span>wrong picks</span></div>
+    <div class="card"><b id="s-out">0</b><span>timed out</span></div>
+    <div class="card"><b id="s-avg">-</b><span>average time</span></div>
+  </section>
+
+  <details>
+    <summary>Three tricks that fix close-but-wrong answers</summary>
+    <ol>
+      <li><b>Work from the target.</b> Add to 31 with 17, 13, 19, 12: 17 needs 14 (not there), 19 needs 12 (there). Answer 19 + 12.</li>
+      <li><b>Check the last digit.</b> For 31 the last digits must make something ending in 1: 9 + 2, 7 + 4, 3 + 8. 17 + 13 ends in 0, so it cannot be right.</li>
+      <li><b>Three numbers become two.</b> Take the biggest, subtract it from the target, find a pair for the rest. No pair? Put it back and try the next biggest.</li>
+    </ol>
+  </details>
+  <p class="hist" id="hist"></p>
+  <p class="hist"><a href="../">Back to the Python DSA Workbook</a></p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var mode = "train", level = 0, streak = 0, puzzle = null, picked = [], timer = null, tLeft = 0, tMax = 0, tStart = 0, locked = true;
+  var stats = { right: 0, wrong: 0, out: 0, times: [] };
+  var TEST_LEVELS = 15;
+
+  function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // difficulty grows with level: bigger numbers, more tiles, more operations, triples, less time
+  function spec(lv) {
+    var ops = ["+"];
+    if (lv >= 2) ops.push("-");
+    if (lv >= 4) ops.push("x");
+    if (lv >= 6) ops.push("/");
+    var triple = lv >= 7 && Math.random() < Math.min(0.5, 0.15 + (lv - 7) * 0.06);
+    return { op: triple ? "+" : ops[rnd(0, ops.length - 1)], k: triple ? 3 : 2, tiles: Math.min(9, 5 + Math.floor(lv / 3)), max: Math.min(99, 20 + lv * 6), time: Math.max(10, 22 - lv) };
+  }
+  function apply(op, xs) {
+    if (op === "+") return xs.reduce(function (s, x) { return s + x; }, 0);
+    if (op === "x") return xs[0] * xs[1];
+    if (op === "-") return Math.abs(xs[0] - xs[1]);
+    if (op === "/") { var a = Math.max(xs[0], xs[1]), b = Math.min(xs[0], xs[1]); return b && a % b === 0 ? a / b : NaN; }
+  }
+  function combos(arr, k) {
+    var out = [];
+    (function go(start, acc) { if (acc.length === k) { out.push(acc.slice()); return; } for (var i = start; i < arr.length; i++) { acc.push(i); go(i + 1, acc); acc.pop(); } })(0, []);
+    return out;
+  }
+  function make(lv) {
+    for (var tries = 0; tries < 400; tries++) {
+      var s = spec(lv), sol, target;
+      if (s.op === "+") { sol = []; for (var i = 0; i < s.k; i++) sol.push(rnd(2, Math.floor(s.max / s.k) + 6)); target = apply("+", sol); }
+      else if (s.op === "-") { var b = rnd(2, s.max - 6), a = b + rnd(3, Math.min(40, s.max)); sol = [a, b]; target = a - b; }
+      else if (s.op === "x") { sol = [rnd(2, 12), rnd(2, 12)]; target = sol[0] * sol[1]; }
+      else { var d = rnd(2, 9), q = rnd(2, 12); sol = [d * q, d]; target = q; }
+      if (new Set(sol).size !== sol.length) continue;
+      var nums = sol.slice();
+      // near-miss decoys: numbers that make target +-1 or +-2 with one solution number
+      var decoys = 0;
+      while (nums.length < s.tiles && decoys < 2) {
+        var base = sol[rnd(0, sol.length - 1)], off = [1, -1, 2, -2][rnd(0, 3)], n;
+        if (s.op === "+") n = (s.k === 2 ? target - base : rnd(2, s.max)) + off;
+        else if (s.op === "-") n = base === sol[0] ? sol[0] - target + off : sol[1] + target + off;
+        else if (s.op === "x") n = Math.round(target / base) + off;
+        else n = sol[1] + off;
+        if (n > 1 && nums.indexOf(n) === -1) nums.push(n);
+        decoys++;
+      }
+      while (nums.length < s.tiles) { var r = rnd(2, s.op === "x" ? 12 : s.max); if (nums.indexOf(r) === -1) nums.push(r); }
+      // exactly one solution
+      var hits = combos(nums, s.k).filter(function (c) { return apply(s.op, c.map(function (i) { return nums[i]; })) === target; });
+      if (hits.length === 1 && target > 0) { shuffle(nums); return { op: s.op, k: s.k, nums: nums, target: target, time: s.time, sol: sol.slice().sort(function (x, y) { return x - y; }) }; }
+    }
+    return make(Math.max(0, lv - 1));
+  }
+
+  var OPWORD = { "+": "add to", "-": "have a difference of", x: "multiply to", "/": "divide to give" };
+  function render() {
+    $("lvl").textContent = mode === "test" ? "Level " + (level + 1) + " of " + TEST_LEVELS : "Level " + (level + 1);
+    $("op").textContent = "Pick " + puzzle.k + " numbers that " + OPWORD[puzzle.op];
+    $("target").textContent = puzzle.target;
+    var html = "";
+    puzzle.nums.forEach(function (n, i) { html += '<button class="tile" type="button" data-i="' + i + '" aria-pressed="false"><kbd>' + (i + 1) + "</kbd>" + n + "</button>"; });
+    $("tiles").innerHTML = html;
+    $("live").textContent = "";
+  }
+  function tick() {
+    tLeft = Math.max(0, tMax - (Date.now() - tStart) / 1000);
+    $("clock").textContent = "0:" + String(Math.ceil(tLeft)).padStart(2, "0");
+    $("timefill").style.width = (100 * tLeft / tMax) + "%";
+    $("timebar").className = "timebar" + (tLeft < 5 ? " low" : "");
+    if (tLeft <= 0) finish(false, true);
+  }
+  function startLevel() {
+    puzzle = make(level);
+    picked = []; locked = false;
+    tMax = mode === "test" ? puzzle.time : puzzle.time + 8;
+    render();
+    $("next").hidden = true; $("start").hidden = true;
+    $("coach").className = "coach tip";
+    $("coach").innerHTML = '<b class="k">' + (puzzle.k === 3 ? "Three numbers" : "Tip") + "</b><span>" + (puzzle.k === 3 ? "Take the biggest number, subtract it from " + puzzle.target + ", then find a pair for what is left." : puzzle.op === "+" ? "Pick one number and ask what it needs to reach " + puzzle.target + "." : puzzle.op === "x" ? "Ask: what times what makes " + puzzle.target + "?" : puzzle.op === "-" ? "Pick one number and ask: what is " + puzzle.target + " more or less than it?" : "Ask: which number divided by another gives " + puzzle.target + "? Think times tables backwards.") + "</span>";
+    tStart = Date.now();
+    clearInterval(timer); timer = setInterval(tick, 100); tick();
+  }
+  function explain() {
+    var p = puzzle, s = p.sol, t = p.target;
+    if (p.k === 3) return "Answer: <code>" + s.join(" + ") + " = " + t + "</code>. Biggest first: " + s[2] + " leaves " + (t - s[2]) + ", and " + s[0] + " + " + s[1] + " makes " + (t - s[2]) + ".";
+    if (p.op === "+") return "Answer: <code>" + s[0] + " + " + s[1] + " = " + t + "</code>. " + s[1] + " needs " + (t - s[1]) + ", and " + (t - s[1]) + " is on the board.";
+    if (p.op === "-") return "Answer: <code>" + s[1] + " - " + s[0] + " = " + t + "</code>. " + s[0] + " needed a partner " + t + " bigger: " + (s[0] + t) + ".";
+    if (p.op === "x") return "Answer: <code>" + s[0] + " × " + s[1] + " = " + t + "</code>.";
+    return "Answer: <code>" + s[1] + " ÷ " + s[0] + " = " + t + "</code>. " + s[0] + " × " + t + " = " + s[1] + ".";
+  }
+  function finish(ok, timedOut, wrongPick) {
+    if (locked) return;
+    locked = true; clearInterval(timer);
+    var secs = (Date.now() - tStart) / 1000;
+    document.querySelectorAll(".tile").forEach(function (b) {
+      var n = +b.textContent.replace(/^\d/, "");
+      b.disabled = true;
+      var val = puzzle.nums[+b.dataset.i];
+      if (puzzle.sol.indexOf(val) !== -1) b.classList.add("right");
+      else if (picked.indexOf(+b.dataset.i) !== -1) b.classList.add("wrong");
+    });
+    if (ok) { stats.right++; stats.times.push(secs); streak++; }
+    else if (timedOut) { stats.out++; streak = 0; }
+    else { stats.wrong++; streak = 0; }
+    var c = $("coach");
+    if (ok) { c.className = "coach ok"; c.innerHTML = '<b class="k">Correct, ' + secs.toFixed(1) + " s</b><span>" + (secs > tMax * 0.75 ? "Right answer. Now aim to spot it sooner: start from what one number needs." : "Clean and quick.") + "</span>"; }
+    else {
+      c.className = "coach bad";
+      var mine = picked.map(function (i) { return puzzle.nums[i]; });
+      var got = wrongPick ? apply(puzzle.op, mine) : null;
+      var near = got != null && !isNaN(got) && Math.abs(got - puzzle.target) <= 2;
+      c.innerHTML = '<b class="k">' + (timedOut ? "Out of time" : near ? "Close but wrong" : "Wrong pick") + "</b><span>" + (wrongPick ? "You picked <code>" + mine.join(puzzle.op === "+" ? " + " : " " + ({ "-": "-", x: "×", "/": "÷" })[puzzle.op] + " ") + "</code>" + (isNaN(got) ? ", which does not divide exactly" : " = " + got) + ". " + (near ? "That is the near-miss habit: check the last digit before the second click. " : "") : "") + explain() + "</span>";
+    }
+    // adaptive like the real thing: two right in a row moves you up, a miss moves you down
+    if (mode === "train") { if (ok && streak >= 2) { level++; streak = 0; } else if (!ok) level = Math.max(0, level - 1); }
+    else level++;
+    paintStats();
+    if (mode === "test" && level >= TEST_LEVELS) { endTest(); return; }
+    $("next").hidden = false; $("next").focus();
+  }
+  function pick(i) {
+    if (locked || picked.indexOf(i) !== -1) return;
+    picked.push(i);
+    var b = document.querySelector('.tile[data-i="' + i + '"]'); b.setAttribute("aria-pressed", "true");
+    if ($("show-live").checked && mode === "train") {
+      var xs = picked.map(function (j) { return puzzle.nums[j]; });
+      $("live").textContent = xs.length > 1 ? "Your pick makes " + apply(puzzle.op, xs) : "Picked " + xs[0];
+    }
+    if (picked.length === puzzle.k) {
+      var vals = picked.map(function (j) { return puzzle.nums[j]; });
+      finish(apply(puzzle.op, vals) === puzzle.target, false, true);
+    }
+  }
+  function paintStats() {
+    $("s-right").textContent = stats.right; $("s-wrong").textContent = stats.wrong; $("s-out").textContent = stats.out;
+    $("s-avg").textContent = stats.times.length ? (stats.times.reduce(function (a, b) { return a + b; }, 0) / stats.times.length).toFixed(1) + " s" : "-";
+  }
+  function endTest() {
+    var total = stats.right + stats.wrong + stats.out;
+    var c = $("coach"); c.className = "coach tip";
+    c.innerHTML = '<b class="k">Test run finished</b><span>' + stats.right + " of " + total + " correct, " + stats.wrong + " wrong picks, " + stats.out + " timed out. " + (stats.wrong > 2 ? "Most points went on wrong picks: slow down by half a second and check the sum." : stats.out > 2 ? "Accuracy is good. Speed comes from starting with what one number needs." : "Strong run.") + "</span>";
+    try { var h = JSON.parse(localStorage.getItem("tt-hist") || "[]"); h.push({ d: new Date().toISOString().slice(0, 16).replace("T", " "), r: stats.right, t: total, w: stats.wrong }); localStorage.setItem("tt-hist", JSON.stringify(h.slice(-10))); } catch (e) {}
+    paintHist();
+    $("start").textContent = "New test run"; $("start").hidden = false; $("next").hidden = true;
+  }
+  function paintHist() {
+    try { var h = JSON.parse(localStorage.getItem("tt-hist") || "[]"); $("hist").textContent = h.length ? "Recent test runs: " + h.slice(-5).map(function (x) { return x.r + "/" + x.t + " (" + x.w + " wrong)"; }).join(" · ") : ""; } catch (e) {}
+  }
+  function reset(m) {
+    mode = m; level = 0; streak = 0; stats = { right: 0, wrong: 0, out: 0, times: [] }; paintStats(); locked = true; clearInterval(timer);
+    $("m-train").setAttribute("aria-pressed", String(m === "train")); $("m-test").setAttribute("aria-pressed", String(m === "test"));
+    $("show-live").disabled = m === "test";
+    $("start").textContent = m === "test" ? "Start test run (" + TEST_LEVELS + " levels)" : "Start"; $("start").hidden = false; $("next").hidden = true;
+    var c = $("coach"); c.className = "coach tip";
+    c.innerHTML = m === "test" ? '<b class="k">Test run</b><span>' + TEST_LEVELS + " levels, real time limits, no training wheels, difficulty rises every level like the assessment.</span>" : '<b class="k">How to play</b><span>Start with one number and ask what it <b>needs</b>: target minus that number. Is the partner on the board? For three numbers, take the biggest first, then find a pair for what is left. Keys 1 to 9 pick tiles.</span>';
+    puzzle = make(0); render(); $("clock").textContent = "0:" + String(puzzle.time).padStart(2, "0"); $("timefill").style.width = "100%";
+    document.querySelectorAll(".tile").forEach(function (b) { b.disabled = true; });
+  }
+  $("tiles").addEventListener("click", function (e) { var b = e.target.closest(".tile"); if (b) pick(+b.dataset.i); });
+  document.addEventListener("keydown", function (e) {
+    if (/^[1-9]$/.test(e.key) && puzzle && +e.key <= puzzle.nums.length) pick(+e.key - 1);
+    if (e.key === "Enter" && !$("next").hidden) { e.preventDefault(); startLevel(); }
+  });
+  $("start").addEventListener("click", function () { if (mode === "test" && level >= TEST_LEVELS) reset("test"); startLevel(); });
+  $("next").addEventListener("click", startLevel);
+  $("m-train").addEventListener("click", function () { reset("train"); });
+  $("m-test").addEventListener("click", function () { reset("test"); });
+  reset("train"); paintHist();
+  window.__tt = { make: make, apply: apply, combos: combos };
+})();
+</script>
+
+</body>
+</html>
