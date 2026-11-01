@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Practise the number-target round of game-based assessments, with coaching on near-miss answers.">
+<meta name="description" content="Practice games for game-based assessments: number targets, shape rotation, odd one out and digit memory.">
 <style>:root{color-scheme:light}body{margin:0}[hidden]{display:none!important}</style>
 <title>Target Trainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,6 +35,7 @@
   --tile: #1b2433; color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { background: var(--paper); color: var(--ink); }
 body { font-family: var(--f-body); font-size: 17px; line-height: 1.5; }
 button { font: inherit; cursor: pointer; }
@@ -74,7 +75,7 @@ h1 span { color: var(--accent); }
 .btn { border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 9px; padding: 8px 16px; font-weight: 700; }
 .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
-.score { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.score { display: grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap: 10px; }
 .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; }
 .card b { display: block; font-family: var(--f-display); font-size: 1.5rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .card span { font-size: .8rem; color: var(--muted); }
@@ -83,6 +84,32 @@ summary { font-weight: 700; cursor: pointer; }
 details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .hist { font-size: .9rem; color: var(--muted); margin: 0; }
 .toggle { display: flex; align-items: center; gap: 8px; justify-content: center; font-size: .9rem; color: var(--muted); }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--rule); }
+.tabs a { padding: 8px 14px; text-decoration: none; color: var(--muted); font-weight: 700; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.tabs a[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.game { display: grid; gap: 16px; }
+.mini { display: grid; gap: 2px; padding: 6px; background: var(--tile); border-radius: 10px; }
+.mini i { display: block; aspect-ratio: 1; border-radius: 3px; background: var(--surface); }
+.mini i.on { background: var(--ink); }
+.shape-target { display: flex; justify-content: center; }
+.shape-target .mini { width: min(170px, 46vw); border: 2px solid var(--accent); }
+.opts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.opt { border: 2px solid transparent; background: var(--tile); border-radius: 12px; padding: 8px; display: grid; gap: 6px; position: relative; color: var(--ink); }
+.opt .mini { background: var(--surface); }
+.opt .mini i { background: var(--tile); }
+.opt .mini i.on { background: var(--ink); }
+.opt kbd { font-family: var(--f-body); font-size: .72rem; color: var(--muted); font-weight: 600; }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.odd-grid { display: grid; gap: 8px; justify-content: center; }
+.odd-grid button { border: 2px solid transparent; background: var(--tile); border-radius: 10px; padding: 6px; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
+.odd-grid button.right { border-color: var(--ok); background: var(--ok-soft); }
+.odd-grid button.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.odd-grid svg { width: 80%; height: 80%; }
+.entry { text-align: center; font-family: var(--f-mono); font-size: 1.8rem; font-weight: 700; letter-spacing: .2em; min-height: 1.6em; }
+.pad { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; max-width: 360px; margin: 0 auto; width: 100%; }
+.pad button { border: 1px solid var(--rule); background: var(--tile); color: var(--ink); border-radius: 10px; font-family: var(--f-mono); font-weight: 700; font-size: 1.3rem; padding: 10px 0; }
+@media (max-width: 480px) { .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
@@ -92,13 +119,21 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   <header>
     <div>
       <h1>Target <span>Trainer</span></h1>
-      <p class="sub">Pick the numbers that make the target. Accuracy first, then speed.</p>
-    </div>
-    <div class="modes" role="group" aria-label="Mode">
-      <button class="mode" id="m-train" aria-pressed="true" type="button">Training</button>
-      <button class="mode" id="m-test" aria-pressed="false" type="button">Test run</button>
+      <p class="sub">Practice for game-based assessments. Accuracy first, then speed.</p>
     </div>
   </header>
+  <nav class="tabs" role="tablist" aria-label="Games">
+    <a role="tab" href="#numbers" data-g="numbers">Numbers</a>
+    <a role="tab" href="#shapes" data-g="shapes">Shapes</a>
+    <a role="tab" href="#odd" data-g="odd">Odd one out</a>
+    <a role="tab" href="#memory" data-g="memory">Memory</a>
+  </nav>
+
+  <div class="game" id="g-numbers">
+  <div class="modes" role="group" aria-label="Mode">
+    <button class="mode" id="m-train" aria-pressed="true" type="button">Training</button>
+    <button class="mode" id="m-test" aria-pressed="false" type="button">Test run</button>
+  </div>
 
   <section class="board" aria-label="Game board">
     <div class="top"><span class="lvl" id="lvl">Level 1</span><span class="lvl" id="clock">0:20</span></div>
@@ -127,6 +162,49 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     </ol>
   </details>
   <p class="hist" id="hist"></p>
+  </div>
+
+  <div class="game" id="g-shapes" hidden>
+    <section class="board" aria-label="Shapes board">
+      <div class="top"><span class="lvl" id="sh-lvl">Level 1</span><span class="lvl" id="sh-clock">0:15</span></div>
+      <div class="timebar" id="sh-bar"><i id="sh-fill"></i></div>
+      <div class="task"><span class="op" id="sh-op">Which option is the same shape, turned?</span></div>
+      <div class="shape-target" id="sh-target"></div>
+      <div class="opts" id="sh-opts"></div>
+      <div class="coach tip" id="sh-coach"><b class="k">How to play</b><span>One option is the target turned round (90, 180 or 270 degrees). The others are a <b>mirror image</b> or have <b>one square moved</b>. Pick a corner square in the target, find where it lands when turned, then check one more square. Keys 1 to 4 pick.</span></div>
+      <div class="row"><button class="btn primary" id="sh-start" type="button">Start</button><button class="btn" id="sh-next" type="button" hidden>Next</button></div>
+    </section>
+    <section class="score"><div class="card"><b id="sh-r">0</b><span>correct</span></div><div class="card"><b id="sh-w">0</b><span>wrong</span></div><div class="card"><b id="sh-best">1</b><span>best level</span></div></section>
+  </div>
+
+  <div class="game" id="g-odd" hidden>
+    <section class="board" aria-label="Odd one out board">
+      <div class="top"><span class="lvl" id="od-lvl">Level 1</span><span class="lvl" id="od-clock">0:10</span></div>
+      <div class="timebar" id="od-bar"><i id="od-fill"></i></div>
+      <div class="task"><span class="op">Tap the one that is different</span></div>
+      <div class="odd-grid" id="od-grid"></div>
+      <div class="coach tip" id="od-coach"><b class="k">How to play</b><span>All shapes match except one: it is turned, a different shape, or a slightly different size. Scan row by row instead of jumping around. Speed counts, but a wrong tap costs more than a slow one.</span></div>
+      <div class="row"><button class="btn primary" id="od-start" type="button">Start</button><button class="btn" id="od-next" type="button" hidden>Next</button></div>
+    </section>
+    <section class="score"><div class="card"><b id="od-r">0</b><span>correct</span></div><div class="card"><b id="od-w">0</b><span>wrong</span></div><div class="card"><b id="od-best">1</b><span>best level</span></div></section>
+  </div>
+
+  <div class="game" id="g-memory" hidden>
+    <section class="board" aria-label="Memory board">
+      <div class="top"><span class="lvl" id="me-lvl">Length 4</span><span class="lvl" id="me-state">Ready</span></div>
+      <div class="task"><span class="op" id="me-op">Watch the digits, then type them in order</span><span class="target" id="me-show">&nbsp;</span></div>
+      <div class="entry" id="me-entry" aria-live="polite"></div>
+      <div class="pad" id="me-pad"></div>
+      <div class="coach tip" id="me-coach"><b class="k">How to play</b><span>Digits appear one at a time. Group them in your head in threes, like a phone number: 4 7 2, 9 1 5. Say them silently as they appear. Type with the keypad or your keyboard. Two right in a row adds a digit; a miss takes one away.</span></div>
+      <div class="row"><button class="btn primary" id="me-start" type="button">Start</button><button class="btn" id="me-del" type="button" hidden>Delete</button><button class="btn" id="me-ok" type="button" hidden>Check</button></div>
+    </section>
+    <section class="score"><div class="card"><b id="me-r">0</b><span>correct</span></div><div class="card"><b id="me-w">0</b><span>wrong</span></div><div class="card"><b id="me-best">4</b><span>longest recalled</span></div></section>
+  </div>
+
+  <details>
+    <summary>About the personality game</summary>
+    <p style="margin:8px 0 0">Candidates also report an image-choice game: "which of these two is more like you?". There is no right profile and nothing to train. Answer quickly with your first honest reaction; overthinking gives inconsistent answers, and consistency is what it measures.</p>
+  </details>
   <p class="hist"><a href="../">Back to the Python DSA Workbook</a></p>
 </div>
 
@@ -295,6 +373,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   }
   $("tiles").addEventListener("click", function (e) { var b = e.target.closest(".tile"); if (b) pick(+b.dataset.i); });
   document.addEventListener("keydown", function (e) {
+    if ($("g-numbers").hidden) return;
     if (/^[1-9]$/.test(e.key) && puzzle && +e.key <= puzzle.nums.length) pick(+e.key - 1);
     if (e.key === "Enter" && !$("next").hidden) { e.preventDefault(); startLevel(); }
   });
@@ -303,7 +382,180 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   $("m-train").addEventListener("click", function () { reset("train"); });
   $("m-test").addEventListener("click", function () { reset("test"); });
   reset("train"); paintHist();
-  window.__tt = { make: make, apply: apply, combos: combos };
+  window.__tt = { make: make, apply: apply, combos: combos, stopNumbers: function () { clearInterval(timer); } };
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function best(key, v) { try { var b = +(localStorage.getItem(key) || 0); if (v > b) { localStorage.setItem(key, String(v)); return v; } return b || v; } catch (e) { return v; } }
+  function clock(prefix, secs, max) {
+    $(prefix + "-clock").textContent = "0:" + String(Math.ceil(secs)).padStart(2, "0");
+    $(prefix + "-fill").style.width = (100 * secs / max) + "%";
+    $(prefix + "-bar").className = "timebar" + (secs < 4 ? " low" : "");
+  }
+  function coach(id, kind, title, html) { var c = $(id); c.className = "coach " + kind; c.innerHTML = '<b class="k">' + title + "</b><span>" + html + "</span>"; }
+
+  // ---------------- Shapes: same shape turned, not mirrored ----------------
+  var sh = { lv: 0, streak: 0, r: 0, w: 0, timer: null, t0: 0, max: 15, locked: true, ans: -1, kinds: [] };
+  function rot(cells, n) { return cells.map(function (c) { return [c[1], n - 1 - c[0]]; }); }
+  function mirror(cells, n) { return cells.map(function (c) { return [c[0], n - 1 - c[1]]; }); }
+  function key(cells) { return cells.map(function (c) { return c[0] * 10 + c[1]; }).sort(function (a, b) { return a - b; }).join(","); }
+  function allRots(cells, n) { var out = [], c = cells; for (var i = 0; i < 4; i++) { out.push(key(c)); c = rot(c, n); } return out; }
+  function miniHTML(cells, n) {
+    var on = {}; cells.forEach(function (c) { on[c[0] * 10 + c[1]] = 1; });
+    var h = '<div class="mini" style="grid-template-columns:repeat(' + n + ',1fr)">';
+    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) h += "<i" + (on[r * 10 + c] ? ' class="on"' : "") + "></i>";
+    return h + "</div>";
+  }
+  function shMake() {
+    var n = sh.lv < 3 ? 3 : sh.lv < 7 ? 4 : 5, cnt = Math.min(n * n - 2, 3 + Math.floor(sh.lv / 2));
+    for (var t = 0; t < 500; t++) {
+      var all = []; for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) all.push([r, c]);
+      var cells = shuffle(all).slice(0, cnt);
+      var rots = allRots(cells, n), mir = mirror(cells, n);
+      if (allRots(mir, n).some(function (k) { return rots.indexOf(k) !== -1; })) continue; // symmetric shapes are ambiguous
+      if (new Set(rots).size < 4) continue;
+      var turns = rnd(1, 3), correct = cells; for (var i = 0; i < turns; i++) correct = rot(correct, n);
+      var opts = [{ cells: correct, kind: "right" }];
+      var m = mir; for (var j = 0, mt = rnd(0, 3); j < mt; j++) m = rot(m, n);
+      opts.push({ cells: m, kind: "mirror" });
+      var tries = 0;
+      while (opts.length < 4 && tries++ < 60) {
+        var base = rnd(0, 1) ? correct : m, moved = base.map(function (c) { return c.slice(); });
+        var free = all.filter(function (a) { return !moved.some(function (b) { return b[0] === a[0] && b[1] === a[1]; }); });
+        moved[rnd(0, moved.length - 1)] = free[rnd(0, free.length - 1)];
+        var k = key(moved);
+        if (rots.indexOf(k) !== -1 || allRots(moved, n).some(function (x) { return rots.indexOf(x) !== -1; })) continue;
+        if (opts.some(function (o) { return key(o.cells) === k; })) continue;
+        opts.push({ cells: moved, kind: "moved" });
+      }
+      if (opts.length < 4) continue;
+      shuffle(opts);
+      return { n: n, cells: cells, opts: opts, ans: opts.findIndex(function (o) { return o.kind === "right"; }) };
+    }
+  }
+  function shStart() {
+    var p = shMake(); sh.p = p; sh.locked = false; sh.max = Math.max(8, 16 - sh.lv);
+    $("sh-lvl").textContent = "Level " + (sh.lv + 1);
+    $("sh-target").innerHTML = miniHTML(p.cells, p.n);
+    $("sh-opts").innerHTML = p.opts.map(function (o, i) { return '<button class="opt" type="button" data-i="' + i + '"><kbd>' + (i + 1) + "</kbd>" + miniHTML(o.cells, p.n) + "</button>"; }).join("");
+    $("sh-start").hidden = true; $("sh-next").hidden = true;
+    coach("sh-coach", "tip", "Tip", "Pick one corner square of the target and follow it round as the shape turns. A mirror image looks right at a glance: check a second square.");
+    sh.t0 = Date.now(); clearInterval(sh.timer);
+    sh.timer = setInterval(function () { var left = Math.max(0, sh.max - (Date.now() - sh.t0) / 1000); clock("sh", left, sh.max); if (left <= 0) shEnd(-1); }, 100);
+  }
+  function shEnd(i) {
+    if (sh.locked) return; sh.locked = true; clearInterval(sh.timer);
+    var p = sh.p, ok = i === p.ans, secs = ((Date.now() - sh.t0) / 1000).toFixed(1);
+    document.querySelectorAll("#sh-opts .opt").forEach(function (b, k) { b.disabled = true; if (k === p.ans) b.classList.add("right"); else if (k === i) b.classList.add("wrong"); });
+    if (ok) { sh.r++; sh.streak++; if (sh.streak >= 2) { sh.lv++; sh.streak = 0; } coach("sh-coach", "ok", "Correct, " + secs + " s", "Option " + (p.ans + 1) + " is the target turned round."); }
+    else {
+      sh.w++; sh.streak = 0; sh.lv = Math.max(0, sh.lv - 1);
+      var why = i < 0 ? "Out of time." : p.opts[i].kind === "mirror" ? "That one is a <b>mirror image</b>: flipped, not turned. You can never turn a shape into its mirror." : "That one has <b>one square moved</b>.";
+      coach("sh-coach", "bad", i < 0 ? "Out of time" : "Not that one", why + " The answer was option " + (p.ans + 1) + ".");
+    }
+    $("sh-r").textContent = sh.r; $("sh-w").textContent = sh.w; $("sh-best").textContent = best("tt-sh", sh.lv + 1);
+    $("sh-next").hidden = false; $("sh-next").focus();
+  }
+  $("sh-start").addEventListener("click", shStart); $("sh-next").addEventListener("click", shStart);
+  $("sh-opts").addEventListener("click", function (e) { var b = e.target.closest(".opt"); if (b) shEnd(+b.dataset.i); });
+
+  // ---------------- Odd one out ----------------
+  var od = { lv: 0, streak: 0, r: 0, w: 0, timer: null, t0: 0, max: 10, locked: true };
+  var SHAPES = {
+    tri: function (s) { return '<polygon points="50,' + (50 - 38 * s) + " " + (50 + 34 * s) + "," + (50 + 26 * s) + " " + (50 - 34 * s) + "," + (50 + 26 * s) + '"/>'; },
+    arrow: function (s) { return '<path d="M' + (50 - 32 * s) + " " + (50 - 10 * s) + "h" + 36 * s + "v" + (-16 * s) + "l" + 28 * s + " " + 26 * s + "l" + (-28 * s) + " " + 26 * s + "v" + (-16 * s) + "h" + (-36 * s) + 'z"/>'; },
+    ell: function (s) { return '<path d="M' + (50 - 26 * s) + " " + (50 - 34 * s) + "h" + 18 * s + "v" + 50 * s + "h" + 34 * s + "v" + 18 * s + "h" + (-52 * s) + 'z"/>'; },
+    flag: function (s) { return '<path d="M' + (50 - 26 * s) + " " + (50 + 34 * s) + "v" + (-68 * s) + "h" + 52 * s + "l" + (-14 * s) + " " + 16 * s + "l" + 14 * s + " " + 16 * s + "h" + (-38 * s) + "v" + 36 * s + 'z"/>'; },
+  };
+  function svg(shape, angle, scale) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor" transform="rotate(' + angle + ' 50 50)">' + SHAPES[shape](scale) + "</g></svg>"; }
+  function odStart() {
+    var cols = od.lv < 3 ? 3 : od.lv < 7 ? 4 : 5, n = cols * cols;
+    var names = Object.keys(SHAPES), shape = names[rnd(0, names.length - 1)], angle = [0, 90, 180, 270][rnd(0, 3)];
+    var diff = od.lv < 4 ? "turn" : ["turn", "turn", "size", "shape"][rnd(0, 3)];
+    var ans = rnd(0, n - 1), oddA = angle, oddS = 1, oddShape = shape;
+    if (diff === "turn") oddA = angle + (od.lv < 6 ? 90 : [45, 90, 180][rnd(0, 2)]) * (rnd(0, 1) ? 1 : -1);
+    if (diff === "size") oddS = od.lv < 8 ? 0.78 : 0.86;
+    if (diff === "shape") oddShape = names.filter(function (x) { return x !== shape; })[rnd(0, 2)];
+    var html = "";
+    for (var i = 0; i < n; i++) html += '<button type="button" data-i="' + i + '" style="color:var(--ink)">' + (i === ans ? svg(oddShape, oddA, oddS) : svg(shape, angle, 1)) + "</button>";
+    var g = $("od-grid"); g.style.gridTemplateColumns = "repeat(" + cols + ", minmax(0, 72px))"; g.innerHTML = html;
+    od.ans = ans; od.diff = diff; od.locked = false; od.max = Math.max(5, 11 - Math.floor(od.lv / 2));
+    $("od-lvl").textContent = "Level " + (od.lv + 1); $("od-start").hidden = true; $("od-next").hidden = true;
+    coach("od-coach", "tip", "Tip", "Scan row by row, left to right. Look at one feature at a time: the point of the shape, then its size.");
+    od.t0 = Date.now(); clearInterval(od.timer);
+    od.timer = setInterval(function () { var left = Math.max(0, od.max - (Date.now() - od.t0) / 1000); clock("od", left, od.max); if (left <= 0) odEnd(-1); }, 100);
+  }
+  function odEnd(i) {
+    if (od.locked) return; od.locked = true; clearInterval(od.timer);
+    var ok = i === od.ans, secs = ((Date.now() - od.t0) / 1000).toFixed(1);
+    document.querySelectorAll("#od-grid button").forEach(function (b, k) { b.disabled = true; if (k === od.ans) b.classList.add("right"); else if (k === i) b.classList.add("wrong"); });
+    var what = { turn: "it was turned", size: "it was slightly smaller", shape: "it was a different shape" }[od.diff];
+    if (ok) { od.r++; od.streak++; if (od.streak >= 2) { od.lv++; od.streak = 0; } coach("od-coach", "ok", "Correct, " + secs + " s", "Found it: " + what + "."); }
+    else { od.w++; od.streak = 0; od.lv = Math.max(0, od.lv - 1); coach("od-coach", "bad", i < 0 ? "Out of time" : "Not that one", "The odd one is outlined in green: " + what + "."); }
+    $("od-r").textContent = od.r; $("od-w").textContent = od.w; $("od-best").textContent = best("tt-od", od.lv + 1);
+    $("od-next").hidden = false; $("od-next").focus();
+  }
+  $("od-start").addEventListener("click", odStart); $("od-next").addEventListener("click", odStart);
+  $("od-grid").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) odEnd(+b.dataset.i); });
+
+  // ---------------- Memory: digit span ----------------
+  var me = { len: 4, streak: 0, r: 0, w: 0, seq: "", typed: "", phase: "idle", timers: [] };
+  $("me-pad").innerHTML = "1234567890".split("").map(function (d) { return '<button type="button" data-d="' + d + '">' + d + "</button>"; }).join("");
+  function meShow() {
+    me.timers.forEach(clearTimeout); me.timers = [];
+    me.seq = ""; for (var i = 0; i < me.len; i++) { var d; do { d = String(rnd(0, 9)); } while (me.seq.slice(-1) === d); me.seq += d; }
+    me.typed = ""; me.phase = "show";
+    $("me-entry").textContent = ""; $("me-lvl").textContent = "Length " + me.len; $("me-state").textContent = "Watch";
+    $("me-start").hidden = true; $("me-ok").hidden = true; $("me-del").hidden = true;
+    coach("me-coach", "tip", "Watch", "Group them in threes as they appear.");
+    me.seq.split("").forEach(function (d, i) {
+      me.timers.push(setTimeout(function () { $("me-show").textContent = d; }, 400 + i * 900));
+      me.timers.push(setTimeout(function () { $("me-show").innerHTML = "&nbsp;"; }, 400 + i * 900 + 650));
+    });
+    me.timers.push(setTimeout(function () { me.phase = "type"; $("me-state").textContent = "Your turn"; $("me-ok").hidden = false; $("me-del").hidden = false; coach("me-coach", "tip", "Your turn", "Type the " + me.len + " digits in order, then press Check (or Enter)."); }, 400 + me.len * 900));
+  }
+  function meType(d) { if (me.phase !== "type" || me.typed.length >= me.len) return; me.typed += d; $("me-entry").textContent = me.typed; }
+  function meCheck() {
+    if (me.phase !== "type") return; me.phase = "done";
+    var ok = me.typed === me.seq;
+    if (ok) { me.r++; me.streak++; coach("me-coach", "ok", "Correct", "You recalled " + me.len + " digits." + (me.streak >= 2 ? " Adding a digit." : "")); if (me.streak >= 2) { me.len++; me.streak = 0; } }
+    else { me.w++; me.streak = 0; coach("me-coach", "bad", "Not quite", "It was <code>" + me.seq.replace(/(\d{3})(?=\d)/g, "$1 ") + "</code>. You typed <code>" + (me.typed || "nothing") + "</code>." + (me.len > 3 ? " Dropping a digit." : "")); if (me.len > 3) me.len--; }
+    $("me-r").textContent = me.r; $("me-w").textContent = me.w; $("me-best").textContent = best("tt-me", ok ? me.seq.length : 0) || 4;
+    $("me-ok").hidden = true; $("me-del").hidden = true; $("me-start").textContent = "Next"; $("me-start").hidden = false; $("me-start").focus();
+  }
+  $("me-start").addEventListener("click", meShow);
+  $("me-ok").addEventListener("click", meCheck);
+  $("me-del").addEventListener("click", function () { if (me.phase === "type") { me.typed = me.typed.slice(0, -1); $("me-entry").textContent = me.typed; } });
+  $("me-pad").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) meType(b.dataset.d); });
+
+  // ---------------- keyboard + tabs ----------------
+  document.addEventListener("keydown", function (e) {
+    if (!$("g-shapes").hidden && /^[1-4]$/.test(e.key) && !sh.locked) shEnd(+e.key - 1);
+    if (!$("g-shapes").hidden && e.key === "Enter" && !$("sh-next").hidden) { e.preventDefault(); shStart(); }
+    if (!$("g-odd").hidden && e.key === "Enter" && !$("od-next").hidden) { e.preventDefault(); odStart(); }
+    if (!$("g-memory").hidden) {
+      if (/^[0-9]$/.test(e.key)) meType(e.key);
+      if (e.key === "Backspace" && me.phase === "type") { me.typed = me.typed.slice(0, -1); $("me-entry").textContent = me.typed; }
+      if (e.key === "Enter") { e.preventDefault(); if (me.phase === "type") meCheck(); else if (me.phase !== "show") meShow(); }
+    }
+  });
+  function route() {
+    var g = (location.hash || "#numbers").slice(1);
+    if (["numbers", "shapes", "odd", "memory"].indexOf(g) === -1) g = "numbers";
+    ["numbers", "shapes", "odd", "memory"].forEach(function (x) { $("g-" + x).hidden = x !== g; });
+    document.querySelectorAll(".tabs a").forEach(function (a) { a.setAttribute("aria-selected", String(a.dataset.g === g)); });
+    if (g !== "numbers" && window.__tt.stopNumbers) window.__tt.stopNumbers();
+    if (g !== "shapes") { clearInterval(sh.timer); sh.locked = true; }
+    if (g !== "odd") { clearInterval(od.timer); od.locked = true; }
+  }
+  window.addEventListener("hashchange", route); route();
+  $("sh-best").textContent = best("tt-sh", 1); $("od-best").textContent = best("tt-od", 1); $("me-best").textContent = best("tt-me", 4);
+  window.__gym = { shMake: shMake, sh: sh, allRots: allRots, key: key, mirror: mirror };
 })();
 </script>
 
