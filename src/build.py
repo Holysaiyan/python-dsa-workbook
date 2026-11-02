@@ -12,6 +12,7 @@ sys.path.insert(0, HERE)
 from extras import EXTRAS
 from extras_more import EXTRAS_MORE
 from videos import VIDEOS
+from ladder import LADDER
 EXTRAS.update(EXTRAS_MORE)
 OUT = os.path.join(HERE, "..", "workbook", "lessons.js")
 
@@ -208,6 +209,24 @@ def main():
                     lesson["debug"] = {"intro": DB["intro"], "starter": DB["starter"], "hint": DB["hint"], "tests": dtests}
             else:
                 lesson["practice"] = None
+            lesson["ladder"] = []
+            for Q in LADDER.get(L["id"], []):
+                tests = [{"label": lab, "args": args, "hidden": hid} for lab, args, hid in Q["tests"]]
+                probe = [{"args": t["args"], "expected": None} for t in tests]
+                rc, out, err = run(Q["solution"] + "\n" + f"__call = {Q['func']}" + "\nimport json\ndef _arg(a):\n    return eval(a['__py__']) if isinstance(a, dict) and '__py__' in a else a\nprint(json.dumps([__call(*[_arg(a) for a in t['args']]) for t in json.loads(%r)]))\n" % json.dumps(probe))
+                if rc != 0:
+                    problems.append(f"{L['id']} ladder {Q['level']}: solution crashed\n{err}"); continue
+                for t, e in zip(tests, json.loads(out.strip().splitlines()[-1])):
+                    t["expected"] = e
+                rc, out, err = run(Q["solution"] + "\n" + harness_for(Q, tests))
+                if not all(r["ok"] for r in json.loads(out.split("@@RESULTS@@")[-1])):
+                    problems.append(f"{L['id']} ladder {Q['level']}: solution fails harness")
+                rc, out, err = run(Q["starter"] + "\n" + harness_for(Q, tests))
+                if all(r["ok"] for r in json.loads(out.split("@@RESULTS@@")[-1])):
+                    problems.append(f"{L['id']} ladder {Q['level']}: starter passes")
+                lesson["ladder"].append({"level": Q["level"], "title": Q["title"], "prompt": Q["prompt"], "func": Q["func"], "starter": Q["starter"],
+                                         "tests": tests, "hints": Q["hints"], "solution": Q["solution"], "explain": Q["explain"],
+                                         "video": "videos/ladder-" + L["id"] + "-" + Q["level"].lower() + ".mp4"})
             mod["lessons"].append(lesson)
         modules.append(mod)
 

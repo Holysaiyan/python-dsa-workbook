@@ -196,6 +196,9 @@ td:first-child { font-weight: 600; }
 .t-detail { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); display: grid; gap: 2px; min-width: 0; }
 .t-detail span { overflow-wrap: anywhere; white-space: pre-wrap; }
 .vid { margin: 4px 0 8px; }
+.ladder-vid { margin: 12px 18px 16px; }
+.ladder-vid summary { cursor: pointer; font-weight: 700; }
+.ladder-vid video { margin-top: 8px; }
 .vid video { width: 100%; max-height: 70vh; border-radius: 12px; background: #000; display: block; }
 .vid p { margin: 6px 0 0; }
 .t-detail b { color: var(--ink); font-weight: 600; }
@@ -699,11 +702,11 @@ td:first-child { font-weight: 600; }
     try { return shortVal(JSON.parse(g)); } catch (e) { return g.length > 140 ? g.slice(0, 137) + "..." : g; }
   }
   function bench(cfg) {
-    var P = cfg, L = cfg.lesson, key = cfg.key, isDebug = cfg.kind === "debug";
+    var P = cfg, L = cfg.lesson, key = cfg.key, isDebug = cfg.kind === "debug", isLadder = cfg.kind === "ladder";
     var box = el("section", "bench" + (isDebug ? " debug" : ""));
     box.setAttribute("aria-label", isDebug ? "Debugging exercise" : "Practice problem");
     var hintsShown = 0, solutionShown = false, loadedSolution = false, timer = null, timerStart = 0;
-    box.innerHTML = '<div class="bench-head"><span class="bench-k"><span>' + (isDebug ? "Fix the bug" : "Practice") + "</span>" + (cfg.limit ? '<span class="pill dim">aim: under ' + cfg.limit + " min</span>" : "") + '</span><h3 class="bench-title">' + esc(P.title) + '</h3></div><div class="bench-prompt">' + P.prompt + "</div>";
+    box.innerHTML = '<div class="bench-head"><span class="bench-k"><span>' + (cfg.badge || (isDebug ? "Fix the bug" : "Practice")) + "</span>" + (cfg.limit ? '<span class="pill dim">aim: under ' + cfg.limit + " min</span>" : "") + '</span><h3 class="bench-title">' + esc(P.title) + '</h3></div><div class="bench-prompt">' + P.prompt + "</div>";
     var cell = el("div", "cell");
     var head = el("div", "cell-head", '<span class="cell-label">' + (isDebug ? "Buggy code: fix it" : "Your solution") + '</span><span class="cell-actions"><span class="timer" data-role="timer" hidden></span><button class="btn" type="button" data-act="timer">Start timer</button><button class="btn" type="button" data-act="reset">Reset</button><button class="btn" type="button" data-act="run">Run</button><button class="btn primary" type="button" data-act="test">Run tests</button></span>');
     var initial = state.drafts[key] != null ? state.drafts[key] : P.starter;
@@ -778,7 +781,7 @@ td:first-child { font-weight: 600; }
     }
     function renderGate() {
       var C = L.complexity;
-      if (!C || isDebug) return;
+      if (!C || isDebug || isLadder) return;
       gateEl.hidden = false;
       if (state.complexity[L.id]) {
         gateEl.className = "gate done";
@@ -1035,6 +1038,15 @@ td:first-child { font-weight: 600; }
         article.appendChild(el("h2", null, "Fix the bug"));
         article.appendChild(bench({ kind: "debug", key: L.id + ":debug", lesson: L, title: P.title + ", broken", prompt: "<p>" + DB.intro + " Same task, same tests. Debugging under time pressure is a skill in its own right: read the failing case, form one hypothesis, change one thing, re-run.</p>", starter: DB.starter, func: P.func, wrapper: P.wrapper, tests: DB.tests, hints: [DB.hint], solution: P.solution, explain: P.explain, limit: Math.max(5, Math.round((L.limit || 10) / 2)) }));
       }
+    }
+    if (L.ladder && L.ladder.length) {
+      article.appendChild(el("h2", null, "Easy, medium, hard"));
+      article.appendChild(el("p", "small", "Three more problems on this pattern, getting harder. Each has a short video of Coach Max solving it: try first, then watch."));
+      L.ladder.forEach(function (Q) {
+        var b = bench({ kind: "ladder", badge: Q.level, key: L.id + ":" + Q.level.toLowerCase(), lesson: L, title: Q.title, prompt: Q.prompt, starter: Q.starter, func: Q.func, wrapper: null, tests: Q.tests, hints: Q.hints, solution: Q.solution, explain: Q.explain, limit: { Easy: 8, Medium: 15, Hard: 25 }[Q.level] });
+        var v = el("details", "vid ladder-vid", "<summary>Watch Coach Max solve it (" + esc(Q.level) + ")</summary>" + '<video controls preload="none" playsinline src="' + esc(Q.video) + '"></video>');
+        b.appendChild(v); article.appendChild(b);
+      });
     }
     if (L.related.length) {
       article.appendChild(el("h2", null, "More practice"));
