@@ -121,6 +121,12 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .vq-item .row { display: flex; gap: 6px; flex-wrap: wrap; }
 .vq-item button[data-ok="1"] { background: var(--ok-soft); border-color: var(--ok); }
 .vq-item button[data-ok="0"] { background: var(--bad-soft); border-color: var(--bad); }
+.ps-opts { display: grid; gap: 10px; }
+.ps-opts button { text-align: left; border: 2px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 12px; padding: 14px 16px; font-size: 1.05rem; font-family: var(--f-body); display: flex; gap: 12px; align-items: center; }
+.ps-opts button kbd { font-family: var(--f-mono); color: var(--muted); font-size: .85rem; }
+.ps-opts button:hover { border-color: var(--accent); }
+.ps-h { font-family: var(--f-display); font-size: 1.3rem; margin: 22px 0 8px; }
+.ps-panel { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 16px; background: var(--surface); }
 .lvnote { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .odd-grid { display: grid; gap: 8px; justify-content: center; }
 .odd-grid button { border: 2px solid transparent; background: var(--tile); border-radius: 10px; padding: 6px; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
@@ -148,6 +154,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <a role="tab" href="#shapes" data-g="shapes">Shapes</a>
     <a role="tab" href="#odd" data-g="odd">Odd one out</a>
     <a role="tab" href="#memory" data-g="memory">Memory</a>
+    <a role="tab" href="#personality" data-g="personality">Personality</a>
   </nav>
 
   <div class="game" id="g-numbers">
@@ -330,11 +337,18 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <section class="score"><div class="card"><b id="me-r">0</b><span>correct</span></div><div class="card"><b id="me-w">0</b><span>wrong</span></div><div class="card"><b id="me-best">4</b><span>longest recalled</span></div></section>
   </div>
 
-  <details>
-    <summary>The personality game and BAE's values</summary>
-    <div class="tipbody">
-      <p style="margin:0 0 8px"><b>What it is.</b> Candidates report an image-choice game: "which of these is more like you?". It measures work style, not ability, and it checks that your answers are consistent.</p>
-      <p style="margin:0 0 10px"><b>BAE Systems' values</b> (from BAE's own careers site). BAE says these are what it looks for, so know them, but answer as you really are at work:</p>
+  <div class="game" id="g-personality" hidden>
+    <section class="board" aria-label="Work style warm-up">
+      <div class="top"><span class="lvl" id="ps-lvl">Warm-up</span><span class="lvl" id="ps-count">12 choices</span></div>
+      <div class="timebar" id="ps-bar"><i id="ps-fill"></i></div>
+      <div class="task"><span class="op" id="ps-op">Which is more like you at work?</span></div>
+      <div class="ps-opts" id="ps-opts"></div>
+      <div class="coach tip" id="ps-coach"><b class="k">What this is</b><span>Candidates report BAE's personality game shows pictures and asks which is more like you. It measures work style, not ability, and checks you answer consistently. This warm-up uses words instead of pictures so you get used to the pace: about 5 seconds a choice, first honest reaction. There is no right answer. Keys 1 and 2 pick.</span></div>
+      <div class="row"><button class="btn primary" id="ps-start" type="button">Start warm-up</button></div>
+    </section>
+    <h2 class="ps-h">BAE's values</h2>
+    <div class="ps-panel">
+            <p style="margin:0 0 10px"><b>BAE Systems' values</b> (from BAE's own careers site). BAE says these are what it looks for, so know them, but answer as you really are at work:</p>
       <div class="vals">
         <div class="val"><b>Trusted</b><ul><li>Being committed: giving our best every day</li><li>Doing what we say we will</li><li>Doing the right thing</li></ul><p><i>Your evidence:</i> compliance work in a regulated sector, where accuracy, procedure and owning your mistakes matter.</p></div>
         <div class="val"><b>Innovative</b><ul><li>Being curious: seeking new ways to make things better</li><li>Learning constantly, from successes and failures</li><li>Turning ideas into actions</li></ul><p><i>Your evidence:</i> moving from compliance into software, and finding a new route for your meal planner project (Story 1).</p></div>
@@ -349,6 +363,8 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <p style="margin:12px 0 6px"><b>Quick check: which value does each behaviour show?</b> <span class="small">(practice items I wrote, not BAE's)</span></p>
       <div id="vq"></div>
     </div>
+  </div>
+
   <details>
     <summary>On the day: all games</summary>
     <div class="tipbody"><ol>
@@ -789,6 +805,60 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   $("me-del").addEventListener("click", function () { if (me.phase === "type") { me.typed = me.typed.slice(0, -1); $("me-entry").textContent = me.typed; } });
   $("me-pad").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) meType(b.dataset.d); });
 
+  // ---------------- Personality warm-up ----------------
+  var PS_PAIRS = [
+    [["I double-check my work before I hand it in", "T"], ["I look for a better way to do a task", "I"]],
+    [["I speak up when I see a problem", "B"], ["I keep promises, even small ones", "T"]],
+    [["I enjoy learning a tool nobody on the team knows yet", "I"], ["I volunteer for the hard task", "B"]],
+    [["I follow the process, especially when it matters", "T"], ["I try an idea quickly to see if it works", "I"]],
+    [["I set myself ambitious goals", "B"], ["I learn from what went wrong and adjust", "I"]],
+    [["I own my mistakes straight away", "T"], ["I put myself forward for new opportunities", "B"]],
+    [["I like to plan before I start", "T"], ["I like to start and adjust as I go", "I"]],
+    [["I like solving a problem with others", "-"], ["I like trying a problem on my own first", "-"]],
+    [["I ask questions until I really understand", "I"], ["I deliver what I said I would, on time", "T"]],
+    [["I challenge an idea if I think it is wrong", "B"], ["I build on other people's ideas", "-"]]
+  ];
+  var ps = { order: [], i: 0, picks: [], timer: null, t0: 0, locked: true };
+  function psStart() {
+    var o = PS_PAIRS.map(function (p, k) { return { k: k, flip: false }; });
+    shuffle(o);
+    // two repeats, shown the other way round, to check consistency
+    var rep = shuffle([0, 1, 2, 3, 4, 5, 6, 8].slice()).slice(0, 2);
+    o.splice(6, 0, { k: rep[0], flip: true, repeat: true }); o.push({ k: rep[1], flip: true, repeat: true });
+    ps.order = o; ps.i = 0; ps.picks = []; $("ps-start").hidden = true; psShow();
+  }
+  function psShow() {
+    var it = ps.order[ps.i], pair = PS_PAIRS[it.k], a = it.flip ? pair[1] : pair[0], b = it.flip ? pair[0] : pair[1];
+    it.shown = [a, b];
+    $("ps-lvl").textContent = "Choice " + (ps.i + 1) + " of " + ps.order.length; $("ps-count").textContent = "";
+    $("ps-opts").innerHTML = [a, b].map(function (x, j) { return '<button type="button" data-j="' + j + '"><kbd>' + (j + 1) + "</kbd>" + x[0] + "</button>"; }).join("");
+    coach("ps-coach", "tip", "First reaction", "Think of yourself at work on a normal day. Pick within about 5 seconds.");
+    ps.locked = false; ps.t0 = Date.now(); clearInterval(ps.timer);
+    ps.timer = setInterval(function () { var left = Math.max(0, 5 - (Date.now() - ps.t0) / 1000); $("ps-fill").style.width = (100 * left / 5) + "%"; $("ps-bar").className = "timebar" + (left < 1.5 ? " low" : ""); }, 100);
+  }
+  function psPick(j) {
+    if (ps.locked) return; ps.locked = true; clearInterval(ps.timer);
+    var it = ps.order[ps.i]; ps.picks.push({ k: it.k, text: it.shown[j][0], tag: it.shown[j][1], repeat: !!it.repeat, secs: (Date.now() - ps.t0) / 1000 });
+    ps.i++;
+    if (ps.i < ps.order.length) psShow(); else psEnd();
+  }
+  function psEnd() {
+    var tally = { T: 0, I: 0, B: 0 }, slow = 0;
+    ps.picks.forEach(function (p) { if (!p.repeat && tally[p.tag] !== undefined) tally[p.tag]++; if (p.secs > 6) slow++; });
+    var same = 0, reps = ps.picks.filter(function (p) { return p.repeat; });
+    reps.forEach(function (r) { var first = ps.picks.filter(function (p) { return p.k === r.k && !p.repeat; })[0]; if (first && first.text === r.text) same++; });
+    $("ps-opts").innerHTML = ""; $("ps-lvl").textContent = "Done"; $("ps-fill").style.width = "0%";
+    coach("ps-coach", same === reps.length ? "ok" : "bad", "Your warm-up",
+      "Consistency: you gave the same answer " + same + " of " + reps.length + " times when a choice came back the other way round. " +
+      (same === reps.length ? "Good: that is what these games check." : "Slow down by a second and answer as you really work, not as you think you should.") +
+      " Your picks leaned Trusted " + tally.T + ", Innovative " + tally.I + ", Bold " + tally.B + ". All three are BAE values, so any mix is fine. " +
+      (slow ? slow + " choices took over 6 seconds: go with your first reaction." : "Pace was good."));
+    $("ps-start").textContent = "Run it again"; $("ps-start").hidden = false;
+  }
+  $("ps-start").addEventListener("click", psStart);
+  $("ps-opts").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) psPick(+b.dataset.j); });
+  document.addEventListener("keydown", function (e) { if (!$("g-personality").hidden && /^[12]$/.test(e.key)) psPick(+e.key - 1); });
+
   // ---------------- values quick check ----------------
   var VQ = [
     ["You notice a figure in a report is wrong after it has been sent. You flag it to your manager straight away.", "Trusted", "Doing the right thing, even when keeping quiet would be easier."],
@@ -826,12 +896,13 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   });
   function route() {
     var g = (location.hash || "#numbers").slice(1);
-    if (["numbers", "shapes", "odd", "memory"].indexOf(g) === -1) g = "numbers";
-    ["numbers", "shapes", "odd", "memory"].forEach(function (x) { $("g-" + x).hidden = x !== g; });
+    if (["numbers", "shapes", "odd", "memory", "personality"].indexOf(g) === -1) g = "numbers";
+    ["numbers", "shapes", "odd", "memory", "personality"].forEach(function (x) { $("g-" + x).hidden = x !== g; });
     document.querySelectorAll(".tabs a").forEach(function (a) { a.setAttribute("aria-selected", String(a.dataset.g === g)); });
     if (g !== "numbers" && window.__tt.stopNumbers) window.__tt.stopNumbers();
     if (g !== "shapes") { clearInterval(sh.timer); sh.locked = true; }
     if (g !== "odd") { clearInterval(od.timer); od.locked = true; }
+    if (g !== "personality") { clearInterval(ps.timer); }
   }
   window.addEventListener("hashchange", route); route();
   $("sh-best").textContent = best("tt-sh", 1); $("od-best").textContent = best("tt-od", 1); $("me-best").textContent = best("tt-me", 4);
