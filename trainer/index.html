@@ -111,6 +111,8 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .opts.six { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; max-width: 480px; margin: 0 auto; }
 #nu-modes { margin-top: 8px; }
 .lvvid { margin-top: 8px; }
+.lvvid video { max-height: 45vh; object-fit: contain; }
+.lvpick { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 0; }
 .vidbox video { width: 100%; border-radius: 10px; background: #000; display: block; margin-top: 8px; }
 .vals { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px; }
 .val { border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; background: var(--surface); }
@@ -171,7 +173,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button>
   </div>
   <p class="lvnote" id="nu-note">Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.</p>
-  <details class="vidbox lvvid" id="nu-lv" hidden><summary>Watch: how to solve <span></span></summary><video controls preload="none" playsinline></video></details>
+  <details class="vidbox lvvid" id="nu-lv" open><summary>How to solve each level (short videos)</summary><div class="lvpick" role="group" aria-label="Level video"><button class="mode" type="button" data-v="easy" aria-pressed="true">Easy</button><button class="mode" type="button" data-v="medium" aria-pressed="false">Medium</button><button class="mode" type="button" data-v="hard" aria-pressed="false">Hard</button><button class="mode" type="button" data-v="ultimate" aria-pressed="false">Ultimate</button></div><video controls preload="metadata" playsinline></video></details>
 
   <section class="board" aria-label="Game board">
     <div class="top"><span class="lvl" id="lvl">Level 1</span><span class="lvl" id="clock">0:20</span></div>
@@ -248,7 +250,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button>
   </div>
   <p class="lvnote" id="sh-note">Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.</p>
-  <details class="vidbox lvvid" id="sh-lv" hidden><summary>Watch: how to solve <span></span></summary><video controls preload="none" playsinline></video></details>
+  <details class="vidbox lvvid" id="sh-lv" open><summary>How to solve each level (short videos)</summary><div class="lvpick" role="group" aria-label="Level video"><button class="mode" type="button" data-v="easy" aria-pressed="true">Easy</button><button class="mode" type="button" data-v="medium" aria-pressed="false">Medium</button><button class="mode" type="button" data-v="hard" aria-pressed="false">Hard</button><button class="mode" type="button" data-v="ultimate" aria-pressed="false">Ultimate</button></div><video controls preload="metadata" playsinline></video></details>
     <section class="board" aria-label="Shapes board">
       <div class="top"><span class="lvl" id="sh-lvl">Level 1</span><span class="lvl" id="sh-clock">0:15</span></div>
       <div class="timebar" id="sh-bar"><i id="sh-fill"></i></div>
@@ -286,7 +288,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button>
   </div>
   <p class="lvnote" id="od-note">Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.</p>
-  <details class="vidbox lvvid" id="od-lv" hidden><summary>Watch: how to solve <span></span></summary><video controls preload="none" playsinline></video></details>
+  <details class="vidbox lvvid" id="od-lv" open><summary>How to solve each level (short videos)</summary><div class="lvpick" role="group" aria-label="Level video"><button class="mode" type="button" data-v="easy" aria-pressed="true">Easy</button><button class="mode" type="button" data-v="medium" aria-pressed="false">Medium</button><button class="mode" type="button" data-v="hard" aria-pressed="false">Hard</button><button class="mode" type="button" data-v="ultimate" aria-pressed="false">Ultimate</button></div><video controls preload="metadata" playsinline></video></details>
     <section class="board" aria-label="Odd one out board">
       <div class="top"><span class="lvl" id="od-lvl">Level 1</span><span class="lvl" id="od-clock">0:10</span></div>
       <div class="timebar" id="od-bar"><i id="od-fill"></i></div>
@@ -318,7 +320,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button>
   </div>
   <p class="lvnote" id="me-note">Adaptive: starts at 4 digits; 2 right in a row adds a digit and speeds up the flashes, a miss takes one away.</p>
-  <details class="vidbox lvvid" id="me-lv" hidden><summary>Watch: how to solve <span></span></summary><video controls preload="none" playsinline></video></details>
+  <details class="vidbox lvvid" id="me-lv" open><summary>How to solve each level (short videos)</summary><div class="lvpick" role="group" aria-label="Level video"><button class="mode" type="button" data-v="easy" aria-pressed="true">Easy</button><button class="mode" type="button" data-v="medium" aria-pressed="false">Medium</button><button class="mode" type="button" data-v="hard" aria-pressed="false">Hard</button><button class="mode" type="button" data-v="ultimate" aria-pressed="false">Ultimate</button></div><video controls preload="metadata" playsinline></video></details>
     <section class="board" aria-label="Memory board">
       <div class="top"><span class="lvl" id="me-lvl">Length 4</span><span class="lvl" id="me-state">Ready</span></div>
       <div class="task"><span class="op" id="me-op">Watch the digits, then type them in order</span><span class="target" id="me-show">&nbsp;</span></div>
@@ -890,16 +892,19 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   // ---------------- level videos ----------------
   (function () {
     var GAME = { nu: "numbers", sh: "shapes", od: "odd", me: "memory" };
-    document.addEventListener("click", function (e) {
-      var b = e.target.closest(".modes .mode[data-m]"); if (!b) return;
-      var grp = b.closest(".modes"), pfx = grp.id.split("-")[0], box = document.getElementById(pfx + "-lv");
-      if (!box || !GAME[pfx]) return;
-      var lv = b.dataset.m;
-      if (lv === "adaptive") { box.hidden = true; return; }
+    function setVid(pfx, lv) {
+      var box = document.getElementById(pfx + "-lv"); if (!box) return;
       var v = box.querySelector("video"), src = "videos/" + GAME[pfx] + "-" + lv + ".mp4";
       if (v.getAttribute("src") !== src) { v.pause(); v.setAttribute("src", src); }
-      box.querySelector("summary span").textContent = lv.charAt(0).toUpperCase() + lv.slice(1) + " (under 30 s)";
-      box.hidden = false;
+      box.querySelectorAll(".lvpick .mode").forEach(function (x) { x.setAttribute("aria-pressed", String(x.dataset.v === lv)); });
+    }
+    Object.keys(GAME).forEach(function (p) { setVid(p, "easy"); });
+    document.addEventListener("click", function (e) {
+      var pick = e.target.closest(".lvpick .mode");
+      if (pick) { setVid(pick.closest(".lvvid").id.split("-")[0], pick.dataset.v); return; }
+      var b = e.target.closest(".modes .mode[data-m]"); if (!b) return;
+      var pfx = b.closest(".modes").id.split("-")[0];
+      if (GAME[pfx] && b.dataset.m !== "adaptive") setVid(pfx, b.dataset.m);
     });
   })();
 
