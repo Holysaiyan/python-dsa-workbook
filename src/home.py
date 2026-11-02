@@ -189,7 +189,7 @@ footer p {{ margin: 0; }}
 
   <section class="section" id="syllabus">
     <h2>Syllabus</h2>
-    <p class="intro">Python basics for anyone new or rusty, six DSA modules from how to start a problem to dynamic programming, and a final project you can talk about in interviews. Each lesson is about 15 to 35 minutes of reading and coding, plus the practice.</p>
+    <p class="intro">Python basics for anyone new or rusty, six DSA modules from how to start a problem to dynamic programming, a Lloyds-style tasks module (JSON validation, a transactional key-value store, weighted graphs), and a final project you can talk about in interviews. Each lesson is about 15 to 35 minutes of reading and coding, plus the practice.</p>
     <div class="modules">{syllabus}</div>
   </section>
 

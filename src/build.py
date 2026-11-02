@@ -11,9 +11,29 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from extras import EXTRAS
 from extras_more import EXTRAS_MORE
+try:
+    from extras_lloyds import EXTRAS_LLOYDS
+except ImportError:
+    EXTRAS_LLOYDS = {}
 from videos import VIDEOS
 from ladder import LADDER
+try:
+    from ladder_b import LADDER_B
+    LADDER.update(LADDER_B)
+except ImportError:
+    pass
+try:
+    from ladder_c import LADDER_C
+    LADDER.update(LADDER_C)
+except ImportError:
+    pass
+try:
+    from ladder_lloyds import LADDER_L
+    LADDER.update(LADDER_L)
+except ImportError:
+    pass
 EXTRAS.update(EXTRAS_MORE)
+EXTRAS.update(EXTRAS_LLOYDS)
 OUT = os.path.join(HERE, "..", "workbook", "lessons.js")
 
 HARNESS = r'''
@@ -76,7 +96,7 @@ def run(code, timeout=30):
 def main():
     modules = []
     problems = []
-    for name in ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7"]:
+    for name in ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m8", "m7"]:
         m = importlib.import_module(name)
         mod = {"id": m.MODULE["id"], "title": m.MODULE["title"], "lessons": [], "n": m.MODULE.get("n") or str(len([x for x in modules if not x["n"].isalpha()]) + 1)}
         for L in m.LESSONS:
@@ -213,7 +233,7 @@ def main():
             for Q in LADDER.get(L["id"], []):
                 tests = [{"label": lab, "args": args, "hidden": hid} for lab, args, hid in Q["tests"]]
                 probe = [{"args": t["args"], "expected": None} for t in tests]
-                rc, out, err = run(Q["solution"] + "\n" + f"__call = {Q['func']}" + "\nimport json\ndef _arg(a):\n    return eval(a['__py__']) if isinstance(a, dict) and '__py__' in a else a\nprint(json.dumps([__call(*[_arg(a) for a in t['args']]) for t in json.loads(%r)]))\n" % json.dumps(probe))
+                rc, out, err = run(Q["solution"] + "\n" + (Q.get("wrapper") or f"__call = {Q['func']}") + "\nimport json\ndef _arg(a):\n    return eval(a['__py__']) if isinstance(a, dict) and '__py__' in a else a\nprint(json.dumps([__call(*[_arg(a) for a in t['args']]) for t in json.loads(%r)]))\n" % json.dumps(probe))
                 if rc != 0:
                     problems.append(f"{L['id']} ladder {Q['level']}: solution crashed\n{err}"); continue
                 for t, e in zip(tests, json.loads(out.strip().splitlines()[-1])):
@@ -224,7 +244,7 @@ def main():
                 rc, out, err = run(Q["starter"] + "\n" + harness_for(Q, tests))
                 if all(r["ok"] for r in json.loads(out.split("@@RESULTS@@")[-1])):
                     problems.append(f"{L['id']} ladder {Q['level']}: starter passes")
-                lesson["ladder"].append({"level": Q["level"], "title": Q["title"], "prompt": Q["prompt"], "func": Q["func"], "starter": Q["starter"],
+                lesson["ladder"].append({"level": Q["level"], "title": Q["title"], "prompt": Q["prompt"], "func": Q["func"], "starter": Q["starter"], "wrapper": Q.get("wrapper"),
                                          "tests": tests, "hints": Q["hints"], "solution": Q["solution"], "explain": Q["explain"],
                                          "video": "videos/ladder-" + L["id"] + "-" + Q["level"].lower() + ".mp4"})
             mod["lessons"].append(lesson)

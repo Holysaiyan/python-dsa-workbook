@@ -482,6 +482,18 @@ td:first-child { font-weight: 600; }
                 S[name] = function () { var r = orig.apply(this, arguments); return Array.isArray(r) && !r.__class__ ? B.$list(r) : r; };
                 S[name].__patched = true;
               });
+              // Brython 3.13.2 bug: setdefault on an all-string dict stores a non-string key as a string ({0: x} becomes {'0': x})
+              (function () {
+                var B = window.__BRYTHON__, D = B.builtins.dict, orig = D.setdefault;
+                if (!orig || orig.__patched) return;
+                D.setdefault = function (self, key, dflt) {
+                  if (arguments.length > 3 || typeof key === "string" || (key && key.$kw)) return orig.apply(this, arguments);
+                  if (dflt === undefined) dflt = B.builtins.None;
+                  if (D.__contains__(self, key)) return D.__getitem__(self, key);
+                  D.__setitem__(self, key, dflt); return dflt;
+                };
+                D.setdefault.__patched = true;
+              })();
               window.__BRYTHON__.runPythonSource(src, "dsa_runner");
             }
           } catch (e) { rej(e); return; }
@@ -1043,8 +1055,9 @@ td:first-child { font-weight: 600; }
       article.appendChild(el("h2", null, "Easy, medium, hard"));
       article.appendChild(el("p", "small", "Three more problems on this pattern, getting harder. Each has a short video of Coach Max solving it: try first, then watch."));
       L.ladder.forEach(function (Q) {
-        var b = bench({ kind: "ladder", badge: Q.level, key: L.id + ":" + Q.level.toLowerCase(), lesson: L, title: Q.title, prompt: Q.prompt, starter: Q.starter, func: Q.func, wrapper: null, tests: Q.tests, hints: Q.hints, solution: Q.solution, explain: Q.explain, limit: { Easy: 8, Medium: 15, Hard: 25 }[Q.level] });
-        var v = el("details", "vid ladder-vid", "<summary>Watch Coach Max solve it (" + esc(Q.level) + ")</summary>" + '<video controls preload="none" playsinline src="' + esc(Q.video) + '"></video>');
+        var b = bench({ kind: "ladder", badge: Q.level, key: L.id + ":" + Q.level.toLowerCase(), lesson: L, title: Q.title, prompt: Q.prompt, starter: Q.starter, func: Q.func, wrapper: Q.wrapper || null, tests: Q.tests, hints: Q.hints, solution: Q.solution, explain: Q.explain, limit: { Easy: 8, Medium: 15, Hard: 25 }[Q.level] });
+        var v = el("details", "vid ladder-vid", "<summary>Watch Coach Max solve it (" + esc(Q.level) + ")</summary>" + '<video controls preload="metadata" playsinline src="' + esc(Q.video) + '"></video>');
+        v.querySelector("video").addEventListener("error", function () { v.hidden = true; });
         b.appendChild(v); article.appendChild(b);
       });
     }
