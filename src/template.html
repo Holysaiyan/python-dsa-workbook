@@ -472,6 +472,13 @@ td:first-child { font-weight: 600; }
           try {
             if (!window.pyReady) {
               try { window.brython({ debug: 0 }); } catch (e) { /* already initialised */ }
+              // Brython 3.13.2 bug: str.split / rsplit with maxsplit return a raw JS array, not a Python list
+              ["split", "rsplit"].forEach(function (name) {
+                var B = window.__BRYTHON__, S = B.builtins.str, orig = S[name];
+                if (!orig || orig.__patched) return;
+                S[name] = function () { var r = orig.apply(this, arguments); return Array.isArray(r) && !r.__class__ ? B.$list(r) : r; };
+                S[name].__patched = true;
+              });
               window.__BRYTHON__.runPythonSource(src, "dsa_runner");
             }
           } catch (e) { rej(e); return; }
