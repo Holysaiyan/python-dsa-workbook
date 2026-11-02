@@ -136,12 +136,16 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .ps-opts button:hover { border-color: var(--accent); }
 .ps-h { font-family: var(--f-display); font-size: 1.3rem; margin: 22px 0 8px; }
 .ps-panel { border: 1px solid var(--rule); border-radius: 14px; padding: 14px 16px; background: var(--surface); }
+.od-cmp { display: flex; gap: 14px; margin-top: 8px; }
+.od-cmp > span { display: grid; justify-items: center; gap: 2px; width: 84px; padding: 6px; border-radius: 10px; background: var(--surface); color: var(--ink); }
+.od-cmp svg { width: 64px; height: 64px; }
+.od-cmp i { font-style: normal; font-size: .75rem; color: var(--muted); }
 .lvnote { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .odd-grid { display: grid; gap: 8px; justify-content: center; }
 .odd-grid button { border: 2px solid transparent; background: var(--tile); border-radius: 10px; padding: 6px; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
 .odd-grid button.right { border-color: var(--ok); background: var(--ok-soft); }
 .odd-grid button.wrong { border-color: var(--bad); background: var(--bad-soft); }
-.odd-grid svg { width: 80%; height: 80%; }
+.odd-grid svg { width: 100%; height: 100%; }
 .entry { text-align: center; font-family: var(--f-mono); font-size: 1.8rem; font-weight: 700; letter-spacing: .2em; min-height: 1.6em; }
 .pad { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; max-width: 360px; margin: 0 auto; width: 100%; }
 .pad button { border: 1px solid var(--rule); background: var(--tile); color: var(--ink); border-radius: 10px; font-family: var(--f-mono); font-weight: 700; font-size: 1.3rem; padding: 10px 0; }
@@ -797,15 +801,15 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   od.mode = "adaptive";
   var OD_LV = {
     easy:     { cols: 3, kinds: ["turn", "shape"], turns: [90], size: 0.78, time: 12 },
-    medium:   { cols: 4, kinds: ["turn", "turn", "size", "shape"], turns: [90, 180], size: 0.8, time: 8 },
-    hard:     { cols: 5, kinds: ["turn", "turn", "size", "size"], turns: [45, 90, 180], size: 0.86, time: 6 },
-    ultimate: { cols: 6, kinds: ["turn", "size", "size"], turns: [45, 180], size: 0.9, time: 5 }
+    medium:   { cols: 4, kinds: ["turn", "turn", "size", "shape"], turns: [90, 180], size: 0.75, time: 8 },
+    hard:     { cols: 5, kinds: ["turn", "turn", "size", "size"], turns: [45, 90, 180], size: 0.8, time: 6 },
+    ultimate: { cols: 6, kinds: ["turn", "size", "size"], turns: [45, 180], size: 0.84, time: 5 }
   };
   var OD_NOTES = { adaptive: "Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate.",
     easy: "Easy: 3 by 3, the odd one is turned a quarter or a different shape, 12 s.",
     medium: "Medium: 4 by 4, turned, a different shape or smaller, 8 s.",
     hard: "Hard: 5 by 5, turned by as little as 45 degrees or only slightly smaller, 6 s.",
-    ultimate: "Ultimate: 6 by 6, tiny size differences and 45 or 180 degree turns, 5 s." };
+    ultimate: "Ultimate: 6 by 6, small size differences and 45 or 180 degree turns, 5 s." };
   function odCfg() {
     if (od.mode !== "adaptive") return OD_LV[od.mode];
     var t = ["easy", "medium", "hard", "ultimate"][Math.min(3, Math.floor(od.lv / 3))], c = Object.assign({}, OD_LV[t]);
@@ -822,7 +826,8 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     var html = "";
     for (var i = 0; i < n; i++) html += '<button type="button" data-i="' + i + '" style="color:var(--ink)">' + (i === ans ? svg(oddShape, oddA, oddS) : svg(shape, angle, 1)) + "</button>";
     var g = $("od-grid"); g.style.gridTemplateColumns = "repeat(" + cols + ", minmax(0, 72px))"; g.innerHTML = html;
-    od.ans = ans; od.diff = diff; od.locked = false; od.max = cfg.time;
+    od.ans = ans; od.diff = diff; od.locked = false; od.max = cfg.time; od.pct = Math.round((1 - oddS) * 100);
+    od.cmp = '<span class="od-cmp"><span>' + svg(shape, angle, 1) + "<i>usual</i></span><span>" + svg(oddShape, oddA, oddS) + "<i>odd one</i></span></span>";
     $("od-lvl").textContent = od.mode === "adaptive" ? "Level " + (od.lv + 1) : od.mode.charAt(0).toUpperCase() + od.mode.slice(1); $("od-start").hidden = true; $("od-next").hidden = true;
     coach("od-coach", "tip", "Tip", "Scan row by row, left to right. Look at one feature at a time: the point of the shape, then its size.");
     od.t0 = Date.now(); clearInterval(od.timer);
@@ -832,10 +837,10 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     if (od.locked) return; od.locked = true; clearInterval(od.timer);
     var ok = i === od.ans, secs = ((Date.now() - od.t0) / 1000).toFixed(1);
     document.querySelectorAll("#od-grid button").forEach(function (b, k) { b.disabled = true; if (k === od.ans) b.classList.add("right"); else if (k === i) b.classList.add("wrong"); });
-    var what = { turn: "it was turned", size: "it was slightly smaller", shape: "it was a different shape" }[od.diff];
+    var what = { turn: "it was turned", size: "it was " + od.pct + "% smaller", shape: "it was a different shape" }[od.diff];
     var ad = od.mode === "adaptive";
-    if (ok) { od.r++; od.streak++; if (ad && od.streak >= 2) { od.lv++; od.streak = 0; } coach("od-coach", "ok", "Correct, " + secs + " s", "Found it: " + what + "."); }
-    else { od.w++; od.streak = 0; if (ad) od.lv = Math.max(0, od.lv - 1); coach("od-coach", "bad", i < 0 ? "Out of time" : "Not that one", "The odd one is outlined in green: " + what + "."); }
+    if (ok) { od.r++; od.streak++; if (ad && od.streak >= 2) { od.lv++; od.streak = 0; } coach("od-coach", "ok", "Correct, " + secs + " s", "Found it: " + what + "." + od.cmp); }
+    else { od.w++; od.streak = 0; if (ad) od.lv = Math.max(0, od.lv - 1); coach("od-coach", "bad", i < 0 ? "Out of time" : "Not that one", "The odd one is outlined in green: " + what + ". Side by side:" + od.cmp); }
     $("od-r").textContent = od.r; $("od-w").textContent = od.w; if (ad) $("od-best").textContent = best("tt-od", od.lv + 1);
     $("od-next").hidden = false; $("od-next").focus();
   }
