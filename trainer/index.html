@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Practice games for game-based assessments: number targets, shape rotation, odd one out and digit memory.">
+<meta name="description" content="Practice games for game-based assessments: number targets, shape rotation, odd one out, memory, flashback, disco numbers, pulse and personality.">
 <style>:root{color-scheme:light}body{margin:0}[hidden]{display:none!important}</style>
 <title>Target Trainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -140,6 +140,28 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .od-cmp > span { display: grid; justify-items: center; gap: 2px; width: 84px; padding: 6px; border-radius: 10px; background: var(--surface); color: var(--ink); }
 .od-cmp svg { width: 64px; height: 64px; }
 .od-cmp i { font-style: normal; font-size: .75rem; color: var(--muted); }
+.fb-stage { height: 170px; display: grid; place-items: center; }
+.fb-stage svg { width: 140px; height: 140px; }
+.fb-stage .fb-new { font-family: var(--f-body); color: var(--muted); font-size: .9rem; }
+.btn kbd { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); }
+.dn-grid { display: grid; grid-template-columns: repeat(3, 76px); gap: 14px; justify-content: center; margin: 6px 0; }
+.dn-grid button { width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--rule); background: var(--tile); color: var(--ink); font-family: var(--f-mono); font-size: 1.6rem; font-weight: 700; transition: background .1s; }
+.dn-grid button.lit { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.dn-grid button.done { background: var(--ok-soft); border-color: var(--ok); }
+.dn-grid button.bad { background: var(--bad-soft); border-color: var(--bad); }
+.dn-sums { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.dn-sums button { min-width: 72px; padding: 12px; border-radius: 12px; border: 2px solid var(--rule); background: var(--surface); color: var(--ink); font-family: var(--f-mono); font-size: 1.3rem; font-weight: 700; }
+.dn-sums button.right { border-color: var(--ok); background: var(--ok-soft); }
+.dn-sums button.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.pu-stage { position: relative; height: 260px; border-radius: 14px; background: var(--tile); cursor: pointer; outline: none; }
+.pu-stage:focus-visible { box-shadow: 0 0 0 3px var(--accent); }
+.pu-dot { position: absolute; width: 56px; height: 56px; border-radius: 50%; transform: translate(-50%, -50%); }
+.pu-stage.flash-ok { box-shadow: inset 0 0 0 4px var(--ok); }
+.pu-stage.flash-bad { box-shadow: inset 0 0 0 4px var(--bad); }
+.ps-opts .ps-pic { font-size: 2.4rem; line-height: 1; }
+.spin .opt .mini { animation: spin 7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin .opt .mini { animation-duration: 20s; } }
 .lvnote { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 .odd-grid { display: grid; gap: 8px; justify-content: center; }
 .odd-grid button { border: 2px solid transparent; background: var(--tile); border-radius: 10px; padding: 6px; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
@@ -160,6 +182,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <div>
       <h1>Target <span>Trainer</span></h1>
       <p class="sub">Practice for game-based assessments. Accuracy first, then speed.</p>
+      <p class="sub">BAE candidates report three games: a number game (<b>Numbers</b>), a shape game (<b>Shapes</b>) and a picture-choice personality game (<b>Personality</b>). HireVue employers pick 4 to 6 of its 13 games, so <b>Memory</b> (Digitspan), <b>Odd one out</b> (Singularity), <b>Flashback</b>, <b>Disco numbers</b> and <b>Pulse</b> are here in case.</p>
     </div>
   </header>
   <nav class="tabs" role="tablist" aria-label="Games">
@@ -167,6 +190,9 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <a role="tab" href="#shapes" data-g="shapes">Shapes</a>
     <a role="tab" href="#odd" data-g="odd">Odd one out</a>
     <a role="tab" href="#memory" data-g="memory">Memory</a>
+    <a role="tab" href="#flashback" data-g="flashback">Flashback</a>
+    <a role="tab" href="#disco" data-g="disco">Disco numbers</a>
+    <a role="tab" href="#pulse" data-g="pulse">Pulse</a>
     <a role="tab" href="#personality" data-g="personality">Personality</a>
   </nav>
 
@@ -269,6 +295,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <div class="shape-target" id="sh-target"></div>
       <div class="opts" id="sh-opts"></div>
       <div class="coach tip" id="sh-coach"><b class="k">How to play</b><span>The right option is the target turned round (90, 180 or 270 degrees, any direction). The others are a <b>mirror image</b> or have <b>one square moved</b>. On Ultimate, <b>more than one</b> option can be right: tick every match, then Submit. Keys 1 to 6 pick, Enter submits.</span></div>
+      <div class="toggle"><input type="checkbox" id="sh-spin"><label for="sh-spin">Spinning options, like HireVue Shapedance</label></div>
       <div class="toggle"><input type="checkbox" id="sh-guided"><label for="sh-guided">Guided: no timer, plus a "Show me" walkthrough</label></div>
       <div class="row"><button class="btn" id="sh-help" type="button" hidden>Show me: step 1</button><button class="btn primary" id="sh-start" type="button">Start</button><button class="btn primary" id="sh-submit" type="button" hidden>Submit</button><button class="btn" id="sh-next" type="button" hidden>Next</button></div>
     </section>
@@ -337,6 +364,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
       <div class="top"><span class="lvl" id="me-lvl">Length 4</span><span class="lvl" id="me-state">Ready</span></div>
       <div class="task"><span class="op" id="me-op">Watch the digits, then type them in order</span><span class="target" id="me-show">&nbsp;</span></div>
       <div class="entry" id="me-entry" aria-live="polite"></div>
+      <div class="toggle"><input type="checkbox" id="me-letters" checked><label for="me-letters">Include letters, like HireVue Digitspan</label></div>
       <div class="pad" id="me-pad"></div>
       <div class="coach tip" id="me-coach"><b class="k">How to play</b><span>Digits appear one at a time. Group them in your head in threes, like a phone number: 4 7 2, 9 1 5. Say them silently as they appear. Type with the keypad or your keyboard. Two right in a row adds a digit; a miss takes one away.</span></div>
       <div class="row"><button class="btn primary" id="me-start" type="button">Start</button><button class="btn" id="me-del" type="button" hidden>Delete</button><button class="btn" id="me-ok" type="button" hidden>Check</button></div>
@@ -356,13 +384,73 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <section class="score"><div class="card"><b id="me-r">0</b><span>correct</span></div><div class="card"><b id="me-w">0</b><span>wrong</span></div><div class="card"><b id="me-best">4</b><span>longest recalled</span></div></section>
   </div>
 
+  <div class="game" id="g-flashback" hidden>
+  <div class="modes" role="group" aria-label="Level" id="fb-modes"><button class="mode" data-m="easy" aria-pressed="true" type="button">Easy</button><button class="mode" data-m="medium" aria-pressed="false" type="button">Medium</button><button class="mode" data-m="hard" aria-pressed="false" type="button">Hard</button><button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button></div>
+  <p class="lvnote" id="fb-note">Easy: is this shape the same as the one just before it (1 back)? 2.5 s each.</p>
+    <section class="board" aria-label="Flashback board">
+      <div class="top"><span class="lvl" id="fb-lvl">Easy</span><span class="lvl" id="fb-count">20 shapes</span></div>
+      <div class="timebar" id="fb-bar"><i id="fb-fill"></i></div>
+      <div class="task"><span class="op" id="fb-op">Same as the one <b id="fb-n">1</b> back?</span></div>
+      <div class="fb-stage" id="fb-stage"></div>
+      <div class="row"><button class="btn" id="fb-no" type="button" disabled><kbd>&larr;</kbd> Different</button><button class="btn" id="fb-yes" type="button" disabled>Same <kbd>&rarr;</kbd></button></div>
+      <div class="coach tip" id="fb-coach"><b class="k">How to play</b><span>Shapes appear one at a time. For each one, decide: is it the <b>same</b> as the shape shown N steps earlier? On Easy, N is 1 (the one just before). The first N shapes are just to remember. Keep a rolling list in your head, said silently: "red star, blue circle". Arrow keys: left = different, right = same.</span></div>
+      <div class="row"><button class="btn primary" id="fb-start" type="button">Start</button></div>
+    </section>
+    <section class="score"><div class="card"><b id="fb-r">0</b><span>correct</span></div><div class="card"><b id="fb-w">0</b><span>wrong</span></div><div class="card"><b id="fb-m">0</b><span>missed</span></div></section>
+    <details><summary>Flashback tips</summary><div class="tipbody"><ol>
+      <li><b>Keep a rolling list.</b> Say each shape silently as a short label, colour first: "red star". For 2 back, keep the last two labels and drop the oldest each time.</li>
+      <li><b>Compare, then update.</b> When a new shape appears, compare it with the label N back, answer, then add the new one to your list. Doing it in that order stops you losing your place.</li>
+      <li><b>Colour and shape both count.</b> A red star is not the same as a blue star.</li>
+      <li><b>Lost track? Answer "different" and rebuild.</b> Most shapes are not matches, so it is the safer guess, and the list rebuilds in N steps.</li>
+      <li><b>This is the game candidates rank hardest.</b> Getting about 75% right on 2 back is a solid score.</li>
+    </ol></div></details>
+  </div>
+
+  <div class="game" id="g-disco" hidden>
+  <div class="modes" role="group" aria-label="Level" id="dn-modes"><button class="mode" data-m="easy" aria-pressed="true" type="button">Easy</button><button class="mode" data-m="medium" aria-pressed="false" type="button">Medium</button><button class="mode" data-m="hard" aria-pressed="false" type="button">Hard</button><button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button></div>
+  <p class="lvnote" id="dn-note">Easy: 3 lights, slow.</p>
+    <section class="board" aria-label="Disco numbers board">
+      <div class="top"><span class="lvl" id="dn-lvl">Easy</span><span class="lvl" id="dn-state">Ready</span></div>
+      <div class="task"><span class="op" id="dn-op">Watch the order the circles light up</span></div>
+      <div class="dn-grid" id="dn-grid"></div>
+      <div class="dn-sums" id="dn-sums" hidden></div>
+      <div class="coach tip" id="dn-coach"><b class="k">How to play</b><span>Circles with numbers light up one at a time. First, tap the circles in the same order. Then pick the total of the numbers that lit up. Tip: say each number as it lights ("seven, two, five") and keep a running total in your head: 7, 9, 14.</span></div>
+      <div class="row"><button class="btn primary" id="dn-start" type="button">Start</button></div>
+    </section>
+    <section class="score"><div class="card"><b id="dn-r">0</b><span>order right</span></div><div class="card"><b id="dn-s">0</b><span>sum right</span></div><div class="card"><b id="dn-w">0</b><span>rounds</span></div></section>
+    <details><summary>Disco numbers tips</summary><div class="tipbody"><ol>
+      <li><b>Say the numbers, not the positions.</b> "Seven, two, five" is easier to hold than "top left, middle, bottom right", and you need the numbers for the sum anyway.</li>
+      <li><b>Add as you go.</b> Keep a running total while the lights flash: 7, then 9, then 14. When the sum question comes, you already have it.</li>
+      <li><b>Then use position as a backup.</b> When tapping the order, find each number on the board. The numbers tell you which circle.</li>
+      <li><b>Check the sum against the last digits.</b> 7 + 2 + 5 ends in 4, so 14 or 24, never 13.</li>
+    </ol></div></details>
+  </div>
+
+  <div class="game" id="g-pulse" hidden>
+  <div class="modes" role="group" aria-label="Level" id="pu-modes"><button class="mode" data-m="easy" aria-pressed="true" type="button">Easy</button><button class="mode" data-m="medium" aria-pressed="false" type="button">Medium</button><button class="mode" data-m="hard" aria-pressed="false" type="button">Hard</button><button class="mode" data-m="ultimate" aria-pressed="false" type="button">Ultimate</button></div>
+  <p class="lvnote" id="pu-note">Easy: dots stay up for 1 second.</p>
+    <section class="board" aria-label="Pulse board">
+      <div class="top"><span class="lvl" id="pu-lvl">Easy</span><span class="lvl" id="pu-count">40 dots</span></div>
+      <div class="pu-stage" id="pu-stage" role="button" tabindex="0" aria-label="Tap here or press space when the dot is red"></div>
+      <div class="coach tip" id="pu-coach"><b class="k">How to play</b><span>Dots appear one at a time. Tap the area (or press Space) <b>only when the dot is red</b>. Any other colour: do nothing. It measures speed and holding back, so a wrong tap costs more than a slow one.</span></div>
+      <div class="row"><button class="btn primary" id="pu-start" type="button">Start</button></div>
+    </section>
+    <section class="score"><div class="card"><b id="pu-h">0</b><span>red hit</span></div><div class="card"><b id="pu-f">0</b><span>wrong taps</span></div><div class="card"><b id="pu-rt">-</b><span>average speed</span></div></section>
+    <details><summary>Pulse tips</summary><div class="tipbody"><ol>
+      <li><b>Hover, don't hammer.</b> Keep a finger resting on Space or the screen, ready, but wait to see the colour.</li>
+      <li><b>React to red, not to movement.</b> A dot appearing is not the signal. Its colour is.</li>
+      <li><b>Expect a run of reds, then a trap.</b> Several reds in a row build a habit of tapping; the next non-red is where people slip.</li>
+      <li><b>A slightly slower, accurate tap beats a fast wrong one.</b></li>
+    </ol></div></details>
+  </div>
+
   <div class="game" id="g-personality" hidden>
     <section class="board" aria-label="Work style warm-up">
       <div class="top"><span class="lvl" id="ps-lvl">Warm-up</span><span class="lvl" id="ps-count">12 choices</span></div>
       <div class="timebar" id="ps-bar"><i id="ps-fill"></i></div>
       <div class="task"><span class="op" id="ps-op">Which is more like you at work?</span></div>
       <div class="ps-opts" id="ps-opts"></div>
-      <div class="coach tip" id="ps-coach"><b class="k">What this is</b><span>Candidates report BAE's personality game shows pictures and asks which is more like you. It measures work style, not ability, and checks you answer consistently. This warm-up uses words instead of pictures so you get used to the pace: about 5 seconds a choice, first honest reaction. There is no right answer. Keys 1 and 2 pick.</span></div>
+      <div class="coach tip" id="ps-coach"><b class="k">What this is</b><span>Candidates report BAE's personality game shows pictures and asks which is more like you. It measures work style, not ability, and checks you answer consistently. HireVue's Portrait shows pictures only, and PortraitXT asks you to rate statements. This warm-up pairs a picture with a short statement so you practise both: about 5 seconds a choice, first honest reaction. There is no right answer. Keys 1 and 2 pick.</span></div>
       <div class="row"><button class="btn primary" id="ps-start" type="button">Start warm-up</button></div>
     </section>
     <h2 class="ps-h">BAE's values</h2>
@@ -729,6 +817,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     coach("sh-coach", "tip", "Tip", p.multi ? "One, two or three options can be right. Check each option against your landmark and a second square; tick every match, then Submit." : "Find where your landmark corner went: that tells you the turn, in any direction. Then check a second square before you pick.");
     sh.t0 = Date.now(); clearInterval(sh.timer); sh.help = 0;
     var g = $("sh-guided").checked;
+    $("sh-opts").classList.toggle("spin", $("sh-spin").checked && !g);
     $("sh-help").hidden = !g; $("sh-help").textContent = "Show me: step 1";
     if (g) { $("sh-clock").textContent = "no timer"; $("sh-fill").style.width = "100%"; $("sh-bar").className = "timebar"; return; }
     sh.timer = setInterval(function () { var left = Math.max(0, sh.max - (Date.now() - sh.t0) / 1000); clock("sh", left, sh.max); if (left <= 0) shEnd(true); }, 100);
@@ -854,14 +943,16 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   var ME_NOTES = { adaptive: "Adaptive: starts at 4 digits; 2 right in a row adds a digit and speeds up the flashes, a miss takes one away.",
     easy: "Easy: 4 to 5 digits, about one a second.", medium: "Medium: 6 to 7 digits, a bit quicker.",
     hard: "Hard: 8 to 9 digits, quicker again. Grouping in threes is essential here.", ultimate: "Ultimate: 10 to 11 digits, fast flashes. Group in threes and say them silently." };
-  $("me-pad").innerHTML = "1234567890".split("").map(function (d) { return '<button type="button" data-d="' + d + '">' + d + "</button>"; }).join("");
+  var ME_LETTERS = "BDFHKLRT";
+  function mePad() { $("me-pad").innerHTML = ("1234567890" + ($("me-letters").checked ? ME_LETTERS : "")).split("").map(function (d) { return '<button type="button" data-d="' + d + '">' + d + "</button>"; }).join(""); }
+  mePad(); $("me-letters").addEventListener("change", mePad);
   function meShow() {
     me.timers.forEach(clearTimeout); me.timers = [];
     var step = 900;
     if (me.mode !== "adaptive") { var c = ME_LV[me.mode]; me.len = rnd(c.len[0], c.len[1]); step = c.step; }
     else step = Math.max(600, 900 - Math.max(0, me.len - 5) * 50);
     var on = Math.round(step * 0.72);
-    me.seq = ""; for (var i = 0; i < me.len; i++) { var d; do { d = String(rnd(0, 9)); } while (me.seq.slice(-1) === d); me.seq += d; }
+    me.seq = ""; var pool = "0123456789" + ($("me-letters").checked ? ME_LETTERS : ""); for (var i = 0; i < me.len; i++) { var d; do { d = pool.charAt(rnd(0, pool.length - 1)); } while (me.seq.slice(-1) === d); me.seq += d; }
     me.typed = ""; me.phase = "show";
     $("me-entry").textContent = ""; $("me-lvl").textContent = (me.mode === "adaptive" ? "" : me.mode.charAt(0).toUpperCase() + me.mode.slice(1) + ", length ") + (me.mode === "adaptive" ? "Length " : "") + me.len; $("me-state").textContent = "Watch";
     $("me-start").hidden = true; $("me-ok").hidden = true; $("me-del").hidden = true;
@@ -890,16 +981,16 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 
   // ---------------- Personality warm-up ----------------
   var PS_PAIRS = [
-    [["I double-check my work before I hand it in", "T"], ["I look for a better way to do a task", "I"]],
-    [["I speak up when I see a problem", "B"], ["I keep promises, even small ones", "T"]],
-    [["I enjoy learning a tool nobody on the team knows yet", "I"], ["I volunteer for the hard task", "B"]],
-    [["I follow the process, especially when it matters", "T"], ["I try an idea quickly to see if it works", "I"]],
-    [["I set myself ambitious goals", "B"], ["I learn from what went wrong and adjust", "I"]],
-    [["I own my mistakes straight away", "T"], ["I put myself forward for new opportunities", "B"]],
-    [["I like to plan before I start", "T"], ["I like to start and adjust as I go", "I"]],
-    [["I like solving a problem with others", "-"], ["I like trying a problem on my own first", "-"]],
-    [["I ask questions until I really understand", "I"], ["I deliver what I said I would, on time", "T"]],
-    [["I challenge an idea if I think it is wrong", "B"], ["I build on other people's ideas", "-"]]
+    [["🔎", "I double-check my work before I hand it in", "T"], ["💡", "I look for a better way to do a task", "I"]],
+    [["📣", "I speak up when I see a problem", "B"], ["🤝", "I keep promises, even small ones", "T"]],
+    [["🧠", "I enjoy learning a tool nobody on the team knows yet", "I"], ["🙋", "I volunteer for the hard task", "B"]],
+    [["📋", "I follow the process, especially when it matters", "T"], ["🧪", "I try an idea quickly to see if it works", "I"]],
+    [["🎯", "I set myself ambitious goals", "B"], ["📈", "I learn from what went wrong and adjust", "I"]],
+    [["✅", "I own my mistakes straight away", "T"], ["🚀", "I put myself forward for new opportunities", "B"]],
+    [["🗓️", "I like to plan before I start", "T"], ["🔧", "I like to start and adjust as I go", "I"]],
+    [["👥", "I like solving a problem with others", "-"], ["🧩", "I like trying a problem on my own first", "-"]],
+    [["❓", "I ask questions until I really understand", "I"], ["⏱️", "I deliver what I said I would, on time", "T"]],
+    [["⚖️", "I challenge an idea if I think it is wrong", "B"], ["🧱", "I build on other people's ideas", "-"]]
   ];
   var ps = { order: [], i: 0, picks: [], timer: null, t0: 0, locked: true };
   function psStart() {
@@ -914,14 +1005,14 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     var it = ps.order[ps.i], pair = PS_PAIRS[it.k], a = it.flip ? pair[1] : pair[0], b = it.flip ? pair[0] : pair[1];
     it.shown = [a, b];
     $("ps-lvl").textContent = "Choice " + (ps.i + 1) + " of " + ps.order.length; $("ps-count").textContent = "";
-    $("ps-opts").innerHTML = [a, b].map(function (x, j) { return '<button type="button" data-j="' + j + '"><kbd>' + (j + 1) + "</kbd>" + x[0] + "</button>"; }).join("");
+    $("ps-opts").innerHTML = [a, b].map(function (x, j) { return '<button type="button" data-j="' + j + '"><kbd>' + (j + 1) + "</kbd>" + '<span class="ps-pic" aria-hidden="true">' + x[0] + "</span>" + x[1] + "</button>"; }).join("");
     coach("ps-coach", "tip", "First reaction", "Think of yourself at work on a normal day. Pick within about 5 seconds.");
     ps.locked = false; ps.t0 = Date.now(); clearInterval(ps.timer);
     ps.timer = setInterval(function () { var left = Math.max(0, 5 - (Date.now() - ps.t0) / 1000); $("ps-fill").style.width = (100 * left / 5) + "%"; $("ps-bar").className = "timebar" + (left < 1.5 ? " low" : ""); }, 100);
   }
   function psPick(j) {
     if (ps.locked) return; ps.locked = true; clearInterval(ps.timer);
-    var it = ps.order[ps.i]; ps.picks.push({ k: it.k, text: it.shown[j][0], tag: it.shown[j][1], repeat: !!it.repeat, secs: (Date.now() - ps.t0) / 1000 });
+    var it = ps.order[ps.i]; ps.picks.push({ k: it.k, text: it.shown[j][1], tag: it.shown[j][2], repeat: !!it.repeat, secs: (Date.now() - ps.t0) / 1000 });
     ps.i++;
     if (ps.i < ps.order.length) psShow(); else psEnd();
   }
@@ -992,14 +1083,15 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     if (!$("g-odd").hidden && e.key === "Enter" && !$("od-next").hidden) { e.preventDefault(); odStart(); }
     if (!$("g-memory").hidden) {
       if (/^[0-9]$/.test(e.key)) meType(e.key);
+      else if (/^[a-zA-Z]$/.test(e.key) && $("me-letters").checked && ME_LETTERS.indexOf(e.key.toUpperCase()) !== -1) meType(e.key.toUpperCase());
       if (e.key === "Backspace" && me.phase === "type") { me.typed = me.typed.slice(0, -1); $("me-entry").textContent = me.typed; }
       if (e.key === "Enter") { e.preventDefault(); if (me.phase === "type") meCheck(); else if (me.phase !== "show") meShow(); }
     }
   });
   function route() {
     var g = (location.hash || "#numbers").slice(1);
-    if (["numbers", "shapes", "odd", "memory", "personality"].indexOf(g) === -1) g = "numbers";
-    ["numbers", "shapes", "odd", "memory", "personality"].forEach(function (x) { $("g-" + x).hidden = x !== g; });
+    if (["numbers", "shapes", "odd", "memory", "flashback", "disco", "pulse", "personality"].indexOf(g) === -1) g = "numbers";
+    ["numbers", "shapes", "odd", "memory", "flashback", "disco", "pulse", "personality"].forEach(function (x) { $("g-" + x).hidden = x !== g; });
     document.querySelectorAll(".tabs a").forEach(function (a) { a.setAttribute("aria-selected", String(a.dataset.g === g)); });
     if (g !== "numbers" && window.__tt.stopNumbers) window.__tt.stopNumbers();
     if (g !== "shapes") { clearInterval(sh.timer); sh.locked = true; }
@@ -1010,6 +1102,181 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   $("sh-best").textContent = best("tt-sh", 1); $("od-best").textContent = best("tt-od", 1); $("me-best").textContent = best("tt-me", 4);
   window.__shExplain = shExplain;
   window.__gym = { OD_LV: OD_LV, ME_LV: ME_LV, od: od, me: me, SH_LV: SH_LV, shMake: shMake, sh: sh, allRots: allRots, key: key, mirror: mirror };
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function coach(id, kind, title, html) { var c = $(id); c.className = "coach " + kind; c.innerHTML = '<b class="k">' + title + "</b><span>" + html + "</span>"; }
+  function levelBar(pfx, notes, onPick) {
+    $(pfx + "-modes").addEventListener("click", function (e) {
+      var b = e.target.closest(".mode"); if (!b) return;
+      document.querySelectorAll("#" + pfx + "-modes .mode").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      $(pfx + "-note").textContent = notes[b.dataset.m]; $(pfx + "-lvl").textContent = b.dataset.m.charAt(0).toUpperCase() + b.dataset.m.slice(1); onPick(b.dataset.m);
+    });
+  }
+  function visible(g) { return !$("g-" + g).hidden; }
+
+  // ================= Flashback =================
+  var FB_LV = { easy: { n: 1, show: 2500, count: 20 }, medium: { n: 2, show: 2500, count: 22 }, hard: { n: 2, show: 1800, count: 24 }, ultimate: { n: 3, show: 2000, count: 26 } };
+  var FB_NOTES = { easy: "Easy: is this shape the same as the one just before it (1 back)? 2.5 s each.", medium: "Medium: same as the one 2 back? 2.5 s each.", hard: "Hard: 2 back, 1.8 s each.", ultimate: "Ultimate: 3 back, 2 s each." };
+  var FB_SHAPES = {
+    circle: '<circle cx="50" cy="50" r="34"/>', square: '<rect x="18" y="18" width="64" height="64" rx="6"/>',
+    triangle: '<polygon points="50,14 88,82 12,82"/>', star: '<polygon points="50,10 61,38 91,38 67,57 76,87 50,69 24,87 33,57 9,38 39,38"/>',
+    diamond: '<polygon points="50,10 88,50 50,90 12,50"/>', cross: '<polygon points="38,12 62,12 62,38 88,38 88,62 62,62 62,88 38,88 38,62 12,62 12,38 38,38"/>'
+  };
+  var FB_COL = { red: "#d6453b", blue: "#2f6fe0", green: "#1f9d5c", amber: "#d99a00" };
+  var fb = { lv: "easy", seq: [], i: 0, timer: null, answered: true, r: 0, w: 0, m: 0, running: false };
+  levelBar("fb", FB_NOTES, function (lv) { fb.lv = lv; fbStop(); $("fb-n").textContent = FB_LV[lv].n; });
+  function fbItem() { var sh = Object.keys(FB_SHAPES), co = Object.keys(FB_COL); return { s: sh[rnd(0, sh.length - 1)], c: co[rnd(0, co.length - 1)] }; }
+  function fbSvg(it) { return '<svg viewBox="0 0 100 100" aria-label="' + it.c + " " + it.s + '"><g fill="' + FB_COL[it.c] + '">' + FB_SHAPES[it.s] + "</g></svg>"; }
+  function fbBuild() {
+    var cfg = FB_LV[fb.lv], seq = [];
+    for (var i = 0; i < cfg.count; i++) {
+      var it;
+      if (i >= cfg.n && Math.random() < 0.33) it = { s: seq[i - cfg.n].s, c: seq[i - cfg.n].c };
+      else { do { it = fbItem(); } while (i >= cfg.n && it.s === seq[i - cfg.n].s && it.c === seq[i - cfg.n].c); }
+      // near misses: same shape, different colour, a third of the time
+      if (i >= cfg.n && !(it.s === seq[i - cfg.n].s && it.c === seq[i - cfg.n].c) && Math.random() < 0.3) { it = { s: seq[i - cfg.n].s, c: Object.keys(FB_COL).filter(function (c) { return c !== seq[i - cfg.n].c; })[rnd(0, 2)] }; }
+      seq.push(it);
+    }
+    return seq;
+  }
+  function fbStop() { clearTimeout(fb.timer); fb.running = false; $("fb-start").hidden = false; $("fb-yes").disabled = true; $("fb-no").disabled = true; $("fb-stage").innerHTML = ""; }
+  function fbStart() {
+    fb.seq = fbBuild(); fb.i = 0; fb.r = fb.w = fb.m = 0; fb.running = true; fbScore();
+    $("fb-start").hidden = true; fbShow();
+  }
+  function fbIsMatch(i) { var n = FB_LV[fb.lv].n; return i >= n && fb.seq[i].s === fb.seq[i - n].s && fb.seq[i].c === fb.seq[i - n].c; }
+  function fbShow() {
+    var cfg = FB_LV[fb.lv];
+    if (fb.i >= fb.seq.length) return fbEnd();
+    var it = fb.seq[fb.i], warm = fb.i < cfg.n;
+    $("fb-stage").innerHTML = fbSvg(it) + (warm ? '<span class="fb-new">Remember this one</span>' : "");
+    $("fb-count").textContent = (fb.i + 1) + " of " + fb.seq.length;
+    fb.answered = warm; $("fb-yes").disabled = warm; $("fb-no").disabled = warm;
+    var t0 = Date.now();
+    (function bar() { if (!fb.running) return; var left = Math.max(0, 1 - (Date.now() - t0) / cfg.show); $("fb-fill").style.width = (100 * left) + "%"; if (left > 0 && fb.i < fb.seq.length && fb.seq[fb.i] === it) requestAnimationFrame(bar); })();
+    fb.timer = setTimeout(function () { if (!fb.answered) { fb.m++; fbScore(); } fb.i++; fbShow(); }, cfg.show);
+  }
+  function fbAnswer(same) {
+    if (!fb.running || fb.answered) return; fb.answered = true;
+    var ok = same === fbIsMatch(fb.i); if (ok) fb.r++; else fb.w++; fbScore();
+    $("fb-yes").disabled = true; $("fb-no").disabled = true;
+    var st = $("fb-stage"); st.style.outline = "3px solid " + (ok ? "var(--ok)" : "var(--bad)"); setTimeout(function () { st.style.outline = ""; }, 250);
+  }
+  function fbScore() { $("fb-r").textContent = fb.r; $("fb-w").textContent = fb.w; $("fb-m").textContent = fb.m; }
+  function fbEnd() {
+    fbStop(); var tot = fb.r + fb.w + fb.m, pct = tot ? Math.round(100 * fb.r / tot) : 0;
+    coach("fb-coach", pct >= 75 ? "ok" : "bad", "Score: " + pct + "%", fb.r + " right, " + fb.w + " wrong, " + fb.m + " missed. " + (pct >= 75 ? "Solid. Try the next level." : fb.m > fb.w ? "You ran out of time on several: answer as soon as you have compared, then update your list." : "Say each shape as a label, colour first, and compare with the label " + FB_LV[fb.lv].n + " back before adding the new one."));
+    $("fb-start").textContent = "Go again";
+  }
+  $("fb-start").addEventListener("click", fbStart);
+  $("fb-yes").addEventListener("click", function () { fbAnswer(true); });
+  $("fb-no").addEventListener("click", function () { fbAnswer(false); });
+
+  // ================= Disco numbers =================
+  var DN_LV = { easy: { len: 3, step: 900 }, medium: { len: 4, step: 800 }, hard: { len: 5, step: 700 }, ultimate: { len: 6, step: 600 } };
+  var DN_NOTES = { easy: "Easy: 3 lights, slow.", medium: "Medium: 4 lights.", hard: "Hard: 5 lights, quicker.", ultimate: "Ultimate: 6 lights, fast." };
+  var dn = { lv: "easy", nums: [], seq: [], tap: [], phase: "idle", timers: [], r: 0, s: 0, w: 0 };
+  levelBar("dn", DN_NOTES, function (lv) { dn.lv = lv; dnReset(); });
+  function dnReset() { dn.timers.forEach(clearTimeout); dn.timers = []; dn.phase = "idle"; $("dn-start").hidden = false; $("dn-sums").hidden = true; $("dn-state").textContent = "Ready"; dnDraw(); }
+  function dnDraw() { $("dn-grid").innerHTML = (dn.nums.length ? dn.nums : [1, 2, 3, 4, 5, 6, 7, 8, 9]).map(function (n, i) { return '<button type="button" data-i="' + i + '"' + (dn.phase === "tap" ? "" : " disabled") + ">" + n + "</button>"; }).join(""); }
+  function dnStart() {
+    var cfg = DN_LV[dn.lv];
+    dn.nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]); dn.seq = []; dn.tap = [];
+    while (dn.seq.length < cfg.len) { var k = rnd(0, 8); if (dn.seq[dn.seq.length - 1] !== k) dn.seq.push(k); }
+    dn.phase = "watch"; dnDraw(); $("dn-start").hidden = true; $("dn-sums").hidden = true;
+    $("dn-op").textContent = "Watch the order the circles light up"; $("dn-state").textContent = "Watch";
+    coach("dn-coach", "tip", "Watch", "Say each number as it lights, and add as you go.");
+    var btns = function () { return $("dn-grid").querySelectorAll("button"); };
+    dn.seq.forEach(function (k, j) {
+      dn.timers.push(setTimeout(function () { btns()[k].classList.add("lit"); }, 500 + j * cfg.step));
+      dn.timers.push(setTimeout(function () { btns()[k].classList.remove("lit"); }, 500 + j * cfg.step + cfg.step * 0.7));
+    });
+    dn.timers.push(setTimeout(function () { dn.phase = "tap"; dnDraw(); $("dn-op").textContent = "Tap the circles in the same order"; $("dn-state").textContent = "Your turn"; coach("dn-coach", "tip", "Your turn", "Tap " + dn.seq.length + " circles in order. Repeats are allowed."); }, 600 + dn.seq.length * cfg.step));
+  }
+  function dnTap(i) {
+    if (dn.phase !== "tap") return;
+    var b = $("dn-grid").querySelectorAll("button")[i], want = dn.seq[dn.tap.length];
+    dn.tap.push(i); b.classList.remove("done", "bad"); void b.offsetWidth; b.classList.add(i === want ? "done" : "bad");
+    if (dn.tap.length === dn.seq.length) {
+      var okOrder = dn.tap.every(function (x, j) { return x === dn.seq[j]; }); if (okOrder) dn.r++;
+      dn.phase = "sum"; $("dn-grid").querySelectorAll("button").forEach(function (x) { x.disabled = true; });
+      var total = dn.seq.reduce(function (a, k) { return a + dn.nums[k]; }, 0), opts = [total];
+      [total - 10, total + 10, total - 1, total + 1, total + 2, total - 2].forEach(function (x) { if (x > 0 && opts.length < 4 && opts.indexOf(x) === -1 && Math.random() < 0.7) opts.push(x); });
+      while (opts.length < 4) { var x = total + rnd(-5, 5); if (x > 0 && opts.indexOf(x) === -1) opts.push(x); }
+      shuffle(opts); dn.total = total; dn.okOrder = okOrder;
+      $("dn-sums").innerHTML = opts.map(function (x) { return '<button type="button" data-v="' + x + '">' + x + "</button>"; }).join(""); $("dn-sums").hidden = false;
+      $("dn-op").textContent = "What was the total of the numbers that lit up?"; $("dn-state").textContent = "Sum";
+      coach("dn-coach", okOrder ? "ok" : "bad", okOrder ? "Order right" : "Order not quite", okOrder ? "Now pick the total." : "The order was " + dn.seq.map(function (k) { return dn.nums[k]; }).join(", ") + ". Now pick the total.");
+    }
+  }
+  function dnSum(v, btn) {
+    if (dn.phase !== "sum") return; dn.phase = "done"; dn.w++;
+    var ok = v === dn.total; if (ok) dn.s++;
+    $("dn-sums").querySelectorAll("button").forEach(function (x) { x.disabled = true; if (+x.dataset.v === dn.total) x.classList.add("right"); else if (x === btn) x.classList.add("wrong"); });
+    var seqN = dn.seq.map(function (k) { return dn.nums[k]; });
+    coach("dn-coach", ok && dn.okOrder ? "ok" : "bad", ok ? "Sum right" : "Sum: " + dn.total, seqN.join(" + ") + " = " + dn.total + ". " + (ok ? "" : "Keep a running total while the lights flash."));
+    $("dn-r").textContent = dn.r; $("dn-s").textContent = dn.s; $("dn-w").textContent = dn.w;
+    $("dn-start").textContent = "Next round"; $("dn-start").hidden = false;
+  }
+  $("dn-start").addEventListener("click", dnStart);
+  $("dn-grid").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) dnTap(+b.dataset.i); });
+  $("dn-sums").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) dnSum(+b.dataset.v, b); });
+  dnDraw();
+
+  // ================= Pulse =================
+  var PU_LV = { easy: { show: 1000, gap: 500, red: 0.4 }, medium: { show: 800, gap: 400, red: 0.45 }, hard: { show: 650, gap: 350, red: 0.5 }, ultimate: { show: 520, gap: 280, red: 0.55 } };
+  var PU_NOTES = { easy: "Easy: dots stay up for 1 second.", medium: "Medium: 0.8 seconds.", hard: "Hard: 0.65 seconds, more reds in a row.", ultimate: "Ultimate: about half a second, long runs of red before a trap." };
+  var PU_OTHER = ["#2f6fe0", "#1f9d5c", "#d99a00", "#8a5cf5"];
+  var pu = { lv: "easy", n: 0, total: 40, cur: null, t0: 0, timers: [], h: 0, f: 0, miss: 0, rts: [], running: false };
+  levelBar("pu", PU_NOTES, function (lv) { pu.lv = lv; puStop(); });
+  function puStop() { pu.timers.forEach(clearTimeout); pu.timers = []; pu.running = false; pu.cur = null; $("pu-stage").innerHTML = ""; $("pu-start").hidden = false; }
+  function puStart() { pu.n = 0; pu.h = pu.f = pu.miss = 0; pu.rts = []; pu.running = true; $("pu-start").hidden = true; puScore(); coach("pu-coach", "tip", "Go", "Red: tap. Anything else: hold."); puNext(); }
+  function puNext() {
+    var cfg = PU_LV[pu.lv];
+    if (pu.n >= pu.total) return puEnd();
+    // build runs of red so the habit forms, then a trap
+    var red = Math.random() < cfg.red || (pu.lastRed && pu.lastRed < 3 && Math.random() < 0.5);
+    pu.lastRed = red ? (pu.lastRed || 0) + 1 : 0;
+    var st = $("pu-stage"), w = st.clientWidth, h = st.clientHeight;
+    pu.cur = { red: red, hit: false }; pu.t0 = performance.now(); pu.n++;
+    st.innerHTML = '<span class="pu-dot" style="left:' + rnd(40, Math.max(41, w - 40)) + "px;top:" + rnd(40, h - 40) + "px;background:" + (red ? "#e0332b" : PU_OTHER[rnd(0, 3)]) + '"></span>';
+    $("pu-count").textContent = pu.n + " of " + pu.total;
+    pu.timers.push(setTimeout(function () { if (pu.cur && pu.cur.red && !pu.cur.hit) pu.miss++; pu.cur = null; st.innerHTML = ""; puScore(); pu.timers.push(setTimeout(puNext, cfg.gap + rnd(0, 250))); }, cfg.show));
+  }
+  function puTap() {
+    if (!pu.running) return;
+    var st = $("pu-stage");
+    if (pu.cur && pu.cur.red && pu.cur.hit) return; // a second tap on the same red dot is ignored
+    if (pu.cur && pu.cur.red && !pu.cur.hit) { pu.cur.hit = true; pu.h++; pu.rts.push(performance.now() - pu.t0); st.classList.add("flash-ok"); }
+    else { pu.f++; st.classList.add("flash-bad"); }
+    setTimeout(function () { st.classList.remove("flash-ok", "flash-bad"); }, 150); puScore();
+  }
+  function puScore() { $("pu-h").textContent = pu.h; $("pu-f").textContent = pu.f; $("pu-rt").textContent = pu.rts.length ? Math.round(pu.rts.reduce(function (a, b) { return a + b; }, 0) / pu.rts.length) + " ms" : "-"; }
+  function puEnd() {
+    puStop();
+    var good = pu.f <= 2 && pu.miss <= 3;
+    coach("pu-coach", good ? "ok" : "bad", "Done", pu.h + " reds hit, " + pu.miss + " reds missed, " + pu.f + " wrong taps. " + (pu.f > 2 ? "Too many wrong taps: wait to see the colour, then tap." : pu.miss > 3 ? "Accurate, but you missed reds: keep a finger ready on Space." : "Good control. Try the next level."));
+    $("pu-start").textContent = "Go again";
+  }
+  $("pu-start").addEventListener("click", puStart);
+  $("pu-stage").addEventListener("pointerdown", function (e) { e.preventDefault(); puTap(); });
+
+  // ================= keys and tab changes =================
+  document.addEventListener("keydown", function (e) {
+    if (visible("flashback")) { if (e.key === "ArrowRight") { e.preventDefault(); fbAnswer(true); } if (e.key === "ArrowLeft") { e.preventDefault(); fbAnswer(false); } }
+    if (visible("pulse") && (e.key === " " || e.code === "Space")) { e.preventDefault(); if (!e.repeat) puTap(); }
+  });
+  window.addEventListener("hashchange", function () {
+    if (!visible("flashback")) fbStop();
+    if (!visible("pulse")) puStop();
+    if (!visible("disco") && dn.phase !== "idle") dnReset();
+  });
 })();
 </script>
 
