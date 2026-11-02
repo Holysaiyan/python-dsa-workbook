@@ -4,7 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Practice games for game-based assessments: number targets, shape rotation, odd one out, memory, flashback, disco numbers, pulse and personality.">
-<style>:root{color-scheme:light}body{margin:0}[hidden]{display:none!important}</style>
+<style>
+:root{color-scheme:light}body{margin:0}[hidden]{display:none!important}
+.site-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 18px;flex-wrap:wrap}
+.site-nav a,.site-foot a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;font-size:.92rem;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:7px 14px}
+.site-nav a:hover,.site-foot a:hover{border-color:var(--accent);color:var(--accent)}
+.site-nav .crumb{font-size:.85rem;color:var(--muted)}
+.site-foot{margin:28px 0 8px;padding-top:18px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.88rem}
+</style>
 <title>Target Trainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,6 +185,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
 <body>
 
 <div class="wrap">
+  <nav class="site-nav" aria-label="Site"><a href="../">&larr; Python DSA Workbook</a><span class="crumb">Target Trainer</span></nav>
   <header>
     <div>
       <h1>Target <span>Trainer</span></h1>
@@ -486,8 +494,8 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     </ol>
     <p style="margin:8px 0 0">These tips cover the games candidates describe for BAE Systems and the common HireVue types. The real games are not published, so expect some surprises; the practice round is there for exactly that.</p></div>
   </details>
+  <footer class="site-foot"><span>Part of the Python DSA Workbook: lessons, practice and these games.</span><a href="../">&larr; Back to the workbook</a></footer>
 </div>
-  <p class="hist"><a href="../">Back to the Python DSA Workbook</a></p>
 
 <script>
 (function () {
