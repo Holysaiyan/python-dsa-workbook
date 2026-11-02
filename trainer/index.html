@@ -569,7 +569,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
   $("nu-modes").addEventListener("click", function (e) {
     var b = e.target.closest(".mode"); if (!b || b.disabled) return;
     document.querySelectorAll("#nu-modes .mode").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-    tier = b.dataset.m; reset("train"); startLevel();
+    tier = b.dataset.m; reset("train");
   });
   $("m-train").addEventListener("click", function () { reset("train"); });
   $("m-test").addEventListener("click", function () { reset("test"); });
@@ -711,7 +711,9 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     sh.mode = b.dataset.m; sh.lv = 0; sh.streak = 0; clearInterval(sh.timer); sh.locked = true;
     document.querySelectorAll("#sh-modes .mode").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
     $("sh-note").textContent = sh.mode === "adaptive" ? "Adaptive: starts easy and gets harder every 2 right in a row, all the way to Ultimate." : SH_LV[sh.mode].label;
-    shStart();
+    $("sh-target").innerHTML = ""; $("sh-opts").innerHTML = ""; $("sh-start").hidden = false; $("sh-next").hidden = true; $("sh-submit").hidden = true;
+    $("sh-lvl").textContent = sh.mode === "adaptive" ? "Level 1" : sh.mode.charAt(0).toUpperCase() + sh.mode.slice(1);
+    coach("sh-coach", "tip", "Ready", "Press Start when you are ready.");
   });
 
   // ---------------- Odd one out ----------------
@@ -769,7 +771,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     $("od-next").hidden = false; $("od-next").focus();
   }
   $("od-start").addEventListener("click", odStart);
-  tierBar("od", OD_NOTES, function (t) { od.mode = t; od.lv = 0; od.streak = 0; odStart(); }); $("od-next").addEventListener("click", odStart);
+  tierBar("od", OD_NOTES, function (t) { od.mode = t; od.lv = 0; od.streak = 0; clearInterval(od.timer); od.locked = true; $("od-grid").innerHTML = ""; $("od-start").hidden = false; $("od-next").hidden = true; $("od-lvl").textContent = t === "adaptive" ? "Level 1" : t.charAt(0).toUpperCase() + t.slice(1); coach("od-coach", "tip", "Ready", "Press Start when you are ready."); }); $("od-next").addEventListener("click", odStart);
   $("od-grid").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) odEnd(+b.dataset.i); });
 
   // ---------------- Memory: digit span ----------------
@@ -807,7 +809,7 @@ details ol { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
     $("me-ok").hidden = true; $("me-del").hidden = true; $("me-start").textContent = "Next"; $("me-start").hidden = false; $("me-start").focus();
   }
   $("me-start").addEventListener("click", meShow);
-  tierBar("me", ME_NOTES, function (t) { me.mode = t; me.len = 4; me.streak = 0; meShow(); });
+  tierBar("me", ME_NOTES, function (t) { me.mode = t; me.len = 4; me.streak = 0; me.timers.forEach(clearTimeout); me.timers = []; me.phase = "idle"; $("me-show").innerHTML = "&nbsp;"; $("me-entry").textContent = ""; $("me-ok").hidden = true; $("me-del").hidden = true; $("me-start").textContent = "Start"; $("me-start").hidden = false; $("me-state").textContent = "Ready"; coach("me-coach", "tip", "Ready", "Press Start when you are ready."); });
   $("me-ok").addEventListener("click", meCheck);
   $("me-del").addEventListener("click", function () { if (me.phase === "type") { me.typed = me.typed.slice(0, -1); $("me-entry").textContent = me.typed; } });
   $("me-pad").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) meType(b.dataset.d); });
