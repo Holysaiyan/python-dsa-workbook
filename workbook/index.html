@@ -201,6 +201,13 @@ td:first-child { font-weight: 600; }
 .t-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
 .t-detail { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); display: grid; gap: 2px; min-width: 0; }
 .t-detail span { overflow-wrap: anywhere; white-space: pre-wrap; }
+.intro-card { border: 1px solid var(--rule); border-left: 5px solid var(--accent); border-radius: 14px; padding: 16px 18px; margin: 6px 0 18px; background: var(--surface); }
+.intro-card .intro-k { margin: 0; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.intro-card h2 { margin: 4px 0 8px; }
+.intro-card p { margin: 0 0 10px; }
+.intro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.intro-grid ul { margin: 6px 0 0; padding-left: 20px; }
+.intro-grid b { display: block; margin-top: 4px; }
 .vid { margin: 4px 0 8px; }
 .ladder-vid { margin: 12px 18px 16px; }
 .ladder-vid summary { cursor: pointer; font-weight: 700; }
@@ -1022,6 +1029,12 @@ td:first-child { font-weight: 600; }
     head.innerHTML = '<div class="eyebrow"><span><span class="num">' + x.m.n + "</span> " + esc(x.m.title) + '</span><span>Lesson <span class="num">' + L.n + "</span> of " + flat.length + "</span><span>About " + L.minutes + " min</span></div><h1>" + esc(L.title) + '</h1><p class="lede">' + esc(L.summary) + "</p>" +
       (L.tags.length ? '<div class="chips">' + L.tags.map(function (t) { return '<span class="chip tag">' + esc(t) + " priority</span>"; }).join("") + "</div>" : "") + '<ol class="mstrip"></ol>';
     article.appendChild(head);
+    if (x.m.lessons[0] === L && x.m.intro) {
+      var I = x.m.intro, mins = x.m.lessons.reduce(function (a, l) { return a + (l.minutes || 0); }, 0);
+      article.appendChild(el("section", "intro-card", '<p class="intro-k">Section ' + esc(x.m.n) + " introduction</p><h2>" + esc(x.m.title) + "</h2><p>" + esc(I.why) + "</p>" +
+        '<div class="intro-grid"><div><b>You will learn</b><ul>' + I.learn.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ul></div>" +
+        "<div><b>Who it is for</b><p>" + esc(I.forwho) + "</p><b>How to use it</b><p>" + esc(I.how) + "</p><b>Time</b><p>" + x.m.lessons.length + " lessons, about " + Math.round(mins / 5) * 5 + " minutes of reading, plus practice.</p></div></div>"));
+    }
     if (L.video) article.appendChild(el("div", "vid", '<video controls preload="metadata" playsinline src="' + esc(L.video.src) + '"></video><p class="small">' + esc(L.video.title) + " (covers this whole section)</p>"));
     renderStrip();
     L.blocks.forEach(function (b) {

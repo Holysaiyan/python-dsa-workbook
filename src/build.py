@@ -16,6 +16,7 @@ try:
 except ImportError:
     EXTRAS_LLOYDS = {}
 from videos import VIDEOS
+from intros import INTROS
 from ladder import LADDER
 try:
     from ladder_b import LADDER_B
@@ -99,6 +100,7 @@ def main():
     for name in ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m8", "m7"]:
         m = importlib.import_module(name)
         mod = {"id": m.MODULE["id"], "title": m.MODULE["title"], "lessons": [], "n": m.MODULE.get("n") or str(len([x for x in modules if not x["n"].isalpha()]) + 1)}
+        mod["intro"] = INTROS.get(m.MODULE["id"])
         for L in m.LESSONS:
             blocks = []
             for b in L["blocks"]:
